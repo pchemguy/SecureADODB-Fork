@@ -28,12 +28,12 @@ Private this As TFactory
 
 '@Description("Default abstract factory")
 '@Ignore ProcedureNotUsed
-Public Function CreateFactory(ByVal baseCommand As IDbCommandBase, Optional ByVal commandClass As Object = Nothing) As IDbCommandFactory
-Attribute CreateFactory.VB_Description = "Default abstract factory"
+Public Function Create(ByVal baseCommand As IDbCommandBase, Optional ByVal commandClass As Object = Nothing) As IDbCommandFactory
+Attribute Create.VB_Description = "Default abstract factory"
     Dim result As DbCommandFactory
     Set result = New DbCommandFactory
     result.init baseCommand, commandClass
-    Set CreateFactory = result
+    Set Create = result
 End Function
 
 
