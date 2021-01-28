@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbCommandBase implementation."
 '@Folder("Tests.Stubs")
 '@ModuleDescription("A stub acting as a IDbCommandBase implementation.")
-'@IgnoreModule ProcedureNotUsed
+'@IgnoreModule UseMeaningfulName, ProcedureNotUsed
 Option Explicit
 Implements IDbCommandBase
 Private Type TInvokeState

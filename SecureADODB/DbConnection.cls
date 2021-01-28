@@ -8,6 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "A thin wrapper around an ADODB connection."
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@Exposed
 '@Folder("SecureADODB.DbConnection")
 '@ModuleDescription("A thin wrapper around an ADODB connection.")
@@ -102,6 +103,7 @@ End Property
 
 Private Sub IDbConnection_BeginTransaction()
     On Error Resume Next 'not all providers support transactions
+    '@Ignore VariableNotUsed
     Dim result As Long
     result = AdoConnection.BeginTrans
     On Error GoTo 0

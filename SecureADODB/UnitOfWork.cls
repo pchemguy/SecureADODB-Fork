@@ -8,6 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object that encapsulates a database transaction."
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@Folder("SecureADODB.UnitOfWork")
 '@ModuleDescription("An object that encapsulates a database transaction.")
 '@PredeclaredId
