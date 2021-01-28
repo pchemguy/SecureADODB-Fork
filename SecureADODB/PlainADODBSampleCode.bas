@@ -14,7 +14,7 @@ Public Sub TestADODBSourceSQL()
     Dim sSQL As String
     Dim sQTName As String
     
-    sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
+    sDatabase = ThisWorkbook.path + "\" + "SecureADODB.db"
     sDriver = "{SQLite3 ODBC Driver}"
     sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
@@ -28,7 +28,7 @@ Public Sub TestADODBSourceSQL()
     Dim adoRecordSet As ADODB.Recordset
     Set adoRecordSet = New ADODB.Recordset
     adoRecordSet.CursorLocation = adUseClient
-    adoRecordSet.Open Source:=sSQL, ActiveConnection:=adoConnStr, CursorType:=adOpenKeyset, LockType:=adLockReadOnly, Options:=(adCmdText Or adAsyncFetch)
+    adoRecordSet.Open source:=sSQL, ActiveConnection:=adoConnStr, CursorType:=adOpenKeyset, LockType:=adLockReadOnly, options:=(adCmdText Or adAsyncFetch)
     Set adoRecordSet.ActiveConnection = Nothing
 End Sub
 
@@ -43,7 +43,7 @@ Public Sub TestADODBSourceCMD()
     Dim sSQL As String
     Dim sQTName As String
     
-    sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
+    sDatabase = ThisWorkbook.path + "\" + "SecureADODB.db"
     sDriver = "{SQLite3 ODBC Driver}"
     sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
@@ -67,11 +67,11 @@ Public Sub TestADODBSourceCMD()
     End With
     
     With adoRecordSet
-        Set .Source = adoCommand
+        Set .source = adoCommand
         .CursorLocation = adUseClient
         .CursorType = adOpenKeyset
         .LockType = adLockReadOnly
-        .Open Options:=adAsyncFetch
+        .Open options:=adAsyncFetch
         Set .ActiveConnection = Nothing
     End With
     adoCommand.ActiveConnection.Close
@@ -89,7 +89,7 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     Dim sSQL As String
     Dim sQTName As String
     
-    sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
+    sDatabase = ThisWorkbook.path + "\" + "SecureADODB.db"
     sDriver = "{SQLite3 ODBC Driver}"
     sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
@@ -128,11 +128,11 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     End With
         
     With adoRecordSet
-        Set .Source = adoCommand
+        Set .source = adoCommand
         .CursorLocation = adUseClient
         .CursorType = adOpenKeyset
         .LockType = adLockReadOnly
-        .Open Options:=adAsyncFetch
+        .Open options:=adAsyncFetch
         Set .ActiveConnection = Nothing
     End With
     adoCommand.ActiveConnection.Close
