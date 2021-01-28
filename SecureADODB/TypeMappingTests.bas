@@ -16,6 +16,7 @@ Private Const ExpectedError As Long = SecureADODBCustomError
     Private Assert As Rubberduck.PermissiveAssertClass
 #End If
 
+
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     #If LateBind Then
@@ -25,10 +26,12 @@ Private Sub ModuleInitialize()
     #End If
 End Sub
 
+
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     Set Assert = Nothing
 End Sub
+
 
 '@TestMethod("Factory Guard")
 Private Sub Default_ThrowsIfNotInvokedFromDefaultInstance()
@@ -45,11 +48,13 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 Private Sub DefaultMapping_MapsType(ByVal name As String)
     Dim sut As ITypeMap
     Set sut = AdoTypeMappings.Default
     Assert.IsTrue sut.IsMapped(name)
 End Sub
+
 
 '@TestMethod("Type Mappings")
 Private Sub Mapping_ThrowsIfUndefined()
@@ -73,11 +78,13 @@ Private Sub IsMapped_FalseIfUndefined()
     Assert.IsFalse sut.IsMapped(InvalidTypeName)
 End Sub
 
+
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsBoolean()
     Dim value As Boolean
     DefaultMapping_MapsType TypeName(value)
 End Sub
+
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsByte()

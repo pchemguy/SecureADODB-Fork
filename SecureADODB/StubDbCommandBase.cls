@@ -12,7 +12,9 @@ Attribute VB_Description = "A stub acting as a IDbCommandBase implementation."
 '@ModuleDescription("A stub acting as a IDbCommandBase implementation.")
 '@IgnoreModule UseMeaningfulName, ProcedureNotUsed
 Option Explicit
+
 Implements IDbCommandBase
+
 Private Type TInvokeState
     CreateCommandInvokes As Long
     GetDisconnectedRecordsetInvokes As Long
@@ -21,6 +23,7 @@ Private Type TInvokeState
     SingleValueResult As Variant
 End Type
 Private this As TInvokeState
+
 
 Public Property Get CreateCommandInvokes() As Long
     CreateCommandInvokes = this.CreateCommandInvokes

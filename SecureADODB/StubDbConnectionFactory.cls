@@ -11,11 +11,14 @@ Attribute VB_Description = "A stub acting as a IDbConnectionFactory implementati
 '@Folder "SecureADODB.Tests.Stubs"
 '@ModuleDescription("A stub acting as a IDbConnectionFactory implementation.")
 Option Explicit
+
 Implements IDbConnectionFactory
+
 Private Type TInvokeState
     CreateConnectionInvokes As Long
 End Type
 Private this As TInvokeState
+
 
 Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String) As IDbConnection
     this.CreateConnectionInvokes = this.CreateConnectionInvokes + 1

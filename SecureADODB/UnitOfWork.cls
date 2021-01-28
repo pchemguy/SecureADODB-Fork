@@ -8,13 +8,15 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object that encapsulates a database transaction."
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@Folder("SecureADODB.UnitOfWork")
 '@ModuleDescription("An object that encapsulates a database transaction.")
 '@PredeclaredId
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@Exposed
 Option Explicit
+
 Implements IUnitOfWork
+
 Private Type TUnitOfWork
     Committed As Boolean
     RolledBack As Boolean
@@ -23,11 +25,11 @@ Private Type TUnitOfWork
 End Type
 Private this As TUnitOfWork
 
+
 '@Description("Creates a new unit of work using default configurations.")
 '@Ignore ProcedureNotUsed
 Public Function FromConnectionString(ByVal connString As String) As IUnitOfWork
 Attribute FromConnectionString.VB_Description = "Creates a new unit of work using default configurations."
-    
     Dim db As IDbConnection
     Set db = DbConnection.Create(connString)
     
@@ -41,8 +43,8 @@ Attribute FromConnectionString.VB_Description = "Creates a new unit of work usin
     Set factory = DefaultDbCommandFactory.Create(baseCommand)
     
     Set FromConnectionString = UnitOfWork.Create(db, factory)
-    
 End Function
+
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal db As IDbConnection, ByVal factory As IDbCommandFactory) As IUnitOfWork
@@ -59,6 +61,7 @@ Public Function Create(ByVal db As IDbConnection, ByVal factory As IDbCommandFac
     Set Create = result
 End Function
 
+
 '@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
 '@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
 Friend Property Set Connection(ByVal value As IDbConnection)
@@ -68,6 +71,7 @@ Friend Property Set Connection(ByVal value As IDbConnection)
     this.Connection.BeginTransaction
 End Property
 
+
 '@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
 '@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
 Friend Property Set CommandFactory(ByVal value As IDbCommandFactory)
@@ -76,11 +80,13 @@ Friend Property Set CommandFactory(ByVal value As IDbCommandFactory)
     Set this.CommandFactory = value
 End Property
 
+
 Private Sub Class_Terminate()
     On Error Resume Next
     If Not this.Committed Then this.Connection.RollbackTransaction
     On Error GoTo 0
 End Sub
+
 
 Private Sub IUnitOfWork_Commit()
     Errors.GuardExpression this.Committed, message:="Transaction is already committed."
@@ -91,9 +97,11 @@ Private Sub IUnitOfWork_Commit()
     On Error GoTo 0
 End Sub
 
+
 Private Function IUnitOfWork_Command() As IDbCommand
     Set IUnitOfWork_Command = this.CommandFactory.CreateInstance(this.Connection)
 End Function
+
 
 Private Sub IUnitOfWork_Rollback()
     Errors.GuardExpression this.Committed, message:="Transaction is already committed."

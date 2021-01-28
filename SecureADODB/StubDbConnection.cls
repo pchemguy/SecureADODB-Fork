@@ -12,12 +12,15 @@ Attribute VB_Description = "A stub acting as a IDbConnection implementation."
 '@ModuleDescription("A stub acting as a IDbConnection implementation.")
 '@IgnoreModule UseMeaningfulName, ProcedureNotUsed
 Option Explicit
+
 Implements IDbConnection
+
 Private stubState As ADODB.ObjectStateEnum
 Private stubConnection As ADODB.Connection
 Private beganTransaction As Boolean
 Private committedTransaction As Boolean
 Private rolledBackTransaction As Boolean
+
 
 Public Property Get State() As ADODB.ObjectStateEnum
     State = stubState

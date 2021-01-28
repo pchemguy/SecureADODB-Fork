@@ -8,14 +8,17 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object responsible for converting a value of a mapped data type to an ADODB.Parameter object."
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
-'@Exposed
 '@Folder("SecureADODB.ParameterProvider")
 '@ModuleDescription("An object responsible for converting a value of a mapped data type to an ADODB.Parameter object.")
 '@PredeclaredId
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
+'@Exposed
 Option Explicit
+
 Implements IParameterProvider
+
 Private mappings As ITypeMap
+
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 '@Description("Creates a new parameter provider using the specified type mappings.")
@@ -29,8 +32,8 @@ Attribute Create.VB_Description = "Creates a new parameter provider using the sp
     
     Set result.TypeMappings = typeMap
     Set Create = result
-
 End Function
+
 
 '@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
 '@Description "Gets/sets the type mappings for this instance."
@@ -41,8 +44,8 @@ Attribute TypeMappings.VB_Description = "Gets/sets the type mappings for this in
     Errors.GuardDoubleInitialization mappings
     
     Set mappings = value
-    
 End Property
+
 
 Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
     If TypeOf value Is ADODB.Parameter Then
@@ -73,12 +76,14 @@ Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional B
     Set IParameterProvider_FromValue = result
 End Function
 
+
 Private Function IsCharMapping(ByVal value As ADODB.DataTypeEnum) As Boolean
-    IsCharMapping = value = adChar _
-                           Or value = adWChar _
-                           Or value = adVarChar _
-                           Or value = adVarWChar
+    IsCharMapping = ((value = adChar) _
+                  Or (value = adWChar) _
+                  Or (value = adVarChar) _
+                  Or (value = adVarWChar))
 End Function
+
 
 Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA.Collection
     Dim results As VBA.Collection
@@ -88,6 +93,7 @@ Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA
     For i = LBound(values) To UBound(values)
         results.Add IParameterProvider_FromValue(values(i))
     Next
+
 CleanExit:
     Set IParameterProvider_FromValues = results
     Exit Function

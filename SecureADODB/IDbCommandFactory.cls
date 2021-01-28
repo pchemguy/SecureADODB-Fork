@@ -8,11 +8,11 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "An abstract factory that creates IDbCommand objects."
-'@IgnoreModule UseMeaningfulName
-'@Exposed
 '@Folder("SecureADODB.DbCommand.Abstract")
 '@ModuleDescription("An abstract factory that creates IDbCommand objects.")
 '@Interface
+'@IgnoreModule UseMeaningfulName
+'@Exposed
 Option Explicit
 
 '@Description("Creates a new IDbCommand object.")

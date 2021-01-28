@@ -15,6 +15,7 @@ Private Const ExpectedError As Long = SecureADODBCustomError
     Private Assert As Rubberduck.PermissiveAssertClass
 #End If
 
+
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     #If LateBind Then
@@ -24,10 +25,12 @@ Private Sub ModuleInitialize()
     #End If
 End Sub
 
+
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     Set Assert = Nothing
 End Sub
+
 
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
@@ -46,9 +49,9 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenNullConnection()
-    
     On Error GoTo CleanFail
     Dim sut As IUnitOfWork
     Set sut = UnitOfWork.Create(Nothing, New StubDbCommandFactory)
@@ -59,6 +62,7 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenConnectionStateNotOpen()
@@ -78,9 +82,9 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenNullCommandFactory()
-    
     On Error GoTo CleanFail
     Dim sut As IUnitOfWork
     Set sut = UnitOfWork.Create(New StubDbConnection, Nothing)
@@ -91,6 +95,7 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("Guard Clauses")
 Private Sub CommandFactory_ThrowsIfAlreadySet()
@@ -109,6 +114,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("Guard Clauses")
 Private Sub Connection_ThrowsIfAlreadySet()
     On Error GoTo TestFail
@@ -126,9 +132,9 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("UnitOfWork")
 Private Sub Command_CreatesDbCommandWithFactory()
-    
     Dim stubCommandFactory As StubDbCommandFactory
     Set stubCommandFactory = New StubDbCommandFactory
     
@@ -141,9 +147,9 @@ Private Sub Command_CreatesDbCommandWithFactory()
     Assert.AreEqual 1, stubCommandFactory.CreateCommandInvokes
 End Sub
 
+
 '@TestMethod("UnitOfWork")
 Private Sub Create_StartsTransaction()
-    
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
     
@@ -153,9 +159,9 @@ Private Sub Create_StartsTransaction()
     Assert.IsTrue stubConnection.DidBeginTransaction
 End Sub
 
+
 '@TestMethod("UnitOfWork")
 Private Sub Commit_CommitsTransaction()
-    
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
     
@@ -166,6 +172,7 @@ Private Sub Commit_CommitsTransaction()
     
     Assert.IsTrue stubConnection.DidCommitTransaction
 End Sub
+
 
 '@TestMethod("UnitOfWork")
 Private Sub Commit_ThrowsIfAlreadyCommitted()
@@ -188,6 +195,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("UnitOfWork")
 Private Sub Commit_ThrowsIfAlreadyRolledBack()
     On Error GoTo TestFail
@@ -208,6 +216,7 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("UnitOfWork")
 Private Sub Rollback_ThrowsIfAlreadyCommitted()
