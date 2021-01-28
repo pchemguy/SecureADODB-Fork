@@ -90,7 +90,7 @@ Private Function GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.R
     Set result = New ADODB.Recordset
     
     result.CursorLocation = adUseClient
-    result.Open Source:=cmd, CursorType:=adOpenStatic
+    result.Open source:=cmd, CursorType:=adOpenStatic
     
     Set result.ActiveConnection = Nothing
     Set GetDisconnectedRecordset = result

@@ -92,7 +92,7 @@ CleanExit:
     Set IParameterProvider_FromValues = results
     Exit Function
 CleanFail:
-    If Err.Number <> 9 Then
+    If Err.number <> 9 Then
         Errors.RethrowOnError
     End If
     Resume CleanExit
