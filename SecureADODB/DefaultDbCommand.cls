@@ -100,7 +100,7 @@ Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArra
     
     Dim i As Long
     For i = LBound(params) To UBound(params)
-        cmd.parameters.Append params(i)
+        cmd.Parameters.Append params(i)
     Next
     
     Dim result As ADODB.Recordset

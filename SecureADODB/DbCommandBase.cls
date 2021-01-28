@@ -72,7 +72,7 @@ Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As A
     On Error GoTo CleanFail
     Dim arg As ADODB.Parameter
     For Each arg In this.ParameterProvider.FromValues(args)
-        cmd.parameters.Append arg
+        cmd.Parameters.Append arg
     Next
     
 CleanExit:
