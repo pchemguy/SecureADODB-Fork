@@ -32,7 +32,7 @@ Friend Property Set Base(ByVal value As IDbCommandBase)
     Set this.Base = value
 End Property
 
-Private Function IDbCommandFactory_Create(ByVal db As IDbConnection) As IDbCommand
-    Set IDbCommandFactory_Create = DefaultDbCommand.Create(db, this.Base)
+Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection) As IDbCommand
+    Set IDbCommandFactory_CreateInstance = DefaultDbCommand.Create(db, this.Base)
 End Function
 

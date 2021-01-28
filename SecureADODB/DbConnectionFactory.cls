@@ -14,6 +14,6 @@ Attribute VB_Description = "An implementation of an abstract factory that create
 Option Explicit
 Implements IDbConnectionFactory
 
-Private Function IDbConnectionFactory_Create(ByVal connString As String) As IDbConnection
-    Set IDbConnectionFactory_Create = DbConnection.Create(connString)
+Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String) As IDbConnection
+    Set IDbConnectionFactory_CreateInstance = DbConnection.Create(connString)
 End Function

@@ -17,9 +17,9 @@ Private Type TInvokeState
 End Type
 Private this As TInvokeState
 
-Private Function IDbConnectionFactory_Create(ByVal connString As String) As IDbConnection
+Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String) As IDbConnection
     this.CreateConnectionInvokes = this.CreateConnectionInvokes + 1
-    Set IDbConnectionFactory_Create = New StubDbConnection
+    Set IDbConnectionFactory_CreateInstance = New StubDbConnection
 End Function
 
 Public Property Get CreateConnectionInvokes() As Long

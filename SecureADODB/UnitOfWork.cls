@@ -92,7 +92,7 @@ Private Sub IUnitOfWork_Commit()
 End Sub
 
 Private Function IUnitOfWork_Command() As IDbCommand
-    Set IUnitOfWork_Command = this.CommandFactory.Create(this.Connection)
+    Set IUnitOfWork_Command = this.CommandFactory.CreateInstance(this.Connection)
 End Function
 
 Private Sub IUnitOfWork_Rollback()

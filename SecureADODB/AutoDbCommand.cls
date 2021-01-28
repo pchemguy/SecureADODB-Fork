@@ -69,7 +69,7 @@ Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Va
     localArgs = args 'cannot pass ParamArray array directly to ByRef array argument
     GuardInvalidOrdinalArguments sql, localArgs
     
-    With this.ConnectionFactory.Create(this.ConnectionString)
+    With this.ConnectionFactory.CreateInstance(this.ConnectionString)
         
         Dim cmd As ADODB.Command
         Set cmd = this.Base.CreateCommand(.Self, adCmdText, sql, localArgs)
@@ -87,7 +87,7 @@ Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As
     localArgs = args 'cannot pass ParamArray array directly to ByRef array argument
     GuardInvalidOrdinalArguments sql, localArgs
     
-    With this.ConnectionFactory.Create(this.ConnectionString)
+    With this.ConnectionFactory.CreateInstance(this.ConnectionString)
     
         Dim cmd As ADODB.Command
         Set cmd = this.Base.CreateCommand(.Self, adCmdText, sql, localArgs)
@@ -103,7 +103,7 @@ Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArra
     localParams = params
     GuardInvalidOrdinalArguments sql, localParams
 
-    With this.ConnectionFactory.Create(this.ConnectionString)
+    With this.ConnectionFactory.CreateInstance(this.ConnectionString)
         
         Dim emptyArgs() As Variant
         
@@ -129,7 +129,7 @@ Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args(
     Dim localArgs() As Variant: localArgs = args
     GuardInvalidOrdinalArguments sql, localArgs
     
-    With this.ConnectionFactory.Create(this.ConnectionString)
+    With this.ConnectionFactory.CreateInstance(this.ConnectionString)
         IDbCommand_GetSingleValue = this.Base.GetSingleValue(.Self, sql, localArgs)
     End With
     

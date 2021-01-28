@@ -15,6 +15,5 @@ Attribute VB_Description = "An abstract factory that creates IDbConnection objec
 Option Explicit
 
 '@Description("Creates and returns a new database connection.")
-Public Function Create(ByVal connString As String) As IDbConnection
-Attribute Create.VB_Description = "Creates and returns a new database connection."
+Public Function CreateInstance(ByVal connString As String) As IDbConnection
 End Function
