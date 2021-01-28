@@ -32,14 +32,14 @@ Public Function Create(ByVal baseCommand As IDbCommandBase, Optional ByVal comma
 Attribute Create.VB_Description = "Default abstract factory"
     Dim result As DbCommandFactory
     Set result = New DbCommandFactory
-    result.init baseCommand, commandClass
+    result.Init baseCommand, commandClass
     Set Create = result
 End Function
 
 
 '@Description("Default constructor")
-Public Sub init(ByVal baseCommand As IDbCommandBase, Optional ByVal commandClass As Object = Nothing)
-Attribute init.VB_Description = "Default constructor"
+Public Sub Init(ByVal baseCommand As IDbCommandBase, Optional ByVal commandClass As Object = Nothing)
+Attribute Init.VB_Description = "Default constructor"
     Set this.Base = baseCommand
     If commandClass Is Nothing Then
         Set this.commandClass = DefaultDbCommand
