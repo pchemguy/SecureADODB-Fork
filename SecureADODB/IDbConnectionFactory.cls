@@ -16,4 +16,5 @@ Option Explicit
 
 '@Description("Creates and returns a new database connection.")
 Public Function CreateInstance(ByVal connString As String) As IDbConnection
+Attribute CreateInstance.VB_Description = "Creates and returns a new database connection."
 End Function
