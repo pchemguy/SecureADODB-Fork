@@ -8,9 +8,9 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbConnection implementation."
-'@Folder("Tests.Stubs")
+'@Folder "SecureADODB.Tests.Stubs"
 '@ModuleDescription("A stub acting as a IDbConnection implementation.")
-'@IgnoreModule ProcedureNotUsed
+'@IgnoreModule UseMeaningfulName, ProcedureNotUsed
 Option Explicit
 Implements IDbConnection
 Private stubState As ADODB.ObjectStateEnum

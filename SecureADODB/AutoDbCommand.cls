@@ -8,6 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "An object that deals with the database connection and builds and executes a parameterized ADODB command from a command string and parameter values. Returns disconnected recordsets."
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@Folder("SecureADODB.DbCommand")
 '@ModuleDescription("An object that deals with the database connection and builds and executes a parameterized ADODB command from a command string and parameter values. Returns disconnected recordsets.")
 '@PredeclaredId
@@ -111,7 +112,7 @@ Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArra
         
         Dim i As Long
         For i = LBound(localParams) To UBound(localParams)
-            cmd.parameters.Append localParams(i)
+            cmd.Parameters.Append localParams(i)
         Next
         
         Dim result As ADODB.Recordset

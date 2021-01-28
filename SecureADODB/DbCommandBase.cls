@@ -8,6 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object intended to be used as a private instance field in a class implementing the IDbCommand interface (composition in place of inheritance)."
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@Exposed
 '@Folder("SecureADODB.DbCommand.Abstract")
 '@ModuleDescription("An object intended to be used as a private instance field in a class implementing the IDbCommand interface (composition in place of inheritance).")
@@ -71,7 +72,7 @@ Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As A
     On Error GoTo CleanFail
     Dim arg As ADODB.Parameter
     For Each arg In this.ParameterProvider.FromValues(args)
-        cmd.parameters.Append arg
+        cmd.Parameters.Append arg
     Next
     
 CleanExit:
@@ -89,7 +90,7 @@ Private Function GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.R
     Set result = New ADODB.Recordset
     
     result.CursorLocation = adUseClient
-    result.Open Source:=cmd, CursorType:=adOpenStatic
+    result.Open source:=cmd, CursorType:=adOpenStatic
     
     Set result.ActiveConnection = Nothing
     Set GetDisconnectedRecordset = result

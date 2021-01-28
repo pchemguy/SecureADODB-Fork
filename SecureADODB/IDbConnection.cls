@@ -8,6 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "Represents an object that wraps an active ADODB connection."
+'@IgnoreModule UseMeaningfulName
 '@Folder("SecureADODB.DbConnection.Abstract")
 '@ModuleDescription("Represents an object that wraps an active ADODB connection.")
 '@Exposed

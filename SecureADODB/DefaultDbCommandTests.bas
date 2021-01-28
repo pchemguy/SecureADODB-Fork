@@ -1,6 +1,6 @@
 Attribute VB_Name = "DefaultDbCommandTests"
+'@Folder "SecureADODB.Tests"
 '@TestModule
-'@Folder("Tests")
 '@IgnoreModule
 Option Explicit
 Option Private Module
@@ -77,7 +77,7 @@ Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
     End With
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -98,7 +98,7 @@ Private Sub Execute_ThrowsGivenExtraneousArgument()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -119,7 +119,7 @@ Private Sub Execute_ThrowsGivenMissingArgument()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -140,7 +140,7 @@ Private Sub ExecuteWithParameters_ThrowsGivenExtraneousArgument()
     On Error GoTo 0
 
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -161,7 +161,7 @@ Private Sub ExecuteWithParameters_ThrowsGivenMissingArgument()
     On Error GoTo 0
 
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -181,7 +181,7 @@ Private Sub ExecuteNonQuery_ThrowsGivenExtraneousArgument()
     On Error GoTo 0
 
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -201,7 +201,7 @@ Private Sub ExecuteNonQuery_ThrowsGivenMissingArgument()
     On Error GoTo 0
 
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -222,7 +222,7 @@ Private Sub GetSingleValue_ThrowsGivenExtraneousArgument()
     On Error GoTo 0
 
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -243,7 +243,7 @@ Private Sub GetSingleValue_ThrowsGivenMissingArgument()
     On Error GoTo 0
 
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -258,7 +258,7 @@ Private Sub Execute_ValidatesArguments()
     On Error Resume Next
     Dim result As ADODB.Recordset
     Set result = sut.Execute(GetSingleParameterSelectSql, 42)
-    Debug.Assert Err.Number = ERR_INVALID_WITHOUT_LIVE_CONNECTION
+    Debug.Assert Err.number = ERR_INVALID_WITHOUT_LIVE_CONNECTION
     On Error GoTo 0
     
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
@@ -273,7 +273,7 @@ Private Sub ExecuteNonQuery_ValidatesArguments()
     
     On Error Resume Next
     sut.ExecuteNonQuery GetSingleParameterInsertSql, 42
-    Debug.Assert Err.Number = ERR_INVALID_WITHOUT_LIVE_CONNECTION
+    Debug.Assert Err.number = ERR_INVALID_WITHOUT_LIVE_CONNECTION
     On Error GoTo 0
     
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
@@ -302,10 +302,9 @@ Private Sub ExecuteWithParameters_ValidatesArguments()
     On Error Resume Next
     Dim result As ADODB.Recordset
     Set result = sut.ExecuteWithParameters(GetSingleParameterInsertSql, GetStubParameter)
-    Debug.Assert Err.Number = ERR_INVALID_WITHOUT_LIVE_CONNECTION
+    Debug.Assert Err.number = ERR_INVALID_WITHOUT_LIVE_CONNECTION
     On Error GoTo 0
     
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
 End Sub
-
 

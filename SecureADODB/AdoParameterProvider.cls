@@ -8,6 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object responsible for converting a value of a mapped data type to an ADODB.Parameter object."
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@Exposed
 '@Folder("SecureADODB.ParameterProvider")
 '@ModuleDescription("An object responsible for converting a value of a mapped data type to an ADODB.Parameter object.")
@@ -91,7 +92,7 @@ CleanExit:
     Set IParameterProvider_FromValues = results
     Exit Function
 CleanFail:
-    If Err.Number <> 9 Then
+    If Err.number <> 9 Then
         Errors.RethrowOnError
     End If
     Resume CleanExit

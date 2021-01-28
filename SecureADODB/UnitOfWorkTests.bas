@@ -1,6 +1,6 @@
 Attribute VB_Name = "UnitOfWorkTests"
+'@Folder "SecureADODB.Tests"
 '@TestModule
-'@Folder("Tests")
 '@IgnoreModule
 Option Explicit
 Option Private Module
@@ -41,7 +41,7 @@ Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
     End With
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -55,7 +55,7 @@ Private Sub Create_ThrowsGivenNullConnection()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -73,7 +73,7 @@ Private Sub Create_ThrowsGivenConnectionStateNotOpen()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -87,7 +87,7 @@ Private Sub Create_ThrowsGivenNullCommandFactory()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -104,7 +104,7 @@ Private Sub CommandFactory_ThrowsIfAlreadySet()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -121,7 +121,7 @@ Private Sub Connection_ThrowsIfAlreadySet()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -183,7 +183,7 @@ Private Sub Commit_ThrowsIfAlreadyCommitted()
     On Error GoTo 0
 
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -204,7 +204,7 @@ Private Sub Commit_ThrowsIfAlreadyRolledBack()
     On Error GoTo 0
 
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -225,7 +225,7 @@ Private Sub Rollback_ThrowsIfAlreadyCommitted()
     On Error GoTo 0
 
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
