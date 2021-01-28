@@ -1,6 +1,6 @@
 Attribute VB_Name = "DefaultDbCommandTests"
+'@Folder "SecureADODB.Tests"
 '@TestModule
-'@Folder("Tests")
 '@IgnoreModule
 Option Explicit
 Option Private Module

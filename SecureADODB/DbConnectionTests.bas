@@ -1,6 +1,6 @@
 Attribute VB_Name = "DbConnectionTests"
+'@Folder "SecureADODB.Tests"
 '@TestModule
-'@Folder("Tests")
 '@IgnoreModule
 Option Explicit
 Option Private Module
