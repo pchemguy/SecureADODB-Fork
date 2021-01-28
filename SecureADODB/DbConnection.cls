@@ -121,20 +121,6 @@ Private Sub IDbConnection_CommitTransaction()
     HasActiveTransaction = False
 End Sub
 
-Private Function IDbConnection_CreateCommand(ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String) As ADODB.Command
-    Errors.GuardEmptyString sql
-    Errors.GuardExpression AdoConnection.State <> adStateOpen, message:="Connection is not open."
-    
-    Dim result As ADODB.Command
-    Set result = New ADODB.Command
-    
-    Set result.ActiveConnection = AdoConnection
-    result.commandType = commandType
-    result.CommandText = sql
-    
-    Set IDbConnection_CreateCommand = result
-End Function
-
 Private Sub IDbConnection_RollbackTransaction()
     If HasActiveTransaction Then AdoConnection.RollbackTrans
     HasActiveTransaction = False

@@ -72,7 +72,10 @@ Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As A
     Errors.GuardExpression Not ValidateOrdinalArguments(sql, args), message:="Arguments supplied are inconsistent with the provided command string parameters."
     
     Dim cmd As ADODB.Command
-    Set cmd = db.CreateCommand(commandType, sql)
+    Set cmd = New ADODB.Command
+    Set cmd.ActiveConnection = db.AdoConnection
+    cmd.commandType = commandType
+    cmd.CommandText = sql
     
     On Error GoTo CleanFail
     Dim arg As ADODB.Parameter
