@@ -48,14 +48,14 @@ Public Function Create(ByVal dbPath As String, _
 Attribute Create.VB_Description = "Default factory"
     Dim result As SqliteConnectionString
     Set result = New SqliteConnectionString
-    result.init dbPath, dbName, driver, options, provider
+    result.Init dbPath, dbName, driver, options, provider
     Set Create = result
 End Function
 
 
 '@Description("Custom constructor")
-Public Sub init(ByVal dbPath As String, ByVal dbName As String, ByVal driver As String, ByVal options As String, ByVal provider As String)
-Attribute init.VB_Description = "Custom constructor"
+Public Sub Init(ByVal dbPath As String, ByVal dbName As String, ByVal driver As String, ByVal options As String, ByVal provider As String)
+Attribute Init.VB_Description = "Custom constructor"
     Dim dbPathName As String
     dbPathName = dbPath & Application.PathSeparator & dbName
     Guard.FileNotExist dbPathName

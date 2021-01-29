@@ -8,12 +8,14 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "An object that builds and executes a parameterized ADODB command from a command string and parameter values. Returns connected recordsets that the client should close."
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@Folder("SecureADODB.DbCommand")
 '@ModuleDescription("An object that builds and executes a parameterized ADODB command from a command string and parameter values. Returns connected recordsets that the client should close.")
 '@PredeclaredId
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
 Option Explicit
+
 Implements IDbCommand
+
 Private Type TCommand
     Base As IDbCommandBase
     Connection As IDbConnection
@@ -21,37 +23,33 @@ End Type
 Private this As TCommand
 '@Ignore MissingMemberAnnotation
 
+
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase) As IDbCommand
     Errors.GuardNonDefaultInstance Me, DefaultDbCommand
-    Errors.GuardNullReference db
-    Errors.GuardNullReference baseCommand
     
     Dim result As DefaultDbCommand
     Set result = New DefaultDbCommand
-    Set result.Connection = db
-    Set result.Base = baseCommand
-    
+    result.CreInit db, baseCommand
     Set Create = result
-    
 End Function
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set Connection(ByVal value As IDbConnection)
-    Errors.GuardDoubleInitialization this.Connection
-    Set this.Connection = value
-End Property
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set Base(ByVal value As IDbCommandBase)
-    Set this.Base = value
-End Property
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase)
+Attribute CreInit.VB_Description = "Default constructor"
+    Errors.GuardNullReference db
+    Errors.GuardNullReference baseCommand
+
+    Set this.Connection = db
+    Set this.Base = baseCommand
+End Sub
+
 
 Private Sub GuardInvalidOrdinalArguments(ByVal sql As String, ByRef args() As Variant)
     Errors.GuardExpression Not this.Base.ValidateOrdinalArguments(sql, args), message:="Arguments provided are inconsistent with expected ordinal parameters."
 End Sub
+
 
 Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
     Errors.GuardNullReference this.Connection
@@ -65,8 +63,8 @@ Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Va
     Set cmd = this.Base.CreateCommand(this.Connection, adCmdText, sql, localArgs)
     
     Set IDbCommand_Execute = cmd.Execute
-
 End Function
+
 
 Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
     Errors.GuardNullReference this.Connection
@@ -80,8 +78,8 @@ Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As
     Set cmd = this.Base.CreateCommand(this.Connection, adCmdText, sql, localArgs)
     '@Ignore FunctionReturnValueDiscarded
     cmd.Execute
-
 End Sub
+
 
 Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArray params() As Variant) As ADODB.Recordset
     Errors.GuardNullReference this.Connection
@@ -107,8 +105,8 @@ Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArra
     Set result = cmd.Execute
     
     Set IDbCommand_ExecuteWithParameters = result
-    
 End Function
+
 
 Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args() As Variant) As Variant
     Errors.GuardNullReference this.Connection
@@ -119,6 +117,4 @@ Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args(
     GuardInvalidOrdinalArguments sql, localArgs
     
     IDbCommand_GetSingleValue = this.Base.GetSingleValue(this.Connection, sql, localArgs)
-
 End Function
-

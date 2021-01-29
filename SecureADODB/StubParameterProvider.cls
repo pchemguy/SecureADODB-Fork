@@ -8,10 +8,12 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IParameterProvider implementation."
-'@Folder "SecureADODB.Tests.Stubs"
+'@Folder("SecureADODB.Tests.Stubs")
 '@ModuleDescription("A stub acting as a IParameterProvider implementation.")
 Option Explicit
+
 Implements IParameterProvider
+
 
 Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
     Set IParameterProvider_FromValue = New ADODB.Parameter

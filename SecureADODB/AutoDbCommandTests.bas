@@ -1,5 +1,5 @@
 Attribute VB_Name = "AutoDbCommandTests"
-'@Folder "SecureADODB.Tests"
+'@Folder("SecureADODB.Tests")
 '@TestModule
 '@IgnoreModule
 
@@ -17,6 +17,7 @@ Private Const ExpectedError As Long = SecureADODBCustomError
     Private Assert As Rubberduck.PermissiveAssertClass
 #End If
 
+
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     #If LateBind Then
@@ -26,10 +27,12 @@ Private Sub ModuleInitialize()
     #End If
 End Sub
 
+
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     Set Assert = Nothing
 End Sub
+
 
 Private Function GetSUT(Optional ByRef stubBase As StubDbCommandBase, Optional ByRef stubFactory As StubDbConnectionFactory) As IDbCommand
     Set stubFactory = New StubDbConnectionFactory
@@ -57,6 +60,7 @@ Private Function GetTwoParameterInsertSql() As String
     GetTwoParameterInsertSql = "INSERT INTO [dbo].[Table1] ([Timestamp], [Value], [ThingID]) VALUES (GETDATE(), ?, ?);"
 End Function
 
+
 Private Function GetStubParameter() As ADODB.Parameter
     Dim stubParameter As ADODB.Parameter
     Set stubParameter = New ADODB.Parameter
@@ -65,6 +69,7 @@ Private Function GetStubParameter() As ADODB.Parameter
     stubParameter.direction = adParamInput
     Set GetStubParameter = stubParameter
 End Function
+
 
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
@@ -83,9 +88,9 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenEmptyConnectionString()
-    
     On Error GoTo CleanFail
     Dim sut As IDbCommand
     Set sut = AutoDbCommand.Create(vbNullString, New StubDbConnectionFactory, New StubDbCommandBase)
@@ -97,9 +102,9 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenNullConnectionFactory()
-    
     On Error GoTo CleanFail
     Dim sut As IDbCommand
     Set sut = AutoDbCommand.Create("connection string", Nothing, New StubDbCommandBase)
@@ -111,9 +116,9 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenNullCommandBase()
-    
     On Error GoTo CleanFail
     Dim sut As IDbCommand
     Set sut = AutoDbCommand.Create("connection string", New StubDbConnectionFactory, Nothing)
@@ -125,39 +130,6 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
-'@TestMethod("Guard Clauses")
-Private Sub ConnectionFactory_ThrowsIfAlreadySet()
-    On Error GoTo TestFail
-    
-    Dim sut As AutoDbCommand
-    Set sut = AutoDbCommand.Create("connection string", New StubDbConnectionFactory, New StubDbCommandBase)
-    
-    On Error GoTo CleanFail
-    Set sut.ConnectionFactory = New StubDbConnectionFactory
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-'@TestMethod("Guard Clauses")
-Private Sub Base_ThrowsIfAlreadySet()
-    On Error GoTo TestFail
-    
-    Dim sut As AutoDbCommand
-    Set sut = AutoDbCommand.Create("connection string", New StubDbConnectionFactory, New StubDbCommandBase)
-    
-    On Error GoTo CleanFail
-    Set sut.Base = New StubDbCommandBase
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
 
 '@TestMethod("AutoDbCommand")
 Private Sub Execute_ThrowsGivenExtraneousArgument()
@@ -180,6 +152,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub Execute_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
@@ -200,6 +173,7 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteWithParameters_ThrowsGivenExtraneousArgument()
@@ -222,6 +196,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteWithParameters_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
@@ -243,6 +218,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteNonQuery_ThrowsGivenExtraneousArgument()
     On Error GoTo TestFail
@@ -263,6 +239,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteNonQuery_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
@@ -282,6 +259,7 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("AutoDbCommand")
 Private Sub GetSingleValue_ThrowsGivenExtraneousArgument()
@@ -304,6 +282,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub GetSingleValue_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
@@ -325,6 +304,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub Execute_CreatesDbConnection()
     Dim stubBase As StubDbCommandBase
@@ -338,6 +318,7 @@ Private Sub Execute_CreatesDbConnection()
     
     Assert.AreEqual 1, stubFactory.CreateConnectionInvokes
 End Sub
+
 
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteNonQuery_CreatesDbConnection()
@@ -355,6 +336,7 @@ Private Sub ExecuteNonQuery_CreatesDbConnection()
     Assert.AreEqual 1, stubFactory.CreateConnectionInvokes
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteWithParameters_CreatesDbConnection()
     Dim stubBase As StubDbCommandBase
@@ -368,6 +350,7 @@ Private Sub ExecuteWithParameters_CreatesDbConnection()
     
     Assert.AreEqual 1, stubFactory.CreateConnectionInvokes
 End Sub
+
 
 '@TestMethod("AutoDbCommand")
 Private Sub GetSingleValue_CreatesDbConnection()
@@ -383,6 +366,7 @@ Private Sub GetSingleValue_CreatesDbConnection()
     Assert.AreEqual 1, stubFactory.CreateConnectionInvokes
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub Execute_ReturnsDisconnectedRecordset()
     Dim stubBase As StubDbCommandBase
@@ -396,6 +380,7 @@ Private Sub Execute_ReturnsDisconnectedRecordset()
     
     Assert.AreEqual 1, stubBase.GetDisconnectedRecordsetInvokes
 End Sub
+
 
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteWithParameters_ReturnsDisconnectedRecordset()
@@ -411,6 +396,7 @@ Private Sub ExecuteWithParameters_ReturnsDisconnectedRecordset()
     Assert.AreEqual 1, stubBase.GetDisconnectedRecordsetInvokes
 End Sub
 
+
 '@TestMethod("Validation")
 Private Sub Execute_ValidatesArguments()
     Dim stubBase As StubDbCommandBase
@@ -424,6 +410,7 @@ Private Sub Execute_ValidatesArguments()
     
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
 End Sub
+
 
 '@TestMethod("Validation")
 Private Sub ExecuteNonQuery_ValidatesArguments()
@@ -441,6 +428,7 @@ Private Sub ExecuteNonQuery_ValidatesArguments()
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
 End Sub
 
+
 '@TestMethod("Validation")
 Private Sub GetSingleValue_ValidatesArguments()
     Dim stubBase As StubDbCommandBase
@@ -454,6 +442,7 @@ Private Sub GetSingleValue_ValidatesArguments()
     
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
 End Sub
+
 
 '@TestMethod("Validation")
 Private Sub ExecuteWithParameters_ValidatesArguments()

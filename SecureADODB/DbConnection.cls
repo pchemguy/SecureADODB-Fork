@@ -8,17 +8,20 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "A thin wrapper around an ADODB connection."
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
-'@Exposed
 '@Folder("SecureADODB.DbConnection")
 '@ModuleDescription("A thin wrapper around an ADODB connection.")
 '@PredeclaredId
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
+'@Exposed
 Option Explicit
+
 Implements IDbConnection
+
 '@Ignore MissingMemberAnnotation
 Private WithEvents AdoConnection As ADODB.Connection
 Attribute AdoConnection.VB_VarHelpID = -1
 Private HasActiveTransaction As Boolean
+
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal connString As String) As IDbConnection
@@ -26,20 +29,31 @@ Public Function Create(ByVal connString As String) As IDbConnection
     
     Dim result As DbConnection
     Set result = New DbConnection
-    
-    result.Connect connString
+    result.CreInit connString
     Set Create = result
-
 End Function
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-Friend Sub Connect(ByVal connString As String)
+
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal connString As String)
+Attribute CreInit.VB_Description = "Default constructor"
     Errors.GuardExpression AdoConnection.ConnectionString <> vbNullString, message:="Object is already initialized."
     Errors.GuardEmptyString connString
-    
     AdoConnection.Open connString
-
 End Sub
+
+
+Private Sub Class_Initialize()
+    Set AdoConnection = New ADODB.Connection
+End Sub
+
+Private Sub Class_Terminate()
+    On Error Resume Next
+    AdoConnection.Close
+    On Error GoTo 0
+    Set AdoConnection = Nothing
+End Sub
+
 
 Private Sub AdoConnection_BeginTransComplete(ByVal TransactionLevel As Long, ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin transaction completed. "
@@ -86,16 +100,6 @@ Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.Curs
     Debug.Print "Begin execute..."
 End Sub
 
-Private Sub Class_Initialize()
-    Set AdoConnection = New ADODB.Connection
-End Sub
-
-Private Sub Class_Terminate()
-    On Error Resume Next
-    AdoConnection.Close
-    On Error GoTo 0
-    Set AdoConnection = Nothing
-End Sub
 
 Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
     Set IDbConnection_AdoConnection = AdoConnection
@@ -116,20 +120,6 @@ Private Sub IDbConnection_CommitTransaction()
     On Error GoTo 0
     HasActiveTransaction = False
 End Sub
-
-Private Function IDbConnection_CreateCommand(ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String) As ADODB.Command
-    Errors.GuardEmptyString sql
-    Errors.GuardExpression AdoConnection.State <> adStateOpen, message:="Connection is not open."
-    
-    Dim result As ADODB.Command
-    Set result = New ADODB.Command
-    
-    Set result.ActiveConnection = AdoConnection
-    result.commandType = commandType
-    result.CommandText = sql
-    
-    Set IDbConnection_CreateCommand = result
-End Function
 
 Private Sub IDbConnection_RollbackTransaction()
     If HasActiveTransaction Then AdoConnection.RollbackTrans

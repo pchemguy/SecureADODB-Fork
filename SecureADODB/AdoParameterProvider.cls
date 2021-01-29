@@ -8,41 +8,38 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object responsible for converting a value of a mapped data type to an ADODB.Parameter object."
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
-'@Exposed
 '@Folder("SecureADODB.ParameterProvider")
 '@ModuleDescription("An object responsible for converting a value of a mapped data type to an ADODB.Parameter object.")
 '@PredeclaredId
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
+'@Exposed
 Option Explicit
+
 Implements IParameterProvider
+
 Private mappings As ITypeMap
+
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 '@Description("Creates a new parameter provider using the specified type mappings.")
 Public Function Create(ByVal typeMap As ITypeMap) As IParameterProvider
 Attribute Create.VB_Description = "Creates a new parameter provider using the specified type mappings."
     Errors.GuardNonDefaultInstance Me, AdoParameterProvider
-    Errors.GuardNullReference typeMap
     
     Dim result As AdoParameterProvider
     Set result = New AdoParameterProvider
-    
-    Set result.TypeMappings = typeMap
+    result.CreInit typeMap
     Set Create = result
-
 End Function
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Description "Gets/sets the type mappings for this instance."
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set TypeMappings(ByVal value As ITypeMap)
-Attribute TypeMappings.VB_Description = "Gets/sets the type mappings for this instance."
-    Errors.GuardNullReference value
-    Errors.GuardDoubleInitialization mappings
-    
-    Set mappings = value
-    
-End Property
+
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal typeMap As ITypeMap)
+Attribute CreInit.VB_Description = "Default constructor"
+    Errors.GuardNullReference typeMap
+    Set mappings = typeMap
+End Sub
+
 
 Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
     If TypeOf value Is ADODB.Parameter Then
@@ -73,12 +70,14 @@ Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional B
     Set IParameterProvider_FromValue = result
 End Function
 
+
 Private Function IsCharMapping(ByVal value As ADODB.DataTypeEnum) As Boolean
-    IsCharMapping = value = adChar _
-                           Or value = adWChar _
-                           Or value = adVarChar _
-                           Or value = adVarWChar
+    IsCharMapping = ((value = adChar) _
+                  Or (value = adWChar) _
+                  Or (value = adVarChar) _
+                  Or (value = adVarWChar))
 End Function
+
 
 Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA.Collection
     Dim results As VBA.Collection
@@ -88,6 +87,7 @@ Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA
     For i = LBound(values) To UBound(values)
         results.Add IParameterProvider_FromValue(values(i))
     Next
+
 CleanExit:
     Set IParameterProvider_FromValues = results
     Exit Function

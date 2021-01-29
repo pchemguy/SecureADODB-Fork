@@ -1,5 +1,5 @@
 Attribute VB_Name = "DefaultDbCommandTests"
-'@Folder "SecureADODB.Tests"
+'@Folder("SecureADODB.Tests")
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -16,6 +16,7 @@ Private Const ERR_INVALID_WITHOUT_LIVE_CONNECTION = 3709
     Private Assert As Rubberduck.PermissiveAssertClass
 #End If
 
+
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     #If LateBind Then
@@ -25,10 +26,12 @@ Private Sub ModuleInitialize()
     #End If
 End Sub
 
+
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     Set Assert = Nothing
 End Sub
+
 
 Private Function GetSUT(ByRef stubBase As StubDbCommandBase, ByRef stubConnection As StubDbConnection) As IDbCommand
     Set stubConnection = New StubDbConnection
@@ -40,21 +43,26 @@ Private Function GetSUT(ByRef stubBase As StubDbCommandBase, ByRef stubConnectio
     Set GetSUT = result
 End Function
 
+
 Private Function GetSingleParameterSelectSql() As String
     GetSingleParameterSelectSql = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
 End Function
+
 
 Private Function GetTwoParameterSelectSql() As String
     GetTwoParameterSelectSql = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ? AND [Field2] = ?;"
 End Function
 
+
 Private Function GetSingleParameterInsertSql() As String
     GetSingleParameterInsertSql = "INSERT INTO [dbo].[Table1] ([Timestamp], [Value]) VALUES (GETDATE(), ?);"
 End Function
 
+
 Private Function GetTwoParameterInsertSql() As String
     GetTwoParameterInsertSql = "INSERT INTO [dbo].[Table1] ([Timestamp], [Value], [ThingID]) VALUES (GETDATE(), ?, ?);"
 End Function
+
 
 Private Function GetStubParameter() As ADODB.Parameter
     Dim stubParameter As ADODB.Parameter
@@ -64,6 +72,7 @@ Private Function GetStubParameter() As ADODB.Parameter
     stubParameter.direction = adParamInput
     Set GetStubParameter = stubParameter
 End Function
+
 
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
@@ -81,6 +90,7 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("AutoDbCommand")
 Private Sub Execute_ThrowsGivenExtraneousArgument()
@@ -103,6 +113,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub Execute_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
@@ -123,6 +134,7 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteWithParameters_ThrowsGivenExtraneousArgument()
@@ -145,6 +157,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteWithParameters_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
@@ -166,6 +179,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteNonQuery_ThrowsGivenExtraneousArgument()
     On Error GoTo TestFail
@@ -186,6 +200,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub ExecuteNonQuery_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
@@ -205,6 +220,7 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("AutoDbCommand")
 Private Sub GetSingleValue_ThrowsGivenExtraneousArgument()
@@ -227,6 +243,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("AutoDbCommand")
 Private Sub GetSingleValue_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
@@ -248,6 +265,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("Validation")
 Private Sub Execute_ValidatesArguments()
     Dim stubBase As StubDbCommandBase, stubConnection As StubDbConnection
@@ -264,6 +282,7 @@ Private Sub Execute_ValidatesArguments()
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
 End Sub
 
+
 '@TestMethod("Validation")
 Private Sub ExecuteNonQuery_ValidatesArguments()
     Dim stubBase As StubDbCommandBase, stubConnection As StubDbConnection
@@ -279,6 +298,7 @@ Private Sub ExecuteNonQuery_ValidatesArguments()
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
 End Sub
 
+
 '@TestMethod("Validation")
 Private Sub GetSingleValue_ValidatesArguments()
     Dim stubBase As StubDbCommandBase, stubConnection As StubDbConnection
@@ -291,6 +311,7 @@ Private Sub GetSingleValue_ValidatesArguments()
     
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
 End Sub
+
 
 '@TestMethod("Validation")
 Private Sub ExecuteWithParameters_ValidatesArguments()

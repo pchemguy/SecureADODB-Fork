@@ -8,30 +8,39 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object intended to be used as a private instance field in a class implementing the IDbCommand interface (composition in place of inheritance)."
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
-'@Exposed
 '@Folder("SecureADODB.DbCommand.Abstract")
 '@ModuleDescription("An object intended to be used as a private instance field in a class implementing the IDbCommand interface (composition in place of inheritance).")
 '@PredeclaredId
+'@IgnoreModule UseMeaningfulName, IllegalAnnotation
+'@Exposed
 Option Explicit
+
 Implements IDbCommandBase
+
 Private Type TCommand
     ParameterProvider As IParameterProvider
 End Type
 Private this As TCommand
 
+
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal provider As IParameterProvider) As IDbCommandBase
     Errors.GuardNonDefaultInstance Me, DbCommandBase
-    Errors.GuardNullReference provider
     
     Dim result As DbCommandBase
     Set result = New DbCommandBase
-    Set result.ParameterProvider = provider
-    
+    result.CreInit provider
     Set Create = result
-
 End Function
+
+
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal provider As IParameterProvider)
+Attribute CreInit.VB_Description = "Default constructor"
+    Errors.GuardNullReference provider
+    Set this.ParameterProvider = provider
+End Sub
+
 
 Public Function ValidateOrdinalArguments(ByVal sql As String, ByRef args() As Variant) As Boolean
     On Error GoTo CleanFail
@@ -53,12 +62,6 @@ CleanFail:
     Resume CleanExit
 End Function
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set ParameterProvider(ByVal value As IParameterProvider)
-    Errors.GuardDoubleInitialization this.ParameterProvider
-    Set this.ParameterProvider = value
-End Property
 
 Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
     Errors.GuardNullReference db
@@ -67,7 +70,10 @@ Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As A
     Errors.GuardExpression Not ValidateOrdinalArguments(sql, args), message:="Arguments supplied are inconsistent with the provided command string parameters."
     
     Dim cmd As ADODB.Command
-    Set cmd = db.CreateCommand(commandType, sql)
+    Set cmd = New ADODB.Command
+    Set cmd.ActiveConnection = db.AdoConnection
+    cmd.commandType = commandType
+    cmd.CommandText = sql
     
     On Error GoTo CleanFail
     Dim arg As ADODB.Parameter
@@ -81,6 +87,7 @@ CleanExit:
 CleanFail:
     Resume CleanExit
 End Function
+
 
 Private Function GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.Recordset
     Errors.GuardNullReference cmd
@@ -96,6 +103,7 @@ Private Function GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.R
     Set GetDisconnectedRecordset = result
 End Function
 
+
 Private Function GetSingleValue(ByVal db As IDbConnection, ByVal sql As String, ByRef args() As Variant) As Variant
     Errors.GuardEmptyString sql
     
@@ -107,6 +115,7 @@ Private Function GetSingleValue(ByVal db As IDbConnection, ByVal sql As String, 
     
     GetSingleValue = results.Fields.Item(0).value
 End Function
+
 
 Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
     Set IDbCommandBase_CreateCommand = CreateCommand(db, commandType, sql, args)

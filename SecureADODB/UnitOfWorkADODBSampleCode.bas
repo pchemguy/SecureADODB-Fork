@@ -1,5 +1,6 @@
 Attribute VB_Name = "UnitOfWorkADODBSampleCode"
 '@Folder("-- DraftsTemplatesSnippets --")
+'@IgnoreModule VariableNotUsed, ProcedureNotUsed, UseMeaningfulName
 Option Explicit
 
 
@@ -94,7 +95,3 @@ Private Sub DefaultDbCommandTest()
     Dim rows As Variant
     rows = results.GetRows
 End Sub
-
-
-
-

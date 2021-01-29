@@ -10,11 +10,11 @@ Attribute VB_Exposed = True
 Attribute VB_Description = "An abstract factory that creates IDbConnection objects."
 '@Folder("SecureADODB.DbConnection.Abstract")
 '@ModuleDescription("An abstract factory that creates IDbConnection objects.")
-'@Exposed
 '@Interface
+'@Exposed
 Option Explicit
 
 '@Description("Creates and returns a new database connection.")
-Public Function Create(ByVal connString As String) As IDbConnection
-Attribute Create.VB_Description = "Creates and returns a new database connection."
+Public Function CreateInstance(ByVal connString As String) As IDbConnection
+Attribute CreateInstance.VB_Description = "Creates and returns a new database connection."
 End Function

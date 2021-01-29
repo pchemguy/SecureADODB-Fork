@@ -8,13 +8,16 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object responsible for mapping programmatic data types to ADODB.DataTypeEnum values."
-'@Exposed
 '@Folder("SecureADODB.ParameterProvider")
 '@ModuleDescription("An object responsible for mapping programmatic data types to ADODB.DataTypeEnum values.")
 '@PredeclaredId
+'@Exposed
 Option Explicit
+
 Implements ITypeMap
+
 Private mappings As Scripting.Dictionary
+
 
 '@Description("Creates a default mapping for intrinsic data types.")
 Public Function Default() As ITypeMap
@@ -50,6 +53,7 @@ Attribute DefaultNullMapping.VB_Description = "Gets the ADODB.DataTypeEnum value
     DefaultNullMapping = adEmpty
 End Property
 
+
 Private Sub Class_Initialize()
     Set mappings = New Scripting.Dictionary
     With mappings
@@ -66,6 +70,7 @@ Private Sub Class_Initialize()
         .Add "Empty", AdoTypeMappings.DefaultNullMapping
     End With
 End Sub
+
 
 Private Property Get ITypeMap_IsMapped(ByVal name As String) As Boolean
     ITypeMap_IsMapped = Me.IsMapped(name)

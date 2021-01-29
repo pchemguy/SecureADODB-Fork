@@ -1,5 +1,5 @@
 Attribute VB_Name = "ParameterProviderTests"
-'@Folder "SecureADODB.Tests"
+'@Folder("SecureADODB.Tests")
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -14,6 +14,7 @@ Private Const ExpectedError As Long = SecureADODBCustomError
     Private Assert As Rubberduck.PermissiveAssertClass
 #End If
 
+
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     #If LateBind Then
@@ -23,18 +24,22 @@ Private Sub ModuleInitialize()
     #End If
 End Sub
 
+
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     Set Assert = Nothing
 End Sub
 
+
 Private Function GetSUT() As IParameterProvider
     Set GetSUT = AdoParameterProvider.Create(GetDefaultMappings)
 End Function
 
+
 Private Function GetDefaultMappings() As ITypeMap
     Set GetDefaultMappings = AdoTypeMappings.Default
 End Function
+
 
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
@@ -53,6 +58,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenNullMappings()
     
@@ -67,22 +73,6 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
-'@TestMethod("Guard Clauses")
-Private Sub TypeMappings_ThrowsIfAlreadySet()
-    On Error GoTo TestFail
-    
-    Dim sut As AdoParameterProvider
-    Set sut = AdoParameterProvider.Create(GetDefaultMappings)
-    
-    On Error GoTo CleanFail
-    Set sut.TypeMappings = GetDefaultMappings
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
 
 '@TestMethod("Guard Clauses")
 Private Sub TypeMappings_ThrowsGivenNullMappings()
@@ -98,6 +88,7 @@ TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("ParameterProvider")
 Private Sub FromValue_MapsParameterSizeToStringLength()
     Dim sut As IParameterProvider
@@ -110,6 +101,7 @@ Private Sub FromValue_MapsParameterSizeToStringLength()
     
     Assert.AreEqual Len(value), p.Size
 End Sub
+
 
 '@TestMethod("ParameterProvider")
 Private Sub FromValue_MapsParameterTypeAsPerMapping()
@@ -130,6 +122,7 @@ Private Sub FromValue_MapsParameterTypeAsPerMapping()
     Assert.AreEqual expected, p.Type
 End Sub
 
+
 '@TestMethod("ParameterProvider")
 Private Sub FromValue_CreatesInputParameters()
     Const expected = ADODB.adParamInput
@@ -143,6 +136,7 @@ Private Sub FromValue_CreatesInputParameters()
     
     Assert.AreEqual expected, p.direction
 End Sub
+
 
 '@TestMethod("ParameterProvider")
 Private Sub FromValues_YieldsAsManyParametersAsSuppliedArgs()

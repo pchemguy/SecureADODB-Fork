@@ -8,11 +8,11 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "Defines an explicit public interface for the DbCommandBase class."
-'@IgnoreModule UseMeaningfulName
-'@Exposed
 '@Folder("SecureADODB.DbCommand.Abstract")
 '@ModuleDescription("Defines an explicit public interface for the DbCommandBase class.")
 '@Interface
+'@IgnoreModule UseMeaningfulName
+'@Exposed
 Option Explicit
 
 '@Description("Creates and returns an ADODB.Command, without executing it.")
