@@ -23,4 +23,3 @@ End Function
 Public Function FromValues(ByRef values() As Variant) As VBA.Collection
 Attribute FromValues.VB_Description = "Creates an ADODB.Parameter object for each specified value; returns a VBA.Collection containing all parameters."
 End Function
-
