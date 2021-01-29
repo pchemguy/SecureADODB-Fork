@@ -131,42 +131,6 @@ TestFail:
 End Sub
 
 
-'@TestMethod("Guard Clauses")
-Private Sub ConnectionFactory_ThrowsIfAlreadySet()
-    On Error GoTo TestFail
-    
-    Dim sut As AutoDbCommand
-    Set sut = AutoDbCommand.Create("connection string", New StubDbConnectionFactory, New StubDbCommandBase)
-    
-    On Error GoTo CleanFail
-    Set sut.ConnectionFactory = New StubDbConnectionFactory
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
-'@TestMethod("Guard Clauses")
-Private Sub Base_ThrowsIfAlreadySet()
-    On Error GoTo TestFail
-    
-    Dim sut As AutoDbCommand
-    Set sut = AutoDbCommand.Create("connection string", New StubDbConnectionFactory, New StubDbCommandBase)
-    
-    On Error GoTo CleanFail
-    Set sut.Base = New StubDbCommandBase
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
 '@TestMethod("AutoDbCommand")
 Private Sub Execute_ThrowsGivenExtraneousArgument()
     On Error GoTo TestFail

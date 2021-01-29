@@ -27,43 +27,25 @@ Private this As TCommand
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal connString As String, ByVal factory As IDbConnectionFactory, ByVal baseCommand As IDbCommandBase) As IDbCommand
     Errors.GuardNonDefaultInstance Me, AutoDbCommand
-    Errors.GuardEmptyString connString
-    Errors.GuardNullReference factory
-    Errors.GuardNullReference baseCommand
     
     Dim result As AutoDbCommand
     Set result = New AutoDbCommand
-    
-    result.ConnectionString = connString
-    Set result.ConnectionFactory = factory
-    Set result.Base = baseCommand
-    
+    result.CreInit connString, factory, baseCommand
     Set Create = result
 End Function
 
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Let ConnectionString(ByVal value As String)
-    Errors.GuardEmptyString value
-    this.ConnectionString = value
-End Property
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal connString As String, ByVal factory As IDbConnectionFactory, ByVal baseCommand As IDbCommandBase)
+Attribute CreInit.VB_Description = "Default constructor"
+    Errors.GuardEmptyString connString
+    Errors.GuardNullReference factory
+    Errors.GuardNullReference baseCommand
 
-
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set Base(ByVal value As IDbCommandBase)
-    Errors.GuardDoubleInitialization this.Base
-    Set this.Base = value
-End Property
-
-
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set ConnectionFactory(ByVal value As IDbConnectionFactory)
-    Errors.GuardDoubleInitialization this.ConnectionFactory
-    Set this.ConnectionFactory = value
-End Property
+    this.ConnectionString = connString
+    Set this.ConnectionFactory = factory
+    Set this.Base = baseCommand
+End Sub
 
 
 Private Sub GuardInvalidOrdinalArguments(ByVal sql As String, ByRef args() As Variant)
@@ -136,4 +118,3 @@ Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args(
         IDbCommand_GetSingleValue = this.Base.GetSingleValue(.Self, sql, localArgs)
     End With
 End Function
-

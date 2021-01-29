@@ -25,26 +25,20 @@ Private mappings As ITypeMap
 Public Function Create(ByVal typeMap As ITypeMap) As IParameterProvider
 Attribute Create.VB_Description = "Creates a new parameter provider using the specified type mappings."
     Errors.GuardNonDefaultInstance Me, AdoParameterProvider
-    Errors.GuardNullReference typeMap
     
     Dim result As AdoParameterProvider
     Set result = New AdoParameterProvider
-    
-    Set result.TypeMappings = typeMap
+    result.CreInit typeMap
     Set Create = result
 End Function
 
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Description "Gets/sets the type mappings for this instance."
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set TypeMappings(ByVal value As ITypeMap)
-Attribute TypeMappings.VB_Description = "Gets/sets the type mappings for this instance."
-    Errors.GuardNullReference value
-    Errors.GuardDoubleInitialization mappings
-    
-    Set mappings = value
-End Property
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal typeMap As ITypeMap)
+Attribute CreInit.VB_Description = "Default constructor"
+    Errors.GuardNullReference typeMap
+    Set mappings = typeMap
+End Sub
 
 
 Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter

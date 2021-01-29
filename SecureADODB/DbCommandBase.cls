@@ -26,14 +26,20 @@ Private this As TCommand
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal provider As IParameterProvider) As IDbCommandBase
     Errors.GuardNonDefaultInstance Me, DbCommandBase
-    Errors.GuardNullReference provider
     
     Dim result As DbCommandBase
     Set result = New DbCommandBase
-    Set result.ParameterProvider = provider
-    
+    result.CreInit provider
     Set Create = result
 End Function
+
+
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal provider As IParameterProvider)
+Attribute CreInit.VB_Description = "Default constructor"
+    Errors.GuardNullReference provider
+    Set this.ParameterProvider = provider
+End Sub
 
 
 Public Function ValidateOrdinalArguments(ByVal sql As String, ByRef args() As Variant) As Boolean
@@ -55,14 +61,6 @@ CleanFail:
     actual = 0
     Resume CleanExit
 End Function
-
-
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set ParameterProvider(ByVal value As IParameterProvider)
-    Errors.GuardDoubleInitialization this.ParameterProvider
-    Set this.ParameterProvider = value
-End Property
 
 
 Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command

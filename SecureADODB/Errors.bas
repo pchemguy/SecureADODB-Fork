@@ -60,4 +60,3 @@ Public Sub GuardEmptyString(ByVal value As String, _
 Attribute GuardEmptyString.VB_Description = "Raises a run-time error if the specified string is empty."
     GuardExpression value = vbNullString, source, message
 End Sub
-

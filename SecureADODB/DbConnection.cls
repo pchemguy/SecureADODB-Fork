@@ -29,16 +29,16 @@ Public Function Create(ByVal connString As String) As IDbConnection
     
     Dim result As DbConnection
     Set result = New DbConnection
-    
-    result.Connect connString
+    result.CreInit connString
     Set Create = result
 End Function
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-Friend Sub Connect(ByVal connString As String)
+
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal connString As String)
+Attribute CreInit.VB_Description = "Default constructor"
     Errors.GuardExpression AdoConnection.ConnectionString <> vbNullString, message:="Object is already initialized."
     Errors.GuardEmptyString connString
-    
     AdoConnection.Open connString
 End Sub
 

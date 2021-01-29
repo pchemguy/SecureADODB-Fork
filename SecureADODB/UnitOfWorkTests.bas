@@ -97,42 +97,6 @@ TestFail:
 End Sub
 
 
-'@TestMethod("Guard Clauses")
-Private Sub CommandFactory_ThrowsIfAlreadySet()
-    On Error GoTo TestFail
-    
-    Dim sut As UnitOfWork
-    Set sut = UnitOfWork.Create(New StubDbConnection, New StubDbCommandFactory)
-    
-    On Error GoTo CleanFail
-    Set sut.CommandFactory = New StubDbCommandFactory
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
-'@TestMethod("Guard Clauses")
-Private Sub Connection_ThrowsIfAlreadySet()
-    On Error GoTo TestFail
-    
-    Dim sut As UnitOfWork
-    Set sut = UnitOfWork.Create(New StubDbConnection, New StubDbCommandFactory)
-    
-    On Error GoTo CleanFail
-    Set sut.Connection = New StubDbConnection
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
 '@TestMethod("UnitOfWork")
 Private Sub Command_CreatesDbCommandWithFactory()
     Dim stubCommandFactory As StubDbCommandFactory

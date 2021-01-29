@@ -27,31 +27,23 @@ Private this As TCommand
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase) As IDbCommand
     Errors.GuardNonDefaultInstance Me, DefaultDbCommand
-    Errors.GuardNullReference db
-    Errors.GuardNullReference baseCommand
     
     Dim result As DefaultDbCommand
     Set result = New DefaultDbCommand
-    Set result.Connection = db
-    Set result.Base = baseCommand
-    
+    result.CreInit db, baseCommand
     Set Create = result
 End Function
 
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set Connection(ByVal value As IDbConnection)
-    Errors.GuardDoubleInitialization this.Connection
-    Set this.Connection = value
-End Property
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase)
+Attribute CreInit.VB_Description = "Default constructor"
+    Errors.GuardNullReference db
+    Errors.GuardNullReference baseCommand
 
-
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set Base(ByVal value As IDbCommandBase)
-    Set this.Base = value
-End Property
+    Set this.Connection = db
+    Set this.Base = baseCommand
+End Sub
 
 
 Private Sub GuardInvalidOrdinalArguments(ByVal sql As String, ByRef args() As Variant)
@@ -126,4 +118,3 @@ Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args(
     
     IDbCommand_GetSingleValue = this.Base.GetSingleValue(this.Connection, sql, localArgs)
 End Function
-

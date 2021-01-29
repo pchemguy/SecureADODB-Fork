@@ -75,24 +75,6 @@ End Sub
 
 
 '@TestMethod("Guard Clauses")
-Private Sub TypeMappings_ThrowsIfAlreadySet()
-    On Error GoTo TestFail
-    
-    Dim sut As AdoParameterProvider
-    Set sut = AdoParameterProvider.Create(GetDefaultMappings)
-    
-    On Error GoTo CleanFail
-    Set sut.TypeMappings = GetDefaultMappings
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
-'@TestMethod("Guard Clauses")
 Private Sub TypeMappings_ThrowsGivenNullMappings()
     
     On Error GoTo CleanFail

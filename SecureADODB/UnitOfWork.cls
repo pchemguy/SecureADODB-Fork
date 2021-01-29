@@ -18,10 +18,10 @@ Option Explicit
 Implements IUnitOfWork
 
 Private Type TUnitOfWork
-    Committed As Boolean
-    RolledBack As Boolean
     Connection As IDbConnection
     CommandFactory As IDbCommandFactory
+    Committed As Boolean
+    RolledBack As Boolean
 End Type
 Private this As TUnitOfWork
 
@@ -49,36 +49,25 @@ End Function
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal db As IDbConnection, ByVal factory As IDbCommandFactory) As IUnitOfWork
     Errors.GuardNonDefaultInstance Me, UnitOfWork
-    Errors.GuardNullReference factory
-    Errors.GuardNullReference db
-    Errors.GuardExpression db.State <> adStateOpen, message:="Connection should be open."
     
     Dim result As UnitOfWork
     Set result = New UnitOfWork
-    Set result.CommandFactory = factory
-    Set result.Connection = db
-    
+    result.CreInit db, factory
     Set Create = result
 End Function
 
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set Connection(ByVal value As IDbConnection)
-    Errors.GuardDoubleInitialization this.Connection
-    Errors.GuardNullReference value
-    Set this.Connection = value
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal db As IDbConnection, ByVal factory As IDbCommandFactory)
+Attribute CreInit.VB_Description = "Default constructor"
+    Errors.GuardNullReference factory
+    Errors.GuardNullReference db
+    Errors.GuardExpression db.State <> adStateOpen, message:="Connection should be open."
+
+    Set this.Connection = db
+    Set this.CommandFactory = factory
     this.Connection.BeginTransaction
-End Property
-
-
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-'@Ignore ProcedureNotUsed: false positive with v2.5.0.5418
-Friend Property Set CommandFactory(ByVal value As IDbCommandFactory)
-    Errors.GuardDoubleInitialization this.CommandFactory
-    Errors.GuardNullReference value
-    Set this.CommandFactory = value
-End Property
+End Sub
 
 
 Private Sub Class_Terminate()
