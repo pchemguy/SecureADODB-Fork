@@ -1,5 +1,5 @@
 Attribute VB_Name = "UnitOfWorkTests"
-'@Folder "SecureADODB.Tests"
+'@Folder("SecureADODB.Tests")
 '@TestModule
 '@IgnoreModule
 Option Explicit

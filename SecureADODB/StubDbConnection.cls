@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbConnection implementation."
-'@Folder "SecureADODB.Tests.Stubs"
+'@Folder("SecureADODB.Tests.Stubs")
 '@ModuleDescription("A stub acting as a IDbConnection implementation.")
 '@IgnoreModule UseMeaningfulName, ProcedureNotUsed
 Option Explicit

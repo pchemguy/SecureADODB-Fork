@@ -1,5 +1,5 @@
 Attribute VB_Name = "TypeMappingTests"
-'@Folder "SecureADODB.Tests"
+'@Folder("SecureADODB.Tests")
 '@TestModule
 '@IgnoreModule
 Option Explicit
