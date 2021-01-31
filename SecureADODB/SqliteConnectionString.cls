@@ -33,9 +33,8 @@ End Property
 
 '@Description("Returns class reference")
 '@Ignore ProcedureNotUsed
-Public Property Get ClassName() As SqliteConnectionString
-Attribute ClassName.VB_Description = "Returns class reference"
-    Set ClassName = SqliteConnectionString
+Public Property Get Class() As SqliteConnectionString
+    Set Class = SqliteConnectionString
 End Property
 
 

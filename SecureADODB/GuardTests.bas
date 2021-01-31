@@ -177,17 +177,17 @@ TestFail:
 End Sub
 
 
-'@TestMethod("Guard.ClassName")
-Private Sub ClassName_CheckAvailability()
+'@TestMethod("Guard.Class")
+Private Sub Class_CheckAvailability()
     On Error GoTo TestFail
     
 Arrange:
     Dim classVar As Object: Set classVar = Guard
 Act:
-    Dim classNameVar As Object: Set classNameVar = classVar.Create.ClassName
+    Dim classVarReturned As Object: Set classVarReturned = classVar.Create.Class
 Assert:
-    Assert.AreEqual TypeName(classVar), TypeName(classNameVar), "Error: type mismatch: " & TypeName(classNameVar) & " type."
-    Assert.AreSame classVar, classNameVar, "Error: bad Class pointer"
+    Assert.AreEqual TypeName(classVar), TypeName(classVarReturned), "Error: type mismatch: " & TypeName(classVarReturned) & " type."
+    Assert.AreSame classVar, classVarReturned, "Error: bad Class pointer"
 
 CleanExit:
     Exit Sub

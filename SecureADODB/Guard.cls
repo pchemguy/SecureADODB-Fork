@@ -25,9 +25,8 @@ End Property
 
 '@Ignore ProcedureNotUsed
 '@Description("Returns class reference")
-Public Property Get ClassName() As Guard
-Attribute ClassName.VB_Description = "Returns class reference"
-    Set ClassName = Guard
+Public Property Get Class() As Guard
+    Set Class = Guard
 End Property
 
 
@@ -147,7 +146,7 @@ Attribute Singleton.VB_Description = "Raises a run-time error if the specified i
     Guard.NullReference instanceVar
         
     Dim classVar As Object
-    Set classVar = instanceVar.ClassName
+    Set classVar = instanceVar.Class
     
     Dim errorDetails As TError
     With errorDetails
@@ -170,7 +169,7 @@ Attribute NonDefaultInstance.VB_Description = "Raises a run-time error if the sp
     Guard.NullReference instanceVar
     
     Dim classVar As Object
-    Set classVar = instanceVar.ClassName
+    Set classVar = instanceVar.Class
     
     Dim errorDetails As TError
     With errorDetails
@@ -193,7 +192,7 @@ Attribute DefaultInstance.VB_Description = "Raises a run-time error if the speci
     Guard.NullReference instanceVar
     
     Dim classVar As Object
-    Set classVar = instanceVar.ClassName
+    Set classVar = instanceVar.Class
     
     Dim errorDetails As TError
     With errorDetails
