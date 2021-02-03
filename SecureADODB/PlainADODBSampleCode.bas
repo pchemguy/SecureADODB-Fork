@@ -140,3 +140,65 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
 End Sub
 
 
+Public Sub TestADODBSourceSQLite()
+    Dim fso As New Scripting.FileSystemObject
+    Dim sDriver As String
+    Dim sDatabase As String
+    Dim sDatabaseExt As String
+    Dim sTable As String
+    Dim adoConnStr As String
+    Dim sSQL As String
+    
+    sDriver = "{SQLite3 ODBC Driver}"
+    sDatabaseExt = ".db"
+    sTable = "categories"
+    sDatabase = ThisWorkbook.path & Application.PathSeparator & fso.GetBaseName(ThisWorkbook.name) & sDatabaseExt
+    adoConnStr = "Driver=" & sDriver & ";" & _
+                 "Database=" & sDatabase & ";"
+    
+    sSQL = "SELECT * FROM """ & sTable & """"
+        
+    Dim adoRecordSet As ADODB.Recordset
+    Set adoRecordSet = New ADODB.Recordset
+    adoRecordSet.CursorLocation = adUseClient
+    adoRecordSet.Open _
+            source:=sSQL, _
+            ActiveConnection:=adoConnStr, _
+            CursorType:=adOpenKeyset, _
+            LockType:=adLockReadOnly, _
+            options:=(adCmdText Or adAsyncFetch)
+    Set adoRecordSet.ActiveConnection = Nothing
+End Sub
+
+
+Public Sub TestADODBSourceCSV()
+    Dim fso As New Scripting.FileSystemObject
+    Dim sDriver As String
+    Dim sDatabase As String
+    Dim sDatabaseExt As String
+    Dim sTable As String
+    Dim adoConnStr As String
+    Dim sSQL As String
+    
+    sDriver = "{Microsoft Text Driver (*.txt; *.csv)}"
+    sDatabaseExt = ".csv"
+    sDatabase = ThisWorkbook.path
+    sTable = fso.GetBaseName(ThisWorkbook.name) & sDatabaseExt
+    adoConnStr = "Driver=" & sDriver & ";" & _
+                 "Database=" & sDatabase & ";"
+    
+    sSQL = "SELECT * FROM """ & sTable & """"
+    
+    Dim adoRecordSet As ADODB.Recordset
+    Set adoRecordSet = New ADODB.Recordset
+    adoRecordSet.CursorLocation = adUseClient
+    adoRecordSet.Open _
+            source:=sSQL, _
+            ActiveConnection:=adoConnStr, _
+            CursorType:=adOpenKeyset, _
+            LockType:=adLockReadOnly, _
+            options:=(adCmdText Or adAsyncFetch)
+    Set adoRecordSet.ActiveConnection = Nothing
+End Sub
+
+
