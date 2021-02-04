@@ -91,5 +91,5 @@ Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args(
     'cannot pass ParamArray array directly to ByRef array argument
     Dim localArgs() As Variant: localArgs = args
     
-    IDbCommand_GetSingleValue = this.Base.GetSingleValue(this.Connection, sql, localArgs)
+    IDbCommand_GetSingleValue = this.Base.GetSingleValue(this.Connection, adCmdText, sql, localArgs)
 End Function

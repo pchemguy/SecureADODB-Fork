@@ -107,6 +107,6 @@ Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args(
     localArgs = args
     
     With this.ConnectionFactory.CreateInstance(this.ConnectionString)
-        IDbCommand_GetSingleValue = this.Base.GetSingleValue(.Self, sql, localArgs)
+        IDbCommand_GetSingleValue = this.Base.GetSingleValue(.Self, adCmdText, sql, localArgs)
     End With
 End Function

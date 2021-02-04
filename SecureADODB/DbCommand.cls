@@ -47,7 +47,8 @@ End Sub
 
 Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
     'cannot pass ParamArray array directly to ByRef array argument
-    Dim localArgs() As Variant: localArgs = args
+    Dim localArgs() As Variant
+    localArgs = args
     
     Dim cmd As ADODB.Command
     Set cmd = this.Base.CreateCommand(this.Connection, adCmdText, sql, localArgs)
@@ -93,5 +94,5 @@ Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args(
     Dim localArgs() As Variant
     localArgs = args
     
-    IDbCommand_GetSingleValue = this.Base.GetSingleValue(this.Connection, sql, localArgs)
+    IDbCommand_GetSingleValue = this.Base.GetSingleValue(this.Connection, adCmdText, sql, localArgs)
 End Function
