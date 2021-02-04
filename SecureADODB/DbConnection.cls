@@ -92,11 +92,11 @@ Private Sub AdoConnection_RollbackTransComplete(ByVal pError As ADODB.Error, adS
     If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
 End Sub
 
-Private Sub AdoConnection_WillConnect(ConnectionString As String, UserID As String, Password As String, options As Long, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
+Private Sub AdoConnection_WillConnect(ConnectionString As String, UserID As String, Password As String, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin connect..."
 End Sub
 
-Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.CursorTypeEnum, LockType As ADODB.LockTypeEnum, options As Long, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
+Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.CursorTypeEnum, LockType As ADODB.LockTypeEnum, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin execute..."
 End Sub
 

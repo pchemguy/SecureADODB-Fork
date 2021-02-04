@@ -7,7 +7,7 @@ Option Explicit
     
 Private Sub UnitOfWorkTest()
     Dim ConnectionStringObject As SqliteConnectionString
-    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.path, "SecureADODB.db")
+    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.Path, "SecureADODB.db")
     Dim connString As String
     connString = ConnectionStringObject.ADOConnectionString
     
@@ -36,7 +36,7 @@ End Sub
 
 Private Sub AutoDbCommandTest()
     Dim ConnectionStringObject As SqliteConnectionString
-    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.path, "SecureADODB.db")
+    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.Path, "SecureADODB.db")
     Dim connString As String
     connString = ConnectionStringObject.ADOConnectionString
     
@@ -68,7 +68,7 @@ End Sub
 
 Private Sub DefaultDbCommandTest()
     Dim ConnectionStringObject As SqliteConnectionString
-    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.path, "SecureADODB.db")
+    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.Path, "SecureADODB.db")
     Dim connString As String
     connString = ConnectionStringObject.ADOConnectionString
     

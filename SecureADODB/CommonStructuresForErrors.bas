@@ -1,5 +1,5 @@
 Attribute VB_Name = "CommonStructuresForErrors"
-'@Folder("Guard")
+'@Folder "SecureADODBmod.Guard"
 Option Explicit
 
 

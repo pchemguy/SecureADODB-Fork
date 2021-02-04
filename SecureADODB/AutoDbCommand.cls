@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "An object that deals with the database connection and builds and executes a parameterized ADODB command from a command string and parameter values. Returns disconnected recordsets."
-'@Folder("SecureADODB.DbCommand")
+'@Folder "SecureADODB.DbCommand"
 '@ModuleDescription("An object that deals with the database connection and builds and executes a parameterized ADODB command from a command string and parameter values. Returns disconnected recordsets.")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation

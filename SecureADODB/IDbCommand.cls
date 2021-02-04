@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "Represents an object abstracting a database command."
-'@Folder("SecureADODB.DbCommand.Abstract")
+'@Folder "SecureADODB.DbCommand.Abstract"
 '@ModuleDescription("Represents an object abstracting a database command.")
 '@Interface
 '@IgnoreModule UseMeaningfulName

@@ -1,5 +1,5 @@
 Attribute VB_Name = "AutoDbCommandTests"
-'@Folder("SecureADODB.Tests")
+'@Folder "SecureADODB.DbCommand"
 '@TestModule
 '@IgnoreModule
 

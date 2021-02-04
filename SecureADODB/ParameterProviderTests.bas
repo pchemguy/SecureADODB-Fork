@@ -1,5 +1,5 @@
 Attribute VB_Name = "ParameterProviderTests"
-'@Folder("SecureADODB.Tests")
+'@Folder "SecureADODB.ParameterProvider"
 '@TestModule
 '@IgnoreModule
 Option Explicit

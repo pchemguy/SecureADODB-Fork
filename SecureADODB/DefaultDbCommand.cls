@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "An object that builds and executes a parameterized ADODB command from a command string and parameter values. Returns connected recordsets that the client should close."
-'@Folder("SecureADODB.DbCommand")
+'@Folder "SecureADODB.DbCommand"
 '@ModuleDescription("An object that builds and executes a parameterized ADODB command from a command string and parameter values. Returns connected recordsets that the client should close.")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation
@@ -21,7 +21,6 @@ Private Type TCommand
     Connection As IDbConnection
 End Type
 Private this As TCommand
-'@Ignore MissingMemberAnnotation
 
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463

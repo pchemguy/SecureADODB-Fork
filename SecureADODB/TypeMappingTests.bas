@@ -1,5 +1,5 @@
 Attribute VB_Name = "TypeMappingTests"
-'@Folder("SecureADODB.Tests")
+'@Folder "SecureADODB.ParameterProvider"
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -49,10 +49,10 @@ TestFail:
 End Sub
 
 
-Private Sub DefaultMapping_MapsType(ByVal name As String)
+Private Sub DefaultMapping_MapsType(ByVal Name As String)
     Dim sut As ITypeMap
     Set sut = AdoTypeMappings.Default
-    Assert.IsTrue sut.IsMapped(name)
+    Assert.IsTrue sut.IsMapped(Name)
 End Sub
 
 
@@ -147,14 +147,14 @@ Private Sub DefaultMapping_MapsNull()
     DefaultMapping_MapsType TypeName(value)
 End Sub
 
-Private Function GetDefaultMappingFor(ByVal name As String) As ADODB.DataTypeEnum
+Private Function GetDefaultMappingFor(ByVal Name As String) As ADODB.DataTypeEnum
     On Error GoTo CleanFail
     Dim sut As ITypeMap
     Set sut = AdoTypeMappings.Default
-    GetDefaultMappingFor = sut.Mapping(name)
+    GetDefaultMappingFor = sut.Mapping(Name)
     Exit Function
 CleanFail:
-    Assert.Inconclusive "Default mapping is undefined for '" & name & "'."
+    Assert.Inconclusive "Default mapping is undefined for '" & Name & "'."
 End Function
 
 '@TestMethod("Default Type Mappings")

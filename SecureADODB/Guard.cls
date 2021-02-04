@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "Class for common guards."
-'@Folder("Guard")
+'@Folder "SecureADODBmod.Guard"
 '@PredeclaredId
 '@ModuleDescription("Class for common guards.")
 Option Explicit
