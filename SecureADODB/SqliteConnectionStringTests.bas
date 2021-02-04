@@ -1,6 +1,6 @@
 Attribute VB_Name = "SqliteConnectionStringTests"
-'@Folder("-- DraftsTemplatesSnippets --")
-'@TestModule
+'@Folder "-- DraftsTemplatesSnippets --.DbConnectionString. Tests"
+''@TestModule
 '@IgnoreModule LineLabelNotUsed, UnhandledOnErrorResumeNext
 Option Explicit
 Option Private Module
@@ -45,7 +45,7 @@ Private Sub Self_CheckAvailability()
     On Error GoTo TestFail
     
 Arrange:
-    Dim instanceVar As Object: Set instanceVar = SqliteConnectionString.Create(ThisWorkbook.path, "SecureADODB.db")
+    Dim instanceVar As Object: Set instanceVar = SqliteConnectionString.Create(ThisWorkbook.Path, "SecureADODB.db")
 Act:
     Dim selfVar As Object: Set selfVar = instanceVar.Self
 Assert:
@@ -66,7 +66,7 @@ Private Sub Class_CheckAvailability()
 Arrange:
     Dim classVar As Object: Set classVar = SqliteConnectionString
 Act:
-    Dim classVarReturned As Object: Set classVarReturned = classVar.Create(ThisWorkbook.path, "SecureADODB.db").Class
+    Dim classVarReturned As Object: Set classVarReturned = classVar.Create(ThisWorkbook.Path, "SecureADODB.db").Class
 Assert:
     Assert.AreEqual TypeName(classVar), TypeName(classVarReturned), "Error: type mismatch: " & TypeName(classVarReturned) & " type."
     Assert.AreSame classVar, classVarReturned, "Error: bad Class pointer"
@@ -89,7 +89,7 @@ End Sub
 '@TestMethod("SqliteConnectionString.Create")
 Private Sub Create_Pass()
     On Error Resume Next
-    Guard.FileNotExist ThisWorkbook.name
+    Guard.FileNotExist ThisWorkbook.Name
     AssertExpectedError ErrNo.PassedNoErr
 End Sub
 
@@ -101,13 +101,13 @@ Private Sub Create_ValidatesConnectionString()
 Arrange:
     Dim ConnectionStringText As String
     ConnectionStringText = "Driver={SQLite3 ODBC Driver};Database=" _
-                           & ThisWorkbook.path & Application.PathSeparator _
+                           & ThisWorkbook.Path & Application.PathSeparator _
                            & "SecureADODB.db;SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     Dim ErrorMessage As String
     ErrorMessage = "Error: connection string mismatch - expected vs. actual -" & vbNewLine
 Act:
     Dim ConnectionStringObject As SqliteConnectionString
-    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.path, "SecureADODB.db")
+    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.Path, "SecureADODB.db")
 Assert:
     Assert.AreEqual ConnectionStringText, ConnectionStringObject.ADOConnectionString, _
                     ErrorMessage & ConnectionStringText & vbNewLine & ConnectionStringObject.ADOConnectionString
