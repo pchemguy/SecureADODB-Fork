@@ -11,7 +11,7 @@ Attribute VB_Description = "An object that encapsulates a database transaction."
 '@Folder "SecureADODBmod.DbManager"
 '@ModuleDescription("An object that encapsulates a database transaction.")
 '@PredeclaredId
-'@IgnoreModule ProcedureNotUsed
+'@IgnoreModule UseMeaningfulName, ProcedureNotUsed
 Option Explicit
 
 Implements IDbManager
@@ -24,12 +24,11 @@ Private Type TConnectionConfig
     Options As String
     connString As String
 End Type
-'@Ignore MoveFieldCloserToUsage
-Private connConfig As TConnectionConfig
 
 Private Type TDbManager
     Connection As IDbConnection
     CommandFactory As IDbCommandFactory
+    UseTransactions As Boolean
     Committed As Boolean
     RolledBack As Boolean
 End Type
@@ -45,21 +44,22 @@ End Property
 
 '@Description("Build connection config")
 Public Function BuildConnectionString( _
-                 ByVal Flavor As String, _
+                 ByVal TypeOrConnString As String, _
         Optional ByVal Path As String = vbNullString, _
         Optional ByVal Name As String = vbNullString, _
         Optional ByVal Options As String = vbNullString _
         ) As String
 Attribute BuildConnectionString.VB_Description = "Build connection config"
         
-    Errors.GuardEmptyString Flavor
+    Errors.GuardEmptyString TypeOrConnString
+    Dim connConfig As TConnectionConfig
         
     If Path = vbNullString Then
         connConfig.Path = ThisWorkbook.Path
     Else
         connConfig.Path = Path
     End If
-    Select Case LCase(Flavor)
+    Select Case LCase(TypeOrConnString)
         Case "sqlite"
             With connConfig
                 .Driver = "{SQLite3 ODBC Driver}"
@@ -84,12 +84,18 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                 connConfig.Options = Options
             End If
         Case Else
+            If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Then
+                connConfig.connString = TypeOrConnString
+                BuildConnectionString = connConfig.connString
+                Exit Function
+            End If
+            
             Dim errorDetails As TError
             With errorDetails
                 .number = ErrNo.FeatureNotAvailableErr
                 .Name = "FeatureNotAvailable"
                 .source = "DbManager.BuildConnectionString"
-                .message = "Config assistance for database " & Flavor & " is not available. Use raw connection string."
+                .message = "Config assistance for database " & TypeOrConnString & " is not available. Use raw connection string."
                 .description = .message
             End With
             RaiseError errorDetails
@@ -105,25 +111,19 @@ End Function
 
 '@Description("Creates a new manager using connection parameters.")
 Public Function FromConnectionParameters( _
-                 ByVal Flavor As String, _
+                 ByVal TypeOrConnString As String, _
         Optional ByVal Path As String = vbNullString, _
         Optional ByVal Name As String = vbNullString, _
-        Optional ByVal Options As String = vbNullString _
+        Optional ByVal Options As String = vbNullString, _
+        Optional ByVal UseTransactions As Boolean = True _
         ) As IDbManager
 Attribute FromConnectionParameters.VB_Description = "Creates a new manager using connection parameters."
 
-    Set FromConnectionParameters = DbManager.FromConnectionString( _
-            BuildConnectionString(Flavor, Path, Name, Options))
-End Function
-
-
-'@Ignore ProcedureNotUsed
-'@Description("Creates a new manager using default configurations.")
-Public Function FromConnectionString(ByVal connString As String) As IDbManager
-Attribute FromConnectionString.VB_Description = "Creates a new manager using default configurations."
-    Errors.GuardNonDefaultInstance Me, DbManager
+    Guard.NonDefaultInstance Me
     
-    '@Ignore UseMeaningfulName
+    Dim connString As String
+    connString = BuildConnectionString(TypeOrConnString, Path, Name, Options)
+    
     Dim db As IDbConnection
     Set db = DbConnection.Create(connString)
     
@@ -136,24 +136,27 @@ Attribute FromConnectionString.VB_Description = "Creates a new manager using def
     Dim factory As IDbCommandFactory
     Set factory = DefaultDbCommandFactory.Create(baseCommand)
     
-    Set FromConnectionString = DbManager.Create(db, factory)
+    Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions)
 End Function
 
 
 '@Ignore UseMeaningfulName
-Public Function Create(ByVal db As IDbConnection, ByVal factory As IDbCommandFactory) As IDbManager
+Public Function Create(ByVal db As IDbConnection, _
+                       ByVal factory As IDbCommandFactory, _
+              Optional ByVal UseTransactions As Boolean = True) As IDbManager
+              
     Guard.NonDefaultInstance Me
     
     Dim result As DbManager
     Set result = New DbManager
-    result.CreInit db, factory
+    result.CreInit db, factory, UseTransactions
     Set Create = result
 End Function
 
 
 '@Ignore UseMeaningfulName
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal db As IDbConnection, ByVal factory As IDbCommandFactory)
+Friend Sub CreInit(ByVal db As IDbConnection, ByVal factory As IDbCommandFactory, Optional ByVal UseTransactions As Boolean = True)
 Attribute CreInit.VB_Description = "Default constructor"
     Guard.NullReference factory
     Guard.NullReference db
@@ -161,7 +164,8 @@ Attribute CreInit.VB_Description = "Default constructor"
 
     Set this.Connection = db
     Set this.CommandFactory = factory
-    this.Connection.BeginTransaction
+    this.UseTransactions = UseTransactions
+    If this.UseTransactions Then this.Connection.BeginTransaction
 End Sub
 
 
@@ -185,6 +189,7 @@ End Function
 
 
 Private Sub IDbManager_Commit()
+    Errors.GuardExpression (Not this.UseTransactions), message:="Transactions are disabled by the caller."
     Errors.GuardExpression this.Committed, message:="Transaction is already committed."
     Errors.GuardExpression this.RolledBack, message:="Transaction was rolled back."
     On Error Resume Next ' not all providers support transactions
@@ -195,6 +200,7 @@ End Sub
 
 
 Private Sub IDbManager_Rollback()
+    Errors.GuardExpression (Not this.UseTransactions), message:="Transactions are disabled by the caller."
     Errors.GuardExpression this.Committed, message:="Transaction is already committed."
     
     On Error Resume Next ' not all providers support transactions

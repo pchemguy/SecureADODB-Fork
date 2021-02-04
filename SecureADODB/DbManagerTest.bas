@@ -242,3 +242,19 @@ TestFail:
     Assert.Fail "Error: " & Err.number & " - " & Err.description
 End Sub
 
+
+'@TestMethod("Connection String")
+Private Sub BuildConnectionString_RawConnectionString()
+    On Error GoTo TestFail
+    
+    Dim connString As String
+    connString = "Driver={SQLite3 ODBC Driver};Database=C:\TMP\db.db;_"
+    Assert.AreEqual connString, DbManager.BuildConnectionString(connString)
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
