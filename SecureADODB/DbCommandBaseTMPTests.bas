@@ -1,5 +1,5 @@
 Attribute VB_Name = "DbCommandBaseTMPTests"
-'@Folder "SecureADODB.DbCommand"
+'@Folder "SecureADODB.DbCommand. Tests"
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -314,5 +314,4 @@ Private Sub ExecuteWithParameters_ValidatesArguments()
     
     Assert.AreEqual 1, stubBase.ValidateOrdinalArgumentsInvokes
 End Sub
-
 
