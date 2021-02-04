@@ -52,7 +52,6 @@ Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Va
     
     Dim cmd As ADODB.Command
     Set cmd = this.Base.CreateCommand(this.Connection, adCmdText, sql, localArgs)
-    
     Set IDbCommand_Execute = cmd.Execute
 End Function
 
@@ -82,10 +81,7 @@ Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArra
         cmd.Parameters.Append localParams(i)
     Next
     
-    Dim result As ADODB.Recordset
-    Set result = cmd.Execute
-    
-    Set IDbCommand_ExecuteWithParameters = result
+    Set IDbCommand_ExecuteWithParameters = cmd.Execute
 End Function
 
 
