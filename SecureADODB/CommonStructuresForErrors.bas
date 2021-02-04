@@ -12,6 +12,7 @@ Public Enum ErrNo
     InvalidObjectUseErr = 425&
     MemberNotExistErr = 438&
     ActionNotSupportedErr = 445&
+    NoObject = 31004&
     
     CustomErr = VBA.vbObjectError + 1000&
     NotImplementedErr = VBA.vbObjectError + 1001&
@@ -21,12 +22,13 @@ Public Enum ErrNo
     SingletonErr = VBA.vbObjectError + 1014&
     UnknownClassErr = VBA.vbObjectError + 1015&
     ObjectSetErr = VBA.vbObjectError + 1091&
+    FeatureNotAvailableErr = VBA.vbObjectError + ADODB.ErrorValueEnum.adErrFeatureNotAvailable
 End Enum
 
 
 Public Type TError
     number As ErrNo
-    name As String
+    Name As String
     source As String
     message As String
     description As String
@@ -53,7 +55,7 @@ Attribute RaiseError.VB_Description = "Formats and raises a run-time error."
     With errorDetails
         Dim message As Variant
         message = Array("Error:", _
-            "name: " & .name, _
+            "name: " & .Name, _
             "number: " & .number, _
             "message: " & .message, _
             "description: " & .description, _
