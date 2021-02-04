@@ -65,8 +65,8 @@ End Function
 
 Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
     Errors.GuardNullReference db
-    Errors.GuardEmptyString sql
     Errors.GuardExpression db.State <> adStateOpen, message:="Connection is not open."
+    Errors.GuardEmptyString sql
     Errors.GuardExpression Not ValidateOrdinalArguments(sql, args), message:="Arguments supplied are inconsistent with the provided command string parameters."
     
     Dim cmd As ADODB.Command

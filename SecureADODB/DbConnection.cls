@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "A thin wrapper around an ADODB connection."
-'@Folder("SecureADODB.DbConnection")
+'@Folder "SecureADODB.DbConnection"
 '@ModuleDescription("A thin wrapper around an ADODB connection.")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation
@@ -37,7 +37,6 @@ End Function
 '@Description("Default constructor")
 Friend Sub CreInit(ByVal connString As String)
 Attribute CreInit.VB_Description = "Default constructor"
-    Errors.GuardExpression AdoConnection.ConnectionString <> vbNullString, message:="Object is already initialized."
     Errors.GuardEmptyString connString
     AdoConnection.Open connString
 End Sub
@@ -101,6 +100,10 @@ Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.Curs
 End Sub
 
 
+Private Property Get IDbConnection_Self() As IDbConnection
+    Set IDbConnection_Self = Me
+End Property
+
 Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
     Set IDbConnection_AdoConnection = AdoConnection
 End Property
@@ -125,10 +128,6 @@ Private Sub IDbConnection_RollbackTransaction()
     If HasActiveTransaction Then AdoConnection.RollbackTrans
     HasActiveTransaction = False
 End Sub
-
-Private Property Get IDbConnection_Self() As IDbConnection
-    Set IDbConnection_Self = Me
-End Property
 
 Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
     IDbConnection_State = AdoConnection.State

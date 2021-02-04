@@ -48,15 +48,9 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Private Sub GuardInvalidOrdinalArguments(ByVal sql As String, ByRef args() As Variant)
-    Errors.GuardExpression Not this.Base.ValidateOrdinalArguments(sql, args), message:="Arguments provided are inconsistent with expected ordinal parameters."
-End Sub
-
-
 Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
     Dim localArgs() As Variant
     localArgs = args 'cannot pass ParamArray array directly to ByRef array argument
-    GuardInvalidOrdinalArguments sql, localArgs
     
     With this.ConnectionFactory.CreateInstance(this.ConnectionString)
         Dim cmd As ADODB.Command
@@ -73,7 +67,6 @@ End Function
 Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
     Dim localArgs() As Variant
     localArgs = args 'cannot pass ParamArray array directly to ByRef array argument
-    GuardInvalidOrdinalArguments sql, localArgs
     
     With this.ConnectionFactory.CreateInstance(this.ConnectionString)
         Dim cmd As ADODB.Command
@@ -88,7 +81,6 @@ End Sub
 Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArray params() As Variant) As ADODB.Recordset
     Dim localParams() As Variant
     localParams = params
-    GuardInvalidOrdinalArguments sql, localParams
 
     With this.ConnectionFactory.CreateInstance(this.ConnectionString)
         Dim emptyArgs() As Variant
@@ -111,8 +103,8 @@ End Function
 
 Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args() As Variant) As Variant
     'cannot pass ParamArray array directly to ByRef array argument
-    Dim localArgs() As Variant: localArgs = args
-    GuardInvalidOrdinalArguments sql, localArgs
+    Dim localArgs() As Variant
+    localArgs = args
     
     With this.ConnectionFactory.CreateInstance(this.ConnectionString)
         IDbCommand_GetSingleValue = this.Base.GetSingleValue(.Self, sql, localArgs)
