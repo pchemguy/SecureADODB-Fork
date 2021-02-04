@@ -92,7 +92,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("AutoDbCommand")
+'@TestMethod("DefaultDbCommand")
 Private Sub Execute_ThrowsGivenExtraneousArgument()
     On Error GoTo TestFail
 
@@ -114,7 +114,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("AutoDbCommand")
+'@TestMethod("DefaultDbCommand")
 Private Sub Execute_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
 
@@ -136,7 +136,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("AutoDbCommand")
+'@TestMethod("DefaultDbCommand")
 Private Sub ExecuteWithParameters_ThrowsGivenExtraneousArgument()
     On Error GoTo TestFail
 
@@ -158,7 +158,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("AutoDbCommand")
+'@TestMethod("DefaultDbCommand")
 Private Sub ExecuteWithParameters_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
 
@@ -180,7 +180,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("AutoDbCommand")
+'@TestMethod("DefaultDbCommand")
 Private Sub ExecuteNonQuery_ThrowsGivenExtraneousArgument()
     On Error GoTo TestFail
 
@@ -201,7 +201,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("AutoDbCommand")
+'@TestMethod("DefaultDbCommand")
 Private Sub ExecuteNonQuery_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
 
@@ -222,7 +222,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("AutoDbCommand")
+'@TestMethod("DefaultDbCommand")
 Private Sub GetSingleValue_ThrowsGivenExtraneousArgument()
     On Error GoTo TestFail
 
@@ -244,7 +244,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("AutoDbCommand")
+'@TestMethod("DefaultDbCommand")
 Private Sub GetSingleValue_ThrowsGivenMissingArgument()
     On Error GoTo TestFail
 
