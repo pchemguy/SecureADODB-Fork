@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbCommand implementation."
-'@Folder("SecureADODB.Tests.Stubs")
+'@Folder "SecureADODB.DbCommand. Tests"
 '@ModuleDescription("A stub acting as a IDbCommand implementation.")
 '@IgnoreModule UseMeaningfulName, ProcedureNotUsed
 Option Explicit

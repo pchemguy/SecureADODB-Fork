@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "An object that builds and executes a parameterized ADODB command from a command string and parameter values. Returns connected recordsets that the client should close."
-'@Folder("SecureADODB.DbCommand")
+'@Folder "SecureADODB.DbCommand"
 '@ModuleDescription("An object that builds and executes a parameterized ADODB command from a command string and parameter values. Returns connected recordsets that the client should close.")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation
@@ -21,7 +21,6 @@ Private Type TCommand
     Connection As IDbConnection
 End Type
 Private this As TCommand
-'@Ignore MissingMemberAnnotation
 
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
@@ -46,33 +45,37 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Private Sub GuardInvalidOrdinalArguments(ByVal sql As String, ByRef args() As Variant)
-    Errors.GuardExpression Not this.Base.ValidateOrdinalArguments(sql, args), message:="Arguments provided are inconsistent with expected ordinal parameters."
-End Sub
-
-
 Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
-    Errors.GuardNullReference this.Connection
-    Errors.GuardExpression this.Connection.State <> adStateOpen, message:="Connection is not open."
-    
     'cannot pass ParamArray array directly to ByRef array argument
-    Dim localArgs() As Variant: localArgs = args
-    GuardInvalidOrdinalArguments sql, localArgs
+    Dim localArgs() As Variant
+    localArgs = args
     
     Dim cmd As ADODB.Command
     Set cmd = this.Base.CreateCommand(this.Connection, adCmdText, sql, localArgs)
-    
     Set IDbCommand_Execute = cmd.Execute
 End Function
 
 
-Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
-    Errors.GuardNullReference this.Connection
-    Errors.GuardExpression this.Connection.State <> adStateOpen, message:="Connection is not open."
+Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArray params() As Variant) As ADODB.Recordset
+    Dim localParams() As Variant
+    localParams = params
     
+    Dim cmd As ADODB.Command
+    Set cmd = this.Base.CreateCommand(this.Connection, adCmdText, sql, localParams)
+    
+    Dim i As Long
+    For i = LBound(localParams) To UBound(localParams)
+        cmd.Parameters.Append localParams(i)
+    Next
+    
+    Set IDbCommand_ExecuteWithParameters = cmd.Execute
+End Function
+
+
+Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
     'cannot pass ParamArray array directly to ByRef array argument
-    Dim localArgs() As Variant: localArgs = args
-    GuardInvalidOrdinalArguments sql, localArgs
+    Dim localArgs() As Variant
+    localArgs = args
     
     Dim cmd As ADODB.Command
     Set cmd = this.Base.CreateCommand(this.Connection, adCmdText, sql, localArgs)
@@ -81,40 +84,10 @@ Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As
 End Sub
 
 
-Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArray params() As Variant) As ADODB.Recordset
-    Errors.GuardNullReference this.Connection
-    Errors.GuardExpression this.Connection.State <> adStateOpen, message:="Connection is not open."
-    
-    Dim localParams() As Variant
-    localParams = params
-    GuardInvalidOrdinalArguments sql, localParams
-    
-    Dim cmd As ADODB.Command
-    Set cmd = New ADODB.Command
-    
-    Set cmd.ActiveConnection = this.Connection.AdoConnection
-    cmd.commandType = adCmdText
-    cmd.CommandText = sql
-    
-    Dim i As Long
-    For i = LBound(params) To UBound(params)
-        cmd.Parameters.Append params(i)
-    Next
-    
-    Dim result As ADODB.Recordset
-    Set result = cmd.Execute
-    
-    Set IDbCommand_ExecuteWithParameters = result
-End Function
-
-
 Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args() As Variant) As Variant
-    Errors.GuardNullReference this.Connection
-    Errors.GuardExpression this.Connection.State <> adStateOpen, message:="Connection is not open."
-    
     'cannot pass ParamArray array directly to ByRef array argument
-    Dim localArgs() As Variant: localArgs = args
-    GuardInvalidOrdinalArguments sql, localArgs
+    Dim localArgs() As Variant
+    localArgs = args
     
-    IDbCommand_GetSingleValue = this.Base.GetSingleValue(this.Connection, sql, localArgs)
+    IDbCommand_GetSingleValue = this.Base.GetSingleValue(this.Connection, adCmdText, sql, localArgs)
 End Function

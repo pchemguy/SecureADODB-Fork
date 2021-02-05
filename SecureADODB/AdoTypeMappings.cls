@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object responsible for mapping programmatic data types to ADODB.DataTypeEnum values."
-'@Folder("SecureADODB.ParameterProvider")
+'@Folder "SecureADODB.ParameterProvider"
 '@ModuleDescription("An object responsible for mapping programmatic data types to ADODB.DataTypeEnum values.")
 '@PredeclaredId
 '@Exposed
@@ -27,24 +27,24 @@ Attribute Default.VB_Description = "Creates a default mapping for intrinsic data
 End Function
 
 '@Description("Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name.")
-Public Property Get Mapping(ByVal name As String) As ADODB.DataTypeEnum
+Public Property Get Mapping(ByVal Name As String) As ADODB.DataTypeEnum
 Attribute Mapping.VB_Description = "Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name."
-    Errors.GuardExpression Not IsMapped(name), message:="Argument 'name' must be the name of an intrinsic data type; data type '" & name & "' is not supported."
-    Mapping = mappings.Item(name)
+    Errors.GuardExpression Not IsMapped(Name), message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
+    Mapping = mappings.Item(Name)
 End Property
 
 '@Ignore ProcedureNotUsed: false positive for indexed property accessors?
 '@Description("Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name.")
-Public Property Let Mapping(ByVal name As String, ByVal value As ADODB.DataTypeEnum)
+Public Property Let Mapping(ByVal Name As String, ByVal value As ADODB.DataTypeEnum)
 Attribute Mapping.VB_Description = "Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name."
-    Errors.GuardExpression Not IsMapped(name), message:="Argument 'name' must be the name of an intrinsic data type; data type '" & name & "' is not supported."
-    mappings.Item(name) = value
+    Errors.GuardExpression Not IsMapped(Name), message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
+    mappings.Item(Name) = value
 End Property
 
 '@Description("True if the specified data type name is mapped to an ADODB.DataTypeEnum value.")
-Public Property Get IsMapped(ByVal name As String) As Boolean
+Public Property Get IsMapped(ByVal Name As String) As Boolean
 Attribute IsMapped.VB_Description = "True if the specified data type name is mapped to an ADODB.DataTypeEnum value."
-    IsMapped = mappings.Exists(name)
+    IsMapped = mappings.Exists(Name)
 End Property
 
 '@Description("Gets the ADODB.DataTypeEnum value to map NULL values.")
@@ -72,14 +72,14 @@ Private Sub Class_Initialize()
 End Sub
 
 
-Private Property Get ITypeMap_IsMapped(ByVal name As String) As Boolean
-    ITypeMap_IsMapped = Me.IsMapped(name)
+Private Property Get ITypeMap_IsMapped(ByVal Name As String) As Boolean
+    ITypeMap_IsMapped = Me.IsMapped(Name)
 End Property
 
-Private Property Get ITypeMap_Mapping(ByVal name As String) As ADODB.DataTypeEnum
-    ITypeMap_Mapping = Me.Mapping(name)
+Private Property Get ITypeMap_Mapping(ByVal Name As String) As ADODB.DataTypeEnum
+    ITypeMap_Mapping = Me.Mapping(Name)
 End Property
 
-Private Property Let ITypeMap_Mapping(ByVal name As String, ByVal value As ADODB.DataTypeEnum)
-    Me.Mapping(name) = value
+Private Property Let ITypeMap_Mapping(ByVal Name As String, ByVal value As ADODB.DataTypeEnum)
+    Me.Mapping(Name) = value
 End Property

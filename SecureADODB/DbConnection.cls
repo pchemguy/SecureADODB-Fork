@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "A thin wrapper around an ADODB connection."
-'@Folder("SecureADODB.DbConnection")
+'@Folder "SecureADODB.DbConnection"
 '@ModuleDescription("A thin wrapper around an ADODB connection.")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation
@@ -37,7 +37,6 @@ End Function
 '@Description("Default constructor")
 Friend Sub CreInit(ByVal connString As String)
 Attribute CreInit.VB_Description = "Default constructor"
-    Errors.GuardExpression AdoConnection.ConnectionString <> vbNullString, message:="Object is already initialized."
     Errors.GuardEmptyString connString
     AdoConnection.Open connString
 End Sub
@@ -92,14 +91,18 @@ Private Sub AdoConnection_RollbackTransComplete(ByVal pError As ADODB.Error, adS
     If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
 End Sub
 
-Private Sub AdoConnection_WillConnect(ConnectionString As String, UserID As String, Password As String, options As Long, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
+Private Sub AdoConnection_WillConnect(ConnectionString As String, UserID As String, Password As String, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin connect..."
 End Sub
 
-Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.CursorTypeEnum, LockType As ADODB.LockTypeEnum, options As Long, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
+Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.CursorTypeEnum, LockType As ADODB.LockTypeEnum, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin execute..."
 End Sub
 
+
+Private Property Get IDbConnection_Self() As IDbConnection
+    Set IDbConnection_Self = Me
+End Property
 
 Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
     Set IDbConnection_AdoConnection = AdoConnection
@@ -125,10 +128,6 @@ Private Sub IDbConnection_RollbackTransaction()
     If HasActiveTransaction Then AdoConnection.RollbackTrans
     HasActiveTransaction = False
 End Sub
-
-Private Property Get IDbConnection_Self() As IDbConnection
-    Set IDbConnection_Self = Me
-End Property
 
 Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
     IDbConnection_State = AdoConnection.State

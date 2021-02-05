@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbCommandBase implementation."
-'@Folder("SecureADODB.Tests.Stubs")
+'@Folder "SecureADODB.DbCommand. Tests"
 '@ModuleDescription("A stub acting as a IDbCommandBase implementation.")
 '@IgnoreModule UseMeaningfulName, ProcedureNotUsed
 Option Explicit
@@ -59,12 +59,8 @@ Private Function IDbCommandBase_GetDisconnectedRecordset(ByVal cmd As ADODB.Comm
     Set IDbCommandBase_GetDisconnectedRecordset = New ADODB.Recordset
 End Function
 
-Private Function IDbCommandBase_GetSingleValue(ByVal db As IDbConnection, ByVal sql As String, args() As Variant) As Variant
+Private Function IDbCommandBase_GetSingleValue(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, args() As Variant) As Variant
     this.GetSingleValueInvokes = this.GetSingleValueInvokes + 1
     IDbCommandBase_GetSingleValue = this.SingleValueResult
 End Function
 
-Private Function IDbCommandBase_ValidateOrdinalArguments(ByVal sql As String, args() As Variant) As Boolean
-    this.ValidateOrdinalArgumentsInvokes = this.ValidateOrdinalArgumentsInvokes + 1
-    IDbCommandBase_ValidateOrdinalArguments = DbCommandBase.ValidateOrdinalArguments(sql, args)
-End Function

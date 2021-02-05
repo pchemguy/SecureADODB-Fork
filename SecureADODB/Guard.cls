@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "Class for common guards."
-'@Folder("Guard")
+'@Folder "SecureADODBmod.Guard"
 '@PredeclaredId
 '@ModuleDescription("Class for common guards.")
 Option Explicit
@@ -25,9 +25,9 @@ End Property
 
 '@Ignore ProcedureNotUsed
 '@Description("Returns class reference")
-Public Property Get ClassName() As Guard
-Attribute ClassName.VB_Description = "Returns class reference"
-    Set ClassName = Guard
+Public Property Get Class() As Guard
+Attribute Class.VB_Description = "Returns class reference"
+    Set Class = Guard
 End Property
 
 
@@ -45,7 +45,7 @@ Private Sub Class_Initialize()
     With this
         .trapped = Not Me Is Guard.Self 'Enforce the singleton pattern
         If .trapped Then
-            .name = "SingletonErr"
+            .Name = "SingletonErr"
             .number = ErrNo.SingletonErr
             .source = TypeName(Me) & " type"
             .message = "Singleton already instantiated"
@@ -63,7 +63,7 @@ Attribute EmptyString.VB_Description = "Raises a run-time error if the specified
     With errorDetails
         .trapped = (TypeName(text) <> "String")
         If .trapped Then
-            .name = "TypeMismatchErr"
+            .Name = "TypeMismatchErr"
             .number = ErrNo.TypeMismatchErr
             .source = TypeName(text) & " type"
             .message = "String required"
@@ -73,7 +73,7 @@ Attribute EmptyString.VB_Description = "Raises a run-time error if the specified
         
         .trapped = (text = vbNullString)
         If .trapped Then
-            .name = "EmptyStringErr"
+            .Name = "EmptyStringErr"
             .number = ErrNo.EmptyStringErr
             .source = "String variable"
             .message = "String variable empty"
@@ -91,7 +91,7 @@ Attribute NullReference.VB_Description = "Raises a run-time error if the specifi
     With errorDetails
         .trapped = Not IsObject(instanceVar)
         If .trapped Then
-            .name = "ObjectRequiredErr"
+            .Name = "ObjectRequiredErr"
             .number = ErrNo.ObjectRequiredErr
             .source = TypeName(instanceVar) & " Type"
             .message = "Object required"
@@ -101,7 +101,7 @@ Attribute NullReference.VB_Description = "Raises a run-time error if the specifi
         
         .trapped = instanceVar Is Nothing
         If .trapped Then
-            .name = "ObjectNotSetErr"
+            .Name = "ObjectNotSetErr"
             .number = ErrNo.ObjectNotSetErr
             .source = "Variable is Nothing"
             .message = "Object variable not set"
@@ -119,7 +119,7 @@ Attribute NonNullReference.VB_Description = "Raises a run-time error if the spec
     With errorDetails
         .trapped = Not IsObject(instanceVar)
         If .trapped Then
-            .name = "ObjectRequiredErr"
+            .Name = "ObjectRequiredErr"
             .number = ErrNo.ObjectRequiredErr
             .source = TypeName(instanceVar) & " Type"
             .message = "Object required"
@@ -129,7 +129,7 @@ Attribute NonNullReference.VB_Description = "Raises a run-time error if the spec
         
         .trapped = Not instanceVar Is Nothing
         If .trapped Then
-            .name = "ObjectSetErr"
+            .Name = "ObjectSetErr"
             .number = ErrNo.ObjectSetErr
             .source = TypeName(instanceVar) & " Type"
             .message = "Object variable already set"
@@ -147,13 +147,13 @@ Attribute Singleton.VB_Description = "Raises a run-time error if the specified i
     Guard.NullReference instanceVar
         
     Dim classVar As Object
-    Set classVar = instanceVar.ClassName
+    Set classVar = instanceVar.Class
     
     Dim errorDetails As TError
     With errorDetails
         .trapped = Not instanceVar Is classVar
         If .trapped Then
-            .name = "SingletonErr"
+            .Name = "SingletonErr"
             .number = ErrNo.SingletonErr
             .source = TypeName(instanceVar) & " type"
             .message = "Singleton already instantiated"
@@ -170,13 +170,13 @@ Attribute NonDefaultInstance.VB_Description = "Raises a run-time error if the sp
     Guard.NullReference instanceVar
     
     Dim classVar As Object
-    Set classVar = instanceVar.ClassName
+    Set classVar = instanceVar.Class
     
     Dim errorDetails As TError
     With errorDetails
         .trapped = Not instanceVar Is classVar
         If .trapped Then
-            .name = "NonDefaultInstanceErr"
+            .Name = "NonDefaultInstanceErr"
             .number = ErrNo.NonDefaultInstanceErr
             .source = TypeName(classVar) & " Class"
             .message = "Default (" & TypeName(classVar) & ") object instance must be used"
@@ -193,13 +193,13 @@ Attribute DefaultInstance.VB_Description = "Raises a run-time error if the speci
     Guard.NullReference instanceVar
     
     Dim classVar As Object
-    Set classVar = instanceVar.ClassName
+    Set classVar = instanceVar.Class
     
     Dim errorDetails As TError
     With errorDetails
         .trapped = instanceVar Is classVar
         If .trapped Then
-            .name = "DefaultInstanceErr"
+            .Name = "DefaultInstanceErr"
             .number = ErrNo.DefaultInstanceErr
             .source = TypeName(classVar) & " Class"
             .message = "Non-default (" & TypeName(classVar) & ") object instance must be used"
@@ -220,7 +220,7 @@ Attribute FileNotExist.VB_Description = "Raises a run-time error if the specifie
     With errorDetails
         .trapped = Not fsObject.FileExists(FilePathName)
         If .trapped Then
-            .name = "FileNotFoundErr"
+            .Name = "FileNotFoundErr"
             .number = ErrNo.FileNotFoundErr
             .source = FilePathName
             .message = "File not found " & FilePathName

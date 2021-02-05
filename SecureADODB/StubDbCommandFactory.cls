@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbCommandFactory implementation that outputs StubDbCommand objects."
-'@Folder("SecureADODB.Tests.Stubs")
+'@Folder "SecureADODB.DbCommand. Tests"
 '@ModuleDescription("A stub acting as a IDbCommandFactory implementation that outputs StubDbCommand objects.")
 '@IgnoreModule UseMeaningfulName
 Option Explicit
@@ -25,7 +25,7 @@ Public Property Get CreateCommandInvokes() As Long
     CreateCommandInvokes = this.CreateCommandInvokes
 End Property
 
-Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection) As IDbCommand
+Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection, Optional ByVal UseDisconnectedRecordset As Boolean = False) As IDbCommand
     this.CreateCommandInvokes = this.CreateCommandInvokes + 1
     Set IDbCommandFactory_CreateInstance = New StubDbCommand
 End Function

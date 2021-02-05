@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "An object that deals with the database connection and builds and executes a parameterized ADODB command from a command string and parameter values. Returns disconnected recordsets."
-'@Folder("SecureADODB.DbCommand")
+'@Folder "SecureADODB.DbCommand"
 '@ModuleDescription("An object that deals with the database connection and builds and executes a parameterized ADODB command from a command string and parameter values. Returns disconnected recordsets.")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation
@@ -48,47 +48,21 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Private Sub GuardInvalidOrdinalArguments(ByVal sql As String, ByRef args() As Variant)
-    Errors.GuardExpression Not this.Base.ValidateOrdinalArguments(sql, args), message:="Arguments provided are inconsistent with expected ordinal parameters."
-End Sub
-
-
 Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
     Dim localArgs() As Variant
     localArgs = args 'cannot pass ParamArray array directly to ByRef array argument
-    GuardInvalidOrdinalArguments sql, localArgs
     
     With this.ConnectionFactory.CreateInstance(this.ConnectionString)
         Dim cmd As ADODB.Command
         Set cmd = this.Base.CreateCommand(.Self, adCmdText, sql, localArgs)
-        
-        Dim result As ADODB.Recordset
-        Set result = this.Base.GetDisconnectedRecordset(cmd)
-        
-        Set IDbCommand_Execute = result
+        Set IDbCommand_Execute = this.Base.GetDisconnectedRecordset(cmd)
     End With
 End Function
-
-
-Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
-    Dim localArgs() As Variant
-    localArgs = args 'cannot pass ParamArray array directly to ByRef array argument
-    GuardInvalidOrdinalArguments sql, localArgs
-    
-    With this.ConnectionFactory.CreateInstance(this.ConnectionString)
-        Dim cmd As ADODB.Command
-        Set cmd = this.Base.CreateCommand(.Self, adCmdText, sql, localArgs)
-        
-        '@Ignore FunctionReturnValueDiscarded
-        cmd.Execute
-    End With
-End Sub
 
 
 Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArray params() As Variant) As ADODB.Recordset
     Dim localParams() As Variant
     localParams = params
-    GuardInvalidOrdinalArguments sql, localParams
 
     With this.ConnectionFactory.CreateInstance(this.ConnectionString)
         Dim emptyArgs() As Variant
@@ -101,20 +75,31 @@ Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArra
             cmd.Parameters.Append localParams(i)
         Next
         
-        Dim result As ADODB.Recordset
-        Set result = this.Base.GetDisconnectedRecordset(cmd)
-        
-        Set IDbCommand_ExecuteWithParameters = result
+        Set IDbCommand_ExecuteWithParameters = this.Base.GetDisconnectedRecordset(cmd)
     End With
 End Function
 
 
-Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args() As Variant) As Variant
-    'cannot pass ParamArray array directly to ByRef array argument
-    Dim localArgs() As Variant: localArgs = args
-    GuardInvalidOrdinalArguments sql, localArgs
+Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
+    Dim localArgs() As Variant
+    localArgs = args 'cannot pass ParamArray array directly to ByRef array argument
     
     With this.ConnectionFactory.CreateInstance(this.ConnectionString)
-        IDbCommand_GetSingleValue = this.Base.GetSingleValue(.Self, sql, localArgs)
+        Dim cmd As ADODB.Command
+        Set cmd = this.Base.CreateCommand(.Self, adCmdText, sql, localArgs)
+        
+        '@Ignore FunctionReturnValueDiscarded
+        cmd.Execute
+    End With
+End Sub
+
+
+Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args() As Variant) As Variant
+    'cannot pass ParamArray array directly to ByRef array argument
+    Dim localArgs() As Variant
+    localArgs = args
+    
+    With this.ConnectionFactory.CreateInstance(this.ConnectionString)
+        IDbCommand_GetSingleValue = this.Base.GetSingleValue(.Self, adCmdText, sql, localArgs)
     End With
 End Function
