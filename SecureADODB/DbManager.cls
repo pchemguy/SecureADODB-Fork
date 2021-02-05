@@ -134,7 +134,7 @@ Attribute FromConnectionParameters.VB_Description = "Creates a new manager using
     Set baseCommand = DbCommandBase.Create(provider)
     
     Dim factory As IDbCommandFactory
-    Set factory = DefaultDbCommandFactory.Create(baseCommand)
+    Set factory = DbCommandFactory.Create(baseCommand)
     
     Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions)
 End Function
