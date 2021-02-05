@@ -59,7 +59,7 @@ End Sub
 
 
 '@Description("Default interface factory")
-Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection) As IDbCommand
+Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection, Optional ByVal UseDisconnectedRecordset As Boolean = False) As IDbCommand
 Attribute IDbCommandFactory_CreateInstance.VB_Description = "Default interface factory"
-    Set IDbCommandFactory_CreateInstance = this.commandClass.Create(db, this.Base)
+    Set IDbCommandFactory_CreateInstance = this.commandClass.Create(db, this.Base, UseDisconnectedRecordset)
 End Function

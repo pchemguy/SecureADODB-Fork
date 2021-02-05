@@ -19,29 +19,37 @@ Implements IDbCommand
 Private Type TCommand
     Base As IDbCommandBase
     Connection As IDbConnection
+    UseDisconnectedRecordset As Boolean
 End Type
 Private this As TCommand
 
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
-Public Function Create(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase) As IDbCommand
+Public Function Create(ByVal db As IDbConnection, _
+                       ByVal baseCommand As IDbCommandBase, _
+              Optional ByVal UseDisconnectedRecordset As Boolean = False) As IDbCommand
+              
     Errors.GuardNonDefaultInstance Me, DbCommand
     
     Dim result As DbCommand
     Set result = New DbCommand
-    result.CreInit db, baseCommand
+    result.CreInit db, baseCommand, UseDisconnectedRecordset
     Set Create = result
 End Function
 
 
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase)
+Friend Sub CreInit(ByVal db As IDbConnection, _
+                       ByVal baseCommand As IDbCommandBase, _
+              Optional ByVal UseDisconnectedRecordset As Boolean = False)
 Attribute CreInit.VB_Description = "Default constructor"
+              
     Errors.GuardNullReference db
     Errors.GuardNullReference baseCommand
 
     Set this.Connection = db
     Set this.Base = baseCommand
+    this.UseDisconnectedRecordset = UseDisconnectedRecordset
 End Sub
 
 
