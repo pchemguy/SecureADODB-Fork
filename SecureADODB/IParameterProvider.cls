@@ -8,14 +8,14 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "Represents an object responsible for converting a value of a mapped data type to an ADODB.Parameter object."
-'@Folder("SecureADODB.ParameterProvider.Abstract")
+'@Folder "SecureADODB.ParameterProvider.Abstract"
 '@ModuleDescription("Represents an object responsible for converting a value of a mapped data type to an ADODB.Parameter object.")
 '@Interface
 '@Exposed
 Option Explicit
 
 '@Description("Creates an ADODB.Parameter object from the specified value.")
-Public Function FromValue(ByVal value As Variant, Optional ByVal name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
+Public Function FromValue(ByVal value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
 Attribute FromValue.VB_Description = "Creates an ADODB.Parameter object from the specified value."
 End Function
 

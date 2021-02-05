@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object responsible for converting a value of a mapped data type to an ADODB.Parameter object."
-'@Folder("SecureADODB.ParameterProvider")
+'@Folder "SecureADODB.ParameterProvider"
 '@ModuleDescription("An object responsible for converting a value of a mapped data type to an ADODB.Parameter object.")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation
@@ -41,7 +41,7 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
+Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
     If TypeOf value Is ADODB.Parameter Then
         Set IParameterProvider_FromValue = value
         Exit Function
@@ -65,7 +65,7 @@ Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional B
     End If
     
     If IsCharMapping(result.Type) And Len(value) > 0 Then result.Size = Len(value)
-    If name <> vbNullString Then result.name = name
+    If Name <> vbNullString Then result.Name = Name
     
     Set IParameterProvider_FromValue = result
 End Function

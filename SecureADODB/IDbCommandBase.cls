@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "Defines an explicit public interface for the DbCommandBase class."
-'@Folder("SecureADODB.DbCommand.Abstract")
+'@Folder "SecureADODB.DbCommand.Abstract"
 '@ModuleDescription("Defines an explicit public interface for the DbCommandBase class.")
 '@Interface
 '@IgnoreModule UseMeaningfulName
@@ -26,11 +26,7 @@ Attribute GetDisconnectedRecordset.VB_Description = "Executes specified ADODB.Co
 End Function
 
 '@Description("Executes specified ADODB.Command, and returns the value of the first field of the first returned record.")
-Public Function GetSingleValue(ByVal db As IDbConnection, ByVal sql As String, ByRef args() As Variant) As Variant
+Public Function GetSingleValue(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
 Attribute GetSingleValue.VB_Description = "Executes specified ADODB.Command, and returns the value of the first field of the first returned record."
 End Function
 
-'@Description("True if the number of provided arguments matches the expected number of parameters in the 'sql' command string.")
-Public Function ValidateOrdinalArguments(ByVal sql As String, ByRef args() As Variant) As Boolean
-Attribute ValidateOrdinalArguments.VB_Description = "True if the number of provided arguments matches the expected number of parameters in the 'sql' command string."
-End Function

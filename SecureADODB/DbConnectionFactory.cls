@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "An implementation of an abstract factory that creates DbConnection objects."
-'@Folder("SecureADODB.DbConnection")
+'@Folder "SecureADODB.DbConnection"
 '@ModuleDescription("An implementation of an abstract factory that creates DbConnection objects.")
 '@Exposed
 Option Explicit

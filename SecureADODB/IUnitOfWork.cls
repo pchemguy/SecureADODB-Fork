@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "Represents an object encapsulating a database transaction."
-'@Folder("SecureADODB.UnitOfWork")
+'@Folder "SecureADODB.UnitOfWork"
 '@ModuleDescription("Represents an object encapsulating a database transaction.")
 '@Interface
 '@Exposed

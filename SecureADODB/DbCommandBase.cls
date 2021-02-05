@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object intended to be used as a private instance field in a class implementing the IDbCommand interface (composition in place of inheritance)."
-'@Folder("SecureADODB.DbCommand.Abstract")
+'@Folder "SecureADODB.DbCommand.Abstract"
 '@ModuleDescription("An object intended to be used as a private instance field in a class implementing the IDbCommand interface (composition in place of inheritance).")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation
@@ -42,31 +42,10 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Public Function ValidateOrdinalArguments(ByVal sql As String, ByRef args() As Variant) As Boolean
-    On Error GoTo CleanFail
-    Dim result As Boolean
-    
-    Dim expected As Long
-    expected = Len(sql) - Len(Replace(sql, "?", vbNullString))
-    
-    Dim actual As Long
-    On Error GoTo CleanFail 'if there are no args, LBound/UBound are both out of bounds
-    actual = UBound(args) + (1 - LBound(args))
-    
-CleanExit:
-    result = (expected = actual)
-    ValidateOrdinalArguments = result
-    Exit Function
-CleanFail:
-    actual = 0
-    Resume CleanExit
-End Function
-
-
 Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
     Errors.GuardNullReference db
-    Errors.GuardEmptyString sql
     Errors.GuardExpression db.State <> adStateOpen, message:="Connection is not open."
+    Errors.GuardEmptyString sql
     Errors.GuardExpression Not ValidateOrdinalArguments(sql, args), message:="Arguments supplied are inconsistent with the provided command string parameters."
     
     Dim cmd As ADODB.Command
@@ -104,16 +83,37 @@ Private Function GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.R
 End Function
 
 
-Private Function GetSingleValue(ByVal db As IDbConnection, ByVal sql As String, ByRef args() As Variant) As Variant
+Private Function GetSingleValue(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
     Errors.GuardEmptyString sql
     
     Dim cmd As ADODB.Command
-    Set cmd = CreateCommand(db, adCmdText, sql, args)
+    Set cmd = CreateCommand(db, commandType, sql, args)
     
     Dim results As ADODB.Recordset
     Set results = GetDisconnectedRecordset(cmd)
     
     GetSingleValue = results.Fields.Item(0).value
+End Function
+
+
+Public Function ValidateOrdinalArguments(ByVal sql As String, ByRef args() As Variant) As Boolean
+    On Error GoTo CleanFail
+    Dim result As Boolean
+    
+    Dim expected As Long
+    expected = Len(sql) - Len(Replace(sql, "?", vbNullString))
+    
+    Dim actual As Long
+    On Error GoTo CleanFail 'if there are no args, LBound/UBound are both out of bounds
+    actual = UBound(args) + (1 - LBound(args))
+    
+CleanExit:
+    result = (expected = actual)
+    ValidateOrdinalArguments = result
+    Exit Function
+CleanFail:
+    actual = 0
+    Resume CleanExit
 End Function
 
 
@@ -125,10 +125,6 @@ Private Function IDbCommandBase_GetDisconnectedRecordset(ByVal cmd As ADODB.Comm
     Set IDbCommandBase_GetDisconnectedRecordset = GetDisconnectedRecordset(cmd)
 End Function
 
-Private Function IDbCommandBase_GetSingleValue(ByVal db As IDbConnection, ByVal sql As String, ByRef args() As Variant) As Variant
-    IDbCommandBase_GetSingleValue = GetSingleValue(db, sql, args)
-End Function
-
-Private Function IDbCommandBase_ValidateOrdinalArguments(ByVal sql As String, args() As Variant) As Boolean
-    IDbCommandBase_ValidateOrdinalArguments = ValidateOrdinalArguments(sql, args)
+Private Function IDbCommandBase_GetSingleValue(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
+    IDbCommandBase_GetSingleValue = GetSingleValue(db, commandType, sql, args)
 End Function

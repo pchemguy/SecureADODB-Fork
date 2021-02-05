@@ -2,17 +2,19 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "SqliteConnectionString"
+Attribute VB_Name = "ExcelConnectionString"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '@Folder "-- DraftsTemplatesSnippets --.DbConnectionString"
 '@PredeclaredId
+'@IgnoreModule
+
 Option Explicit
 
 
-Private Type TSqliteConnectionString
+Private Type TExcelConnectionString
     Driver As String
     Options As String
     Path As String
@@ -20,12 +22,12 @@ Private Type TSqliteConnectionString
     pathName As String
     provider As String
 End Type
-Private this As TSqliteConnectionString
+Private this As TExcelConnectionString
 
 
 '@Description("Returns instance reference")
 '@Ignore ProcedureNotUsed
-Public Property Get Self() As SqliteConnectionString
+Public Property Get Self() As ExcelConnectionString
 Attribute Self.VB_Description = "Returns instance reference"
     Set Self = Me
 End Property
@@ -33,21 +35,21 @@ End Property
 
 '@Description("Returns class reference")
 '@Ignore ProcedureNotUsed
-Public Property Get Class() As SqliteConnectionString
+Public Property Get Class() As ExcelConnectionString
 Attribute Class.VB_Description = "Returns class reference"
-    Set Class = SqliteConnectionString
+    Set Class = ExcelConnectionString
 End Property
 
 
 '@Description("Default factory")
-Public Function Create(ByVal dbPath As String, _
-                       ByVal dbName As String, _
-              Optional ByVal Driver As String = vbNullString, _
-              Optional ByVal Options As String = vbNullString, _
-              Optional ByVal provider As String = vbNullString) As SqliteConnectionString
+Public Function Create(Optional ByVal dbPath As String, _
+                       Optional ByVal dbName As String, _
+                       Optional ByVal Driver As String = vbNullString, _
+                       Optional ByVal Options As String = vbNullString, _
+                       Optional ByVal provider As String = vbNullString) As ExcelConnectionString
 Attribute Create.VB_Description = "Default factory"
-    Dim result As SqliteConnectionString
-    Set result = New SqliteConnectionString
+    Dim result As ExcelConnectionString
+    Set result = New ExcelConnectionString
     result.Init dbPath, dbName, Driver, Options, provider
     Set Create = result
 End Function
@@ -89,9 +91,10 @@ Attribute ADOConnectionString.VB_Description = "Returns connection string for an
 End Property
 
 
-'@Description("Returns connection string for an Excel QueryTable object")
-'@Ignore ProcedureNotUsed
-Public Property Get QTConnectionString() As String
-Attribute QTConnectionString.VB_Description = "Returns connection string for an Excel QueryTable object"
-    QTConnectionString = this.provider & ";" & Me.ADOConnectionString
-End Property
+''@Description("Returns connection string for an Excel QueryTable object")
+''@Ignore ProcedureNotUsed
+'Public Property Get QTConnectionString() As String
+'    QTConnectionString = this.provider & ";" & Me.ADOConnectionString
+'End Property
+
+'Provider=Microsoft.ACE.OLEDB.12.0;Data Source=F:\Archive\Business\FID\PolMaFID\Drafts\Knowledge Management System\VBA\Samples\RDVBA-examples\SecureADODB.xls;Persist Security Info=False;Extended Properties="Excel 12.0;HDR=Yes"

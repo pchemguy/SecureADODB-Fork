@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-'@Folder("SecureADODB.DbCommand")
+'@Folder "SecureADODB.DbCommand"
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@PredeclaredId
 '@Exposed
@@ -40,6 +40,7 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection) As IDbCommand
+Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection, Optional ByVal UseDisconnectedRecordset As Boolean = False) As IDbCommand
     Set IDbCommandFactory_CreateInstance = DefaultDbCommand.Create(db, this.Base)
 End Function
+
