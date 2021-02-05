@@ -60,20 +60,6 @@ Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Va
 End Function
 
 
-Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
-    Dim localArgs() As Variant
-    localArgs = args 'cannot pass ParamArray array directly to ByRef array argument
-    
-    With this.ConnectionFactory.CreateInstance(this.ConnectionString)
-        Dim cmd As ADODB.Command
-        Set cmd = this.Base.CreateCommand(.Self, adCmdText, sql, localArgs)
-        
-        '@Ignore FunctionReturnValueDiscarded
-        cmd.Execute
-    End With
-End Sub
-
-
 Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArray params() As Variant) As ADODB.Recordset
     Dim localParams() As Variant
     localParams = params
@@ -92,6 +78,20 @@ Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArra
         Set IDbCommand_ExecuteWithParameters = this.Base.GetDisconnectedRecordset(cmd)
     End With
 End Function
+
+
+Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
+    Dim localArgs() As Variant
+    localArgs = args 'cannot pass ParamArray array directly to ByRef array argument
+    
+    With this.ConnectionFactory.CreateInstance(this.ConnectionString)
+        Dim cmd As ADODB.Command
+        Set cmd = this.Base.CreateCommand(.Self, adCmdText, sql, localArgs)
+        
+        '@Ignore FunctionReturnValueDiscarded
+        cmd.Execute
+    End With
+End Sub
 
 
 Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args() As Variant) As Variant
