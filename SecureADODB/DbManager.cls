@@ -43,6 +43,15 @@ Attribute Class.VB_Description = "Returns class reference"
 End Property
 
 
+' Basic connection string construction facility
+'
+' The first argument specifies either the type of the target database or, for reasons of
+' flexibility can take a completed connection string. Select Case implements the core
+' functionality. If the first argument matches any of the Case block, the corresponding
+' configuration will be applied and a connection string is built and returned. Otherwise,
+' if the first argument contains "Driver=" substring, it is assumed to be a completed
+' connection string, which is returned as is.
+'
 '@Description("Build connection config")
 Public Function BuildConnectionString( _
                  ByVal TypeOrConnString As String, _
@@ -61,7 +70,7 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
         connConfig.Path = Path
     End If
     Select Case LCase(TypeOrConnString)
-        Case "sqlite"
+        Case "sqlite"                                                           ' ========== SQLite db ========== '
             With connConfig
                 .Driver = "{SQLite3 ODBC Driver}"
                 If Name = vbNullString Then
@@ -78,14 +87,14 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                 End If
                 .Database = .Path & Application.PathSeparator & .Name
             End With
-        Case "csv"
+        Case "csv"                                                              ' ============ CSV db ============ '
             connConfig.Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
             connConfig.Database = connConfig.Path
             If Options <> vbNullString Then
                 connConfig.Options = Options
             End If
         Case Else
-            If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Then
+            If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Then    ' ============ Raw Connection String ============ '
                 connConfig.connString = TypeOrConnString
                 BuildConnectionString = connConfig.connString
                 Exit Function
