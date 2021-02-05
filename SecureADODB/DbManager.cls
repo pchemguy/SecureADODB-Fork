@@ -29,6 +29,7 @@ Private Type TDbManager
     Connection As IDbConnection
     CommandFactory As IDbCommandFactory
     UseTransactions As Boolean
+    UseDisconnectedRecordset As Boolean
     Committed As Boolean
     RolledBack As Boolean
 End Type
@@ -115,9 +116,9 @@ Public Function FromConnectionParameters( _
         Optional ByVal Path As String = vbNullString, _
         Optional ByVal Name As String = vbNullString, _
         Optional ByVal Options As String = vbNullString, _
-        Optional ByVal UseTransactions As Boolean = True _
+        Optional ByVal UseTransactions As Boolean = True, _
+        Optional ByVal UseDisconnectedRecordset As Boolean = False _
         ) As IDbManager
-Attribute FromConnectionParameters.VB_Description = "Creates a new manager using connection parameters."
 
     Guard.NonDefaultInstance Me
     
@@ -136,28 +137,32 @@ Attribute FromConnectionParameters.VB_Description = "Creates a new manager using
     Dim factory As IDbCommandFactory
     Set factory = DbCommandFactory.Create(baseCommand)
     
-    Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions)
+    Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions, UseDisconnectedRecordset)
 End Function
 
 
 '@Ignore UseMeaningfulName
 Public Function Create(ByVal db As IDbConnection, _
                        ByVal factory As IDbCommandFactory, _
-              Optional ByVal UseTransactions As Boolean = True) As IDbManager
+              Optional ByVal UseTransactions As Boolean = True, _
+              Optional ByVal UseDisconnectedRecordset As Boolean = False) As IDbManager
               
     Guard.NonDefaultInstance Me
     
     Dim result As DbManager
     Set result = New DbManager
-    result.CreInit db, factory, UseTransactions
+    result.CreInit db, factory, UseTransactions, UseDisconnectedRecordset
     Set Create = result
 End Function
 
 
 '@Ignore UseMeaningfulName
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal db As IDbConnection, ByVal factory As IDbCommandFactory, Optional ByVal UseTransactions As Boolean = True)
-Attribute CreInit.VB_Description = "Default constructor"
+Friend Sub CreInit(ByVal db As IDbConnection, _
+                       ByVal factory As IDbCommandFactory, _
+              Optional ByVal UseTransactions As Boolean = True, _
+              Optional ByVal UseDisconnectedRecordset As Boolean = False)
+              
     Guard.NullReference factory
     Guard.NullReference db
     Errors.GuardExpression db.State <> adStateOpen, message:="Connection should be open."
@@ -165,6 +170,7 @@ Attribute CreInit.VB_Description = "Default constructor"
     Set this.Connection = db
     Set this.CommandFactory = factory
     this.UseTransactions = UseTransactions
+    this.UseDisconnectedRecordset = UseDisconnectedRecordset
     If this.UseTransactions Then this.Connection.BeginTransaction
 End Sub
 
@@ -184,7 +190,7 @@ End Property
 
 
 Private Function IDbManager_Command() As IDbCommand
-    Set IDbManager_Command = this.CommandFactory.CreateInstance(this.Connection)
+    Set IDbManager_Command = this.CommandFactory.CreateInstance(this.Connection, this.UseDisconnectedRecordset)
 End Function
 
 

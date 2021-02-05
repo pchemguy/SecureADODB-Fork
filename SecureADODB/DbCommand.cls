@@ -60,7 +60,11 @@ Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Va
     
     Dim cmd As ADODB.Command
     Set cmd = this.Base.CreateCommand(this.Connection, adCmdText, sql, localArgs)
-    Set IDbCommand_Execute = cmd.Execute
+    If this.UseDisconnectedRecordset Then
+        Set IDbCommand_Execute = this.Base.GetDisconnectedRecordset(cmd)
+    Else
+        Set IDbCommand_Execute = cmd.Execute
+    End If
 End Function
 
 
@@ -77,7 +81,11 @@ Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArra
         cmd.Parameters.Append localParams(i)
     Next
     
-    Set IDbCommand_ExecuteWithParameters = cmd.Execute
+    If this.UseDisconnectedRecordset Then
+        Set IDbCommand_ExecuteWithParameters = this.Base.GetDisconnectedRecordset(cmd)
+    Else
+        Set IDbCommand_ExecuteWithParameters = cmd.Execute
+    End If
 End Function
 
 

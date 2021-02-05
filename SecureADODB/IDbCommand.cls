@@ -22,6 +22,7 @@ End Function
 
 '@Description("Returns an ADODB.Recordset that contains the results of the specified parameterized query, using specified ADODB.Parameters.")
 Public Function ExecuteWithParameters(ByVal sql As String, ParamArray params()) As ADODB.Recordset
+Attribute ExecuteWithParameters.VB_Description = "Returns an ADODB.Recordset that contains the results of the specified parameterized query, using specified ADODB.Parameters."
 End Function
 
 '@Description("Executes the specified parameterized SQL statement/command.")
