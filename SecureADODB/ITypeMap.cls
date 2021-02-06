@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "Represents an object responsible for mapping programmatic data types to ADODB.DataTypeEnum values."
-'@Folder "SecureADODB.ParameterProvider.Abstract"
+'@Folder "SecureADODB.DbParameterProvider.Abstract"
 '@ModuleDescription("Represents an object responsible for mapping programmatic data types to ADODB.DataTypeEnum values.")
 '@Interface
 '@Exposed

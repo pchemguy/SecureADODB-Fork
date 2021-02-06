@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "An object that encapsulates a database transaction."
-'@Folder "SecureADODBmod.DbManager"
+'@Folder "SecureADODB.DbManager"
 '@ModuleDescription("An object that encapsulates a database transaction.")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, ProcedureNotUsed
@@ -128,6 +128,7 @@ Public Function FromConnectionParameters( _
         Optional ByVal UseTransactions As Boolean = True, _
         Optional ByVal UseDisconnectedRecordset As Boolean = False _
         ) As IDbManager
+Attribute FromConnectionParameters.VB_Description = "Creates a new manager using connection parameters."
 
     Guard.NonDefaultInstance Me
     
@@ -171,6 +172,7 @@ Friend Sub CreInit(ByVal db As IDbConnection, _
                        ByVal factory As IDbCommandFactory, _
               Optional ByVal UseTransactions As Boolean = True, _
               Optional ByVal UseDisconnectedRecordset As Boolean = False)
+Attribute CreInit.VB_Description = "Default constructor"
               
     Guard.NullReference factory
     Guard.NullReference db

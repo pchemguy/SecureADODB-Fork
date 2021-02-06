@@ -1,5 +1,5 @@
 Attribute VB_Name = "DbManagerTest"
-'@Folder "SecureADODBmod.DbManager"
+'@Folder "SecureADODB.DbManager"
 '@TestModule
 '@IgnoreModule
 Option Explicit

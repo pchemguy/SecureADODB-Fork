@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object responsible for converting a value of a mapped data type to an ADODB.Parameter object."
-'@Folder "SecureADODB.ParameterProvider"
+'@Folder "SecureADODB.DbParameterProvider"
 '@ModuleDescription("An object responsible for converting a value of a mapped data type to an ADODB.Parameter object.")
 '@PredeclaredId
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation

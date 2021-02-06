@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "An implementation of an abstract factory that creates DbCommand objects."
-'@Folder "SecureADODBmod.DbCommand"
+'@Folder "SecureADODB.DbCommand"
 '@IgnoreModule UseMeaningfulName, IllegalAnnotation
 '@PredeclaredId
 '@ModuleDescription("An implementation of an abstract factory that creates DbCommand objects.")
