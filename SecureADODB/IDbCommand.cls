@@ -15,6 +15,7 @@ Attribute VB_Description = "Represents an object abstracting a database command.
 '@Exposed
 Option Explicit
 
+
 '@Description("Returns an ADODB.Recordset that contains the results of the specified parameterized query.")
 Public Function Execute(ByVal sql As String, ParamArray args()) As ADODB.Recordset
 Attribute Execute.VB_Description = "Returns an ADODB.Recordset that contains the results of the specified parameterized query."

@@ -42,7 +42,7 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
+Private Function CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
     Errors.GuardNullReference db
     Errors.GuardExpression db.State <> adStateOpen, message:="Connection is not open."
     Errors.GuardEmptyString sql
@@ -51,7 +51,7 @@ Private Function CreateCommand(ByVal db As IDbConnection, ByVal commandType As A
     Dim cmd As ADODB.Command
     Set cmd = New ADODB.Command
     Set cmd.ActiveConnection = db.AdoConnection
-    cmd.commandType = commandType
+    cmd.CommandType = CommandType
     cmd.CommandText = sql
     
     On Error GoTo CleanFail
@@ -83,11 +83,11 @@ Private Function GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.R
 End Function
 
 
-Private Function GetSingleValue(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
+Private Function GetSingleValue(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
     Errors.GuardEmptyString sql
     
     Dim cmd As ADODB.Command
-    Set cmd = CreateCommand(db, commandType, sql, args)
+    Set cmd = CreateCommand(db, CommandType, sql, args)
     
     Dim results As ADODB.Recordset
     Set results = GetDisconnectedRecordset(cmd)
@@ -117,14 +117,14 @@ CleanFail:
 End Function
 
 
-Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
-    Set IDbCommandBase_CreateCommand = CreateCommand(db, commandType, sql, args)
+Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
+    Set IDbCommandBase_CreateCommand = CreateCommand(db, CommandType, sql, args)
 End Function
 
 Private Function IDbCommandBase_GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.Recordset
     Set IDbCommandBase_GetDisconnectedRecordset = GetDisconnectedRecordset(cmd)
 End Function
 
-Private Function IDbCommandBase_GetSingleValue(ByVal db As IDbConnection, ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
-    IDbCommandBase_GetSingleValue = GetSingleValue(db, commandType, sql, args)
+Private Function IDbCommandBase_GetSingleValue(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
+    IDbCommandBase_GetSingleValue = GetSingleValue(db, CommandType, sql, args)
 End Function

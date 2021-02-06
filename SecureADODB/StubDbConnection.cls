@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbConnection implementation."
-'@Folder "SecureADODB.DbConnection"
+'@Folder "SecureADODB.DbConnection. Tests"
 '@ModuleDescription("A stub acting as a IDbConnection implementation.")
 '@IgnoreModule UseMeaningfulName, ProcedureNotUsed
 Option Explicit
@@ -64,11 +64,11 @@ Private Sub IDbConnection_CommitTransaction()
     committedTransaction = True
 End Sub
 
-Private Function IDbConnection_CreateCommand(ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String) As ADODB.Command
+Private Function IDbConnection_CreateCommand(ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String) As ADODB.Command
     Dim result As ADODB.Command
     Set result = New ADODB.Command
     'Set result.ActiveConnection = stubConnection '<~ we don't want to do that in tests.
-    result.commandType = commandType
+    result.CommandType = CommandType
     result.CommandText = sql
     Set IDbConnection_CreateCommand = result
 End Function

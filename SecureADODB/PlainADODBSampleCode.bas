@@ -25,11 +25,11 @@ Public Sub TestADODBSourceSQL()
     
     sSQL = "SELECT * FROM categories WHERE category_id <= 3 AND section = 'machinery'"
     
-    Dim adoRecordSet As ADODB.Recordset
-    Set adoRecordSet = New ADODB.Recordset
-    adoRecordSet.CursorLocation = adUseClient
-    adoRecordSet.Open source:=sSQL, ActiveConnection:=adoConnStr, CursorType:=adOpenKeyset, LockType:=adLockReadOnly, Options:=(adCmdText Or adAsyncFetch)
-    Set adoRecordSet.ActiveConnection = Nothing
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseClient
+    AdoRecordset.Open source:=sSQL, ActiveConnection:=adoConnStr, CursorType:=adOpenKeyset, LockType:=adLockReadOnly, Options:=(adCmdText Or adAsyncFetch)
+    Set AdoRecordset.ActiveConnection = Nothing
 End Sub
 
 
@@ -54,27 +54,27 @@ Public Sub TestADODBSourceCMD()
     
     sSQL = "SELECT * FROM categories WHERE category_id <= 3 AND section = 'machinery'"
     
-    Dim adoRecordSet As ADODB.Recordset
-    Set adoRecordSet = New ADODB.Recordset
-    Dim adoCommand As ADODB.Command
-    Set adoCommand = New ADODB.Command
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    Dim AdoCommand As ADODB.Command
+    Set AdoCommand = New ADODB.Command
     
-    With adoCommand
-        .commandType = adCmdText
+    With AdoCommand
+        .CommandType = adCmdText
         .CommandText = sSQL
         .ActiveConnection = adoConnStr
         .ActiveConnection.CursorLocation = adUseClient
     End With
     
-    With adoRecordSet
-        Set .source = adoCommand
+    With AdoRecordset
+        Set .source = AdoCommand
         .CursorLocation = adUseClient
         .CursorType = adOpenKeyset
         .LockType = adLockReadOnly
         .Open Options:=adAsyncFetch
         Set .ActiveConnection = Nothing
     End With
-    adoCommand.ActiveConnection.Close
+    AdoCommand.ActiveConnection.Close
 End Sub
 
 
@@ -100,10 +100,10 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     
     sSQL = "SELECT * FROM categories WHERE category_id <= ? AND section = ?"
     
-    Dim adoRecordSet As ADODB.Recordset
-    Set adoRecordSet = New ADODB.Recordset
-    Dim adoCommand As ADODB.Command
-    Set adoCommand = New ADODB.Command
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    Dim AdoCommand As ADODB.Command
+    Set AdoCommand = New ADODB.Command
     
     Dim mappings As ITypeMap
     Set mappings = AdoTypeMappings.Default
@@ -113,13 +113,13 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     Dim adoParameter As ADODB.Parameter
     Set adoParameter = provider.FromValue(3)
     'adoParameter.name = "@category_id"
-    adoCommand.Parameters.Append adoParameter
+    AdoCommand.Parameters.Append adoParameter
     Set adoParameter = provider.FromValue("machinery")
     'adoParameter.name = "@section"
-    adoCommand.Parameters.Append adoParameter
+    AdoCommand.Parameters.Append adoParameter
     
-    With adoCommand
-        .commandType = adCmdText
+    With AdoCommand
+        .CommandType = adCmdText
         .CommandText = sSQL
         .Prepared = True
         '.NamedParameters = True
@@ -127,16 +127,16 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
         .ActiveConnection.CursorLocation = adUseClient
     End With
         
-    With adoRecordSet
-        Set .source = adoCommand
+    With AdoRecordset
+        Set .source = AdoCommand
         .CursorLocation = adUseClient
         .CursorType = adOpenKeyset
         .LockType = adLockReadOnly
         .Open Options:=adAsyncFetch
         Set .ActiveConnection = Nothing
     End With
-    adoCommand.ActiveConnection.Close
-    Debug.Print "RecordCount: " & CStr(adoRecordSet.RecordCount)
+    AdoCommand.ActiveConnection.Close
+    Debug.Print "RecordCount: " & CStr(AdoRecordset.RecordCount)
 End Sub
 
 
@@ -158,16 +158,16 @@ Public Sub TestADODBSourceSQLite()
     
     sSQL = "SELECT * FROM """ & sTable & """"
         
-    Dim adoRecordSet As ADODB.Recordset
-    Set adoRecordSet = New ADODB.Recordset
-    adoRecordSet.CursorLocation = adUseClient
-    adoRecordSet.Open _
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseClient
+    AdoRecordset.Open _
             source:=sSQL, _
             ActiveConnection:=adoConnStr, _
             CursorType:=adOpenKeyset, _
             LockType:=adLockReadOnly, _
             Options:=(adCmdText Or adAsyncFetch)
-    Set adoRecordSet.ActiveConnection = Nothing
+    Set AdoRecordset.ActiveConnection = Nothing
 End Sub
 
 
@@ -189,16 +189,16 @@ Public Sub TestADODBSourceCSV()
     
     sSQL = "SELECT * FROM """ & sTable & """"
     
-    Dim adoRecordSet As ADODB.Recordset
-    Set adoRecordSet = New ADODB.Recordset
-    adoRecordSet.CursorLocation = adUseClient
-    adoRecordSet.Open _
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseClient
+    AdoRecordset.Open _
             source:=sSQL, _
             ActiveConnection:=adoConnStr, _
             CursorType:=adOpenKeyset, _
             LockType:=adLockReadOnly, _
             Options:=(adCmdText Or adAsyncFetch)
-    Set adoRecordSet.ActiveConnection = Nothing
+    Set AdoRecordset.ActiveConnection = Nothing
 End Sub
 
 
