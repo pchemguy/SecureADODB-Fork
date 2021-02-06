@@ -36,12 +36,10 @@ End Function
 
 
 '@Description("Default constructor")
-Public Sub CreInit(ByVal baseCommand As IDbCommandBase, Optional ByVal commandClassName As String = "DefaultDbCommand")
+Public Sub CreInit(ByVal baseCommand As IDbCommandBase, Optional ByVal commandClassName As String = "DbCommand")
 Attribute CreInit.VB_Description = "Default constructor"
     Set this.Base = baseCommand
     Select Case commandClassName
-        Case "DefaultDbCommand"
-            Set this.commandClass = DefaultDbCommand
         Case "DbCommand"
             Set this.commandClass = DbCommand
         Case Else
