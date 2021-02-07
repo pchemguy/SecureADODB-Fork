@@ -57,21 +57,21 @@ End Sub
 
 
 '@Description("Raises a run-time error if the specified string is empty.")
-Public Sub EmptyString(ByVal text As Variant)
+Public Sub EmptyString(ByVal Text As Variant)
 Attribute EmptyString.VB_Description = "Raises a run-time error if the specified string is empty."
     Dim errorDetails As TError
     With errorDetails
-        .trapped = (TypeName(text) <> "String")
+        .trapped = (TypeName(Text) <> "String")
         If .trapped Then
             .Name = "TypeMismatchErr"
             .number = ErrNo.TypeMismatchErr
-            .source = TypeName(text) & " type"
+            .source = TypeName(Text) & " type"
             .message = "String required"
-            .description = "Variable type: " & TypeName(text) & ". String required."
+            .description = "Variable type: " & TypeName(Text) & ". String required."
             RaiseError errorDetails
         End If
         
-        .trapped = (text = vbNullString)
+        .trapped = (Text = vbNullString)
         If .trapped Then
             .Name = "EmptyStringErr"
             .number = ErrNo.EmptyStringErr
@@ -210,6 +210,7 @@ Attribute DefaultInstance.VB_Description = "Raises a run-time error if the speci
 End Sub
 
 
+'@Ignore ProcedureNotUsed
 '@Description("Raises a run-time error if the specified file does not exist.")
 Public Sub FileNotExist(ByVal FilePathName As String)
 Attribute FileNotExist.VB_Description = "Raises a run-time error if the specified file does not exist."
