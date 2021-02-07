@@ -22,7 +22,9 @@ Public Enum ErrNo
     SingletonErr = VBA.vbObjectError + 1014&
     UnknownClassErr = VBA.vbObjectError + 1015&
     ObjectSetErr = VBA.vbObjectError + 1091&
-    FeatureNotAvailableErr = VBA.vbObjectError + ADODB.ErrorValueEnum.adErrFeatureNotAvailable
+    AdoFeatureNotAvailableErr = VBA.vbObjectError + ADODB.ErrorValueEnum.adErrFeatureNotAvailable
+    AdoInTransaction = VBA.vbObjectError + ADODB.ErrorValueEnum.adErrInTransaction
+    AdoNotInTransaction = VBA.vbObjectError + ADODB.ErrorValueEnum.adErrInvalidTransaction
 End Enum
 
 

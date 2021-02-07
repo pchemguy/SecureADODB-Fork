@@ -230,3 +230,43 @@ Attribute FileNotExist.VB_Description = "Raises a run-time error if the specifie
         End If
     End With
 End Sub
+
+
+'@Description("Raises a run-time error if the specified IDbConnection has active transaction.")
+Public Sub inTransaction(ByVal HasActiveTransaction As Boolean)
+Attribute inTransaction.VB_Description = "Raises a run-time error if the specified IDbConnection has active transaction."
+    Debug.Assert TypeName(HasActiveTransaction) = "Boolean"
+    
+    Dim errorDetails As TError
+    With errorDetails
+        .trapped = HasActiveTransaction
+        If .trapped Then
+            .Name = "InTransaction"
+            .number = ErrNo.AdoInTransaction
+            .source = vbNullString
+            .message = "Current database connection already in transaction"
+            .description = "Attempted operation not permmited when transaction in progress (e.g. starting a new transaction)."
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
+
+
+'@Description("Raises a run-time error if the specified IDbConnection has no active transaction.")
+Public Sub NotInTransaction(ByVal HasActiveTransaction As Boolean)
+Attribute NotInTransaction.VB_Description = "Raises a run-time error if the specified IDbConnection has no active transaction."
+    Debug.Assert TypeName(HasActiveTransaction) = "Boolean"
+    
+    Dim errorDetails As TError
+    With errorDetails
+        .trapped = Not HasActiveTransaction
+        If .trapped Then
+            .Name = "NotInTransaction"
+            .number = ErrNo.AdoNotInTransaction
+            .source = vbNullString
+            .message = "Current database connection is not in transaction"
+            .description = "Attempted operation not permmited when no  active transaction in progress (e.g. commit or rollback)."
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
