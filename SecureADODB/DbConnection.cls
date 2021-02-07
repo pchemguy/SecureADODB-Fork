@@ -17,7 +17,7 @@ Option Explicit
 
 Implements IDbConnection
 
-'@Ignore MissingMemberAnnotation
+'@MemberAttribute VB_VarHelpID, -1
 Private WithEvents AdoConnection As ADODB.Connection
 Attribute AdoConnection.VB_VarHelpID = -1
 Private HasActiveTransaction As Boolean
@@ -53,6 +53,48 @@ Private Sub Class_Terminate()
     Set AdoConnection = Nothing
 End Sub
 
+
+'================================================================================'
+'============================ IDbConnection INTERFACE ==========================='
+'================================================================================'
+
+Private Property Get IDbConnection_Self() As IDbConnection
+    Set IDbConnection_Self = Me
+End Property
+
+Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
+    Set IDbConnection_AdoConnection = AdoConnection
+End Property
+
+Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
+    IDbConnection_State = AdoConnection.State
+End Property
+
+Private Sub IDbConnection_BeginTransaction()
+    On Error Resume Next 'not all providers support transactions
+    '@Ignore VariableNotUsed
+    Dim result As Long
+    result = AdoConnection.BeginTrans
+    On Error GoTo 0
+    HasActiveTransaction = True
+End Sub
+
+Private Sub IDbConnection_CommitTransaction()
+    On Error Resume Next
+    AdoConnection.CommitTrans
+    On Error GoTo 0
+    HasActiveTransaction = False
+End Sub
+
+Private Sub IDbConnection_RollbackTransaction()
+    If HasActiveTransaction Then AdoConnection.RollbackTrans
+    HasActiveTransaction = False
+End Sub
+
+
+'================================================================================'
+'========================= AdoConnection EVENT HANDLERS ========================='
+'================================================================================'
 
 Private Sub AdoConnection_BeginTransComplete(ByVal TransactionLevel As Long, ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin transaction completed. "
@@ -100,35 +142,3 @@ Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.Curs
 End Sub
 
 
-Private Property Get IDbConnection_Self() As IDbConnection
-    Set IDbConnection_Self = Me
-End Property
-
-Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
-    Set IDbConnection_AdoConnection = AdoConnection
-End Property
-
-Private Sub IDbConnection_BeginTransaction()
-    On Error Resume Next 'not all providers support transactions
-    '@Ignore VariableNotUsed
-    Dim result As Long
-    result = AdoConnection.BeginTrans
-    On Error GoTo 0
-    HasActiveTransaction = True
-End Sub
-
-Private Sub IDbConnection_CommitTransaction()
-    On Error Resume Next
-    AdoConnection.CommitTrans
-    On Error GoTo 0
-    HasActiveTransaction = False
-End Sub
-
-Private Sub IDbConnection_RollbackTransaction()
-    If HasActiveTransaction Then AdoConnection.RollbackTrans
-    HasActiveTransaction = False
-End Sub
-
-Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
-    IDbConnection_State = AdoConnection.State
-End Property
