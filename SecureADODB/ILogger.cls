@@ -12,22 +12,30 @@ Attribute VB_Exposed = False
 Option Explicit
 
 
-'@Description "Adds item to the log database"
-Public Sub Log(ByVal LogLine As String)
-Attribute Log.VB_Description = "Adds item to the log database"
-End Sub
-
-'@Description "Prints the log database to the immediate"
-Public Sub PrintLog()
-Attribute PrintLog.VB_Description = "Prints the log database to the immediate"
-End Sub
-
 '@Description("Returns instance reference")
 Public Property Get Self() As ILogger
-Attribute Self.VB_Description = "Returns instance reference"
 End Property
 
 '@Description("Returns class reference")
 Public Property Get Class() As ILogger
-Attribute Class.VB_Description = "Returns class reference"
 End Property
+
+'@Description("Returns instance reference")
+Public Property Get LogDatabase() As Scripting.Dictionary
+End Property
+
+
+'@Description "Adds item to the log database"
+Public Sub Log(ByVal LogLine As String, Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+Attribute Log.VB_Description = "Adds item to the log database"
+End Sub
+
+'@Description "Prints the log database to the immediate"
+Public Sub PrintLog(Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+Attribute PrintLog.VB_Description = "Prints the log database to the immediate"
+End Sub
+
+'@Description "Resets the log database"
+Public Sub ClearLog(Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+End Sub
+

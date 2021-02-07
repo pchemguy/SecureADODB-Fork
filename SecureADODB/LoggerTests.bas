@@ -63,6 +63,115 @@ Private Sub ztcCreate_ThrowsIfNotInvokedFromDefaultInstance()
 End Sub
 
 
+'@TestMethod("Log Database")
+Private Sub ztcGetLogDatabase_VerifyReturnsDictionary()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim instanceVar As Object: Set instanceVar = Logger.Create
+Act:
+    Dim stubILogger As Logger: Set stubILogger = Logger.Create
+Assert:
+    Assert.AreEqual "Dictionary", TypeName(Logger.LogDatabase)
+    Assert.AreEqual "Dictionary", TypeName(stubILogger.LogDatabase)
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("Log Database")
+Private Sub ztcLog_VerifyItemCountOnInstance()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim LogDb As Scripting.Dictionary: Set LogDb = New Scripting.Dictionary
+    Dim AdoLogger As ILogger: Set AdoLogger = Logger.Create
+Act:
+    AdoLogger.Log "AAA"
+    AdoLogger.Log "AAA"
+Assert:
+    Assert.AreEqual 2, AdoLogger.LogDatabase.Count
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("Log Database")
+Private Sub ztcLog_VerifyItemCountOnInstanceWithClear()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim LogDb As Scripting.Dictionary: Set LogDb = New Scripting.Dictionary
+    Dim AdoLogger As ILogger: Set AdoLogger = Logger.Create
+Act:
+    AdoLogger.Log "AAA"
+    AdoLogger.Log "AAA"
+    AdoLogger.ClearLog
+    AdoLogger.Log "AAA"
+    AdoLogger.Log "AAA"
+    AdoLogger.Log "AAA"
+Assert:
+    Assert.AreEqual 3, AdoLogger.LogDatabase.Count
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("Log Database")
+Private Sub ztcLog_VerifyItemCountOnGlobalWithCustomDb()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim LogDb As Scripting.Dictionary
+    Set LogDb = New Scripting.Dictionary
+    LogDb.CompareMode = TextCompare
+Act:
+    Logger.Log "AAA", LogDb
+    Logger.Log "AAA", LogDb
+Assert:
+    Assert.AreEqual 2, LogDb.Count
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("Log Database")
+Private Sub ztcLog_VerifyItemCountOnGlobalWithClearWithCustomDb()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim LogDb As Scripting.Dictionary
+    Set LogDb = New Scripting.Dictionary
+    LogDb.CompareMode = TextCompare
+Act:
+    Logger.Log "AAA", LogDb
+    Logger.Log "AAA", LogDb
+    Logger.ClearLog LogDb
+    Logger.Log "AAA", LogDb
+    Logger.Log "AAA", LogDb
+    Logger.Log "AAA", LogDb
+Assert:
+    Assert.AreEqual 3, LogDb.Count
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
 '@TestMethod("Self")
 Private Sub ztcSelf_CheckAvailability()
     On Error GoTo TestFail
@@ -106,9 +215,9 @@ End Sub
 '===================================================='
 
 '@TestMethod("PrintLog")
-'@Description "Log some items, check the contents"
-Private Sub ziPrintLogTest()
-Attribute ziPrintLogTest.VB_Description = "Log some items, check the contents"
+'@Description "Log some items, check the contents using Logger instance"
+Private Sub ziPrintLogInstanceTest()
+Attribute ziPrintLogInstanceTest.VB_Description = "Log some items, check the contents"
     Dim AdoLogger As ILogger
     Set AdoLogger = Logger.Create
     
@@ -116,3 +225,29 @@ Attribute ziPrintLogTest.VB_Description = "Log some items, check the contents"
     AdoLogger.Log "BBB"
     AdoLogger.PrintLog
 End Sub
+
+
+'@TestMethod("PrintLog")
+'@Description "Log some items, check the contents using global Logger"
+Private Sub ziPrintLogGlobalTest()
+    Logger.Log "AAA"
+    Logger.Log "BBB"
+    'Logger.ClearLog
+    Logger.PrintLog
+End Sub
+
+
+'@TestMethod("PrintLog")
+'@Description "Log some items, check the contents using global Logger and custom database"
+Private Sub ziPrintLogGlobalCustomDatabaseTest()
+    Dim LogDb As Scripting.Dictionary
+    Set LogDb = New Scripting.Dictionary
+    LogDb.CompareMode = TextCompare
+    
+    Logger.Log "AAA", LogDb
+    Logger.Log "BBB", LogDb
+    'Logger.ClearLog
+    Logger.PrintLog LogDb
+End Sub
+
+

@@ -39,6 +39,11 @@ Attribute Class.VB_Description = "Returns class reference"
 End Property
 
 
+Public Property Get LogDatabase() As Scripting.Dictionary
+    Set LogDatabase = this.Database
+End Property
+
+
 '@Description("Default class factory")
 Public Function Create() As ILogger
 Attribute Create.VB_Description = "Default class factory"
@@ -55,6 +60,41 @@ Private Function GetTimeStampMs() As String
 End Function
 
 
+'@Description "Adds item to the log database"
+Public Sub Log(ByVal LogLine As String, Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+Attribute Log.VB_Description = "Adds item to the log database"
+    Dim LogDb As Scripting.Dictionary
+    Set LogDb = IIf(LogDatabase Is Nothing, this.Database, LogDatabase)
+    
+    Dim key As String
+    Do
+        key = GetTimeStampMs
+    Loop While LogDb.Exists(key)
+    LogDb.Item(key) = LogLine
+End Sub
+
+
+'@Description "Prints the log database to the immediate"
+Public Sub PrintLog(Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+Attribute PrintLog.VB_Description = "Prints the log database to the immediate"
+    Dim LogDb As Scripting.Dictionary
+    Set LogDb = IIf(LogDatabase Is Nothing, this.Database, LogDatabase)
+    
+    Dim key As Variant
+    For Each key In LogDb.Keys
+        Debug.Print key & vbTab & vbTab & LogDb.Item(key)
+    Next key
+End Sub
+
+
+Public Sub ClearLog(Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+    Dim LogDb As Scripting.Dictionary
+    Set LogDb = IIf(LogDatabase Is Nothing, this.Database, LogDatabase)
+    
+    LogDb.RemoveAll
+End Sub
+
+
 '===================================================='
 '================= ILogger INTERFACE ================'
 '===================================================='
@@ -69,18 +109,22 @@ Private Property Get ILogger_Class() As ILogger
 End Property
 
 
-Private Sub ILogger_Log(ByVal LogLine As String)
-    Dim key As String
-    Do
-        key = GetTimeStampMs
-    Loop While this.Database.Exists(key)
-    this.Database.Item(GetTimeStampMs) = LogLine
+Private Property Get ILogger_LogDatabase() As Scripting.Dictionary
+    Set ILogger_LogDatabase = this.Database
+End Property
+
+
+Private Sub ILogger_Log(ByVal LogLine As String, Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+    Log LogLine, LogDatabase
 End Sub
 
 
-Private Sub ILogger_PrintLog()
-    Dim key As Variant
-    For Each key In this.Database.Keys
-        Debug.Print key & vbTab & vbTab & this.Database.Item(key)
-    Next key
+Private Sub ILogger_PrintLog(Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+    PrintLog LogDatabase
 End Sub
+
+
+Private Sub ILogger_ClearLog(Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+    ClearLog LogDatabase
+End Sub
+
