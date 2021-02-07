@@ -6,22 +6,26 @@ Attribute VB_Name = "ILogger"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '@Folder("SecureADODB.Logger")
 '@Interface
+'@Exposed
 Option Explicit
 
 
 '@Description("Returns instance reference")
 Public Property Get Self() As ILogger
+Attribute Self.VB_Description = "Returns instance reference"
 End Property
 
 '@Description("Returns class reference")
 Public Property Get Class() As ILogger
+Attribute Class.VB_Description = "Returns class reference"
 End Property
 
 '@Description("Returns instance reference")
 Public Property Get LogDatabase() As Scripting.Dictionary
+Attribute LogDatabase.VB_Description = "Returns instance reference"
 End Property
 
 
@@ -37,5 +41,5 @@ End Sub
 
 '@Description "Resets the log database"
 Public Sub ClearLog(Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+Attribute ClearLog.VB_Description = "Resets the log database"
 End Sub
-

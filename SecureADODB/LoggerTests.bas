@@ -87,7 +87,6 @@ Private Sub ztcLog_VerifyItemCountOnInstance()
     On Error GoTo TestFail
     
 Arrange:
-    Dim LogDb As Scripting.Dictionary: Set LogDb = New Scripting.Dictionary
     Dim AdoLogger As ILogger: Set AdoLogger = Logger.Create
 Act:
     AdoLogger.Log "AAA"
@@ -107,7 +106,6 @@ Private Sub ztcLog_VerifyItemCountOnInstanceWithClear()
     On Error GoTo TestFail
     
 Arrange:
-    Dim LogDb As Scripting.Dictionary: Set LogDb = New Scripting.Dictionary
     Dim AdoLogger As ILogger: Set AdoLogger = Logger.Create
 Act:
     AdoLogger.Log "AAA"
@@ -217,7 +215,7 @@ End Sub
 '@TestMethod("PrintLog")
 '@Description "Log some items, check the contents using Logger instance"
 Private Sub ziPrintLogInstanceTest()
-Attribute ziPrintLogInstanceTest.VB_Description = "Log some items, check the contents"
+Attribute ziPrintLogInstanceTest.VB_Description = "Log some items, check the contents using Logger instance"
     Dim AdoLogger As ILogger
     Set AdoLogger = Logger.Create
     
@@ -230,6 +228,7 @@ End Sub
 '@TestMethod("PrintLog")
 '@Description "Log some items, check the contents using global Logger"
 Private Sub ziPrintLogGlobalTest()
+Attribute ziPrintLogGlobalTest.VB_Description = "Log some items, check the contents using global Logger"
     Logger.Log "AAA"
     Logger.Log "BBB"
     'Logger.ClearLog
@@ -240,6 +239,7 @@ End Sub
 '@TestMethod("PrintLog")
 '@Description "Log some items, check the contents using global Logger and custom database"
 Private Sub ziPrintLogGlobalCustomDatabaseTest()
+Attribute ziPrintLogGlobalCustomDatabaseTest.VB_Description = "Log some items, check the contents using global Logger and custom database"
     Dim LogDb As Scripting.Dictionary
     Set LogDb = New Scripting.Dictionary
     LogDb.CompareMode = TextCompare
@@ -249,5 +249,3 @@ Private Sub ziPrintLogGlobalCustomDatabaseTest()
     'Logger.ClearLog
     Logger.PrintLog LogDb
 End Sub
-
-
