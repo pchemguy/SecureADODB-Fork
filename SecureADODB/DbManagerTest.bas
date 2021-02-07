@@ -35,11 +35,11 @@ End Sub
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
     On Error Resume Next
-    With New DbManager
-        Dim sut As IDbManager
-        Set sut = .Create(New StubDbConnection, New StubDbCommandFactory)
-    End With
-    AssertExpectedError ErrNo.NonDefaultInstanceErr
+    Dim sutObject As DbManager
+    Set sutObject = New DbManager
+    Dim sutInterface As IDbManager
+    Set sutInterface = sutObject.Create(New StubDbConnection, New StubDbCommandFactory)
+    AssertExpectedError Assert, ErrNo.NonDefaultInstanceErr
 End Sub
 
 
@@ -47,7 +47,7 @@ End Sub
 Private Sub Create_ThrowsGivenNullConnection()
     On Error Resume Next
     Dim sut As IDbManager: Set sut = DbManager.Create(Nothing, New StubDbCommandFactory)
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 
@@ -55,7 +55,7 @@ End Sub
 Private Sub Create_ThrowsGivenNullCommandFactory()
     On Error Resume Next
     Dim sut As IDbManager: Set sut = DbManager.Create(New StubDbConnection, Nothing)
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 
@@ -167,18 +167,22 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_ThrowsGivenNullDatabaseFlavor()
+Private Sub BuildConnectionString_ThrowsGivenNullDatabaseType()
     On Error Resume Next
     Dim connString As String: connString = DbManager.BuildConnectionString(vbNullString)
-    AssertExpectedError ErrNo.EmptyStringErr
+    AssertExpectedError Assert, ErrNo.EmptyStringErr
 End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_ThrowsGivenNullUnsupportedFlavor()
-    On Error Resume Next
-    Dim connString As String: connString = DbManager.BuildConnectionString("Access")
-    AssertExpectedError ErrNo.FeatureNotAvailableErr
+Private Sub BuildConnectionString_UnsupportedType()
+    On Error GoTo TestFail
+    Assert.AreEqual vbNullString, DbManager.BuildConnectionString("Access")
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
 End Sub
 
 
@@ -187,7 +191,7 @@ Private Sub BuildConnectionString_DeafultCSVConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
-    connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};Database=" + ThisWorkbook.Path + ";"
+    connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=" + ThisWorkbook.Path + ";"
     Assert.AreEqual connString, DbManager.BuildConnectionString("csv")
 
 CleanExit:
@@ -202,7 +206,7 @@ Private Sub BuildConnectionString_CSVConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
-    connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};Database=C:\TMP;;"
+    connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=C:\TMP;;"
     Assert.AreEqual connString, DbManager.BuildConnectionString("csv", "C:\TMP", "db.csv", ";")
 
 CleanExit:

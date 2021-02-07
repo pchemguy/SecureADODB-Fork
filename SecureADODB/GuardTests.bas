@@ -48,42 +48,42 @@ End Sub
 Private Sub EmptyString_Pass()
     On Error Resume Next
     Guard.EmptyString "Non-empty string"
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.EmptyString")
 Private Sub EmptyString_ThrowsIfNotString()
     On Error Resume Next
     Guard.EmptyString True
-    AssertExpectedError ErrNo.TypeMismatchErr
+    AssertExpectedError Assert, ErrNo.TypeMismatchErr
 End Sub
 
 '@TestMethod("Guard.EmptyString")
 Private Sub EmptyString_ThrowsIfEmptyString()
     On Error Resume Next
     Guard.EmptyString vbNullString
-    AssertExpectedError ErrNo.EmptyStringErr
+    AssertExpectedError Assert, ErrNo.EmptyStringErr
 End Sub
 
 '@TestMethod("Guard.Singleton")
 Private Sub Singleton_Pass()
     On Error Resume Next
     Guard.Singleton Guard
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.Singleton")
 Private Sub Singleton_DefaultFactoryPass()
     On Error Resume Next
     Guard.Singleton Guard.Create
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.Singleton")
 Private Sub Singleton_NothingCheck()
     On Error Resume Next
     Guard.Singleton Nothing
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 '@TestMethod("Guard.Singleton")
@@ -91,70 +91,70 @@ Private Sub Singleton_ThrowsIfNewingObject()
     On Error Resume Next
     '@Ignore VariableNotUsed, AssignmentNotUsed
     Dim GuardInstance As Guard: Set GuardInstance = New Guard
-    AssertExpectedError ErrNo.SingletonErr
+    AssertExpectedError Assert, ErrNo.SingletonErr
 End Sub
 
 '@TestMethod("Guard.ObjectNotSet")
 Private Sub ObjectNotSet_Pass()
     On Error Resume Next
     Guard.NullReference Guard
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.ObjectNotSet")
 Private Sub ObjectNotSet_ThrowsIfNotObject()
     On Error Resume Next
     Guard.NullReference Empty
-    AssertExpectedError ErrNo.ObjectRequiredErr
+    AssertExpectedError Assert, ErrNo.ObjectRequiredErr
 End Sub
 
 '@TestMethod("Guard.ObjectNotSet")
 Private Sub ObjectNotSet_ThrowsIfNothing()
     On Error Resume Next
     Guard.NullReference Nothing
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 '@TestMethod("Guard.ObjectSet")
 Private Sub ObjectSet_Pass()
     On Error Resume Next
     Guard.NonNullReference Nothing
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.ObjectSet")
 Private Sub ObjectSet_ThrowsIfNotObject()
     On Error Resume Next
     Guard.NonNullReference Empty
-    AssertExpectedError ErrNo.ObjectRequiredErr
+    AssertExpectedError Assert, ErrNo.ObjectRequiredErr
 End Sub
 
 '@TestMethod("Guard.ObjectSet")
 Private Sub ObjectSet_ThrowsIfNotNothing()
     On Error Resume Next
     Guard.NonNullReference Guard
-    AssertExpectedError ErrNo.ObjectSetErr
+    AssertExpectedError Assert, ErrNo.ObjectSetErr
 End Sub
 
 '@TestMethod("Guard.NonDefaultInstance")
 Private Sub NonDefaultInstance_Pass()
     On Error Resume Next
     Guard.NonDefaultInstance Guard
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.NonDefaultInstance")
 Private Sub NonDefaultInstance_ThrowsIfNothing()
     On Error Resume Next
     Guard.NonDefaultInstance Nothing
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 '@TestMethod("Guard.DefaultInstance")
 Private Sub DefaultInstance_ThrowsIfDefaultInstance()
     On Error Resume Next
     Guard.DefaultInstance Guard
-    AssertExpectedError ErrNo.DefaultInstanceErr
+    AssertExpectedError Assert, ErrNo.DefaultInstanceErr
 End Sub
 
 
