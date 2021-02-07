@@ -50,14 +50,54 @@ End Sub
 
 Private Sub Class_Initialize()
     Set AdoConnection = New ADODB.Connection
+    '@Ignore EmptyStringLiteral
+    this.StateMap = Array("adStateClosed", "adStateOpen", "adStateConnecting", "", "adStateExecuting", "", "", "", "adStateFetching")
 End Sub
 
+
 Private Sub Class_Terminate()
-    On Error Resume Next
+    On Error GoTo ErrorHandler
     If this.HasActiveTransaction Then AdoConnection.RollbackTrans
     AdoConnection.Close
-    On Error GoTo 0
     Set AdoConnection = Nothing
+    
+    On Error GoTo 0
+    LogAdoErrors
+    Exit Sub
+
+ErrorHandler:
+    LogAdoErrors
+    Resume Next
+End Sub
+
+
+Private Sub LogAdoErrors()
+    If this.LogController Is Nothing Then Exit Sub
+    
+    Dim AdoError As ADODB.Error
+    Dim message As String
+    message = "ADODB.Connection State: " + CStr(this.StateMap(AdoConnection.State))
+    this.LogController.Log message
+    For Each AdoError In AdoConnection.Errors
+        With AdoError
+            message = "ADODB.Error #" + CStr(.number) + ", " + _
+                      "SQLState: " + CStr(.SqlState) + ", " + _
+                      "Source: " + CStr(.source) + ", " + _
+                      "Description: " + CStr(.description)
+        End With
+        this.LogController.Log message
+    Next AdoError
+    AdoConnection.Errors.Clear
+        
+    With VBA.Err
+        If .number > 0 And Left(.source, 6) = "ADODB." Then
+            message = "VBA.Err #" + CStr(.number) + ", " + _
+                      "Source: " + CStr(.source) + ", " + _
+                      "Description: " + CStr(.description)
+        End If
+    End With
+    this.LogController.Log message
+    VBA.Err.Clear
 End Sub
 
 
@@ -84,8 +124,9 @@ Private Sub IDbConnection_BeginTransaction()
     '@Ignore VariableNotUsed
     Dim result As Long
     result = AdoConnection.BeginTrans
-    On Error GoTo 0
     this.HasActiveTransaction = True
+    LogAdoErrors
+    On Error GoTo 0
 End Sub
 
 Private Sub IDbConnection_CommitTransaction()
@@ -93,8 +134,9 @@ Private Sub IDbConnection_CommitTransaction()
     
     On Error Resume Next
     AdoConnection.CommitTrans
-    On Error GoTo 0
     this.HasActiveTransaction = False
+    LogAdoErrors
+    On Error GoTo 0
 End Sub
 
 Private Sub IDbConnection_RollbackTransaction()
@@ -102,6 +144,7 @@ Private Sub IDbConnection_RollbackTransaction()
     
     AdoConnection.RollbackTrans
     this.HasActiveTransaction = False
+    LogAdoErrors
 End Sub
 
 
@@ -153,5 +196,3 @@ End Sub
 Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.CursorTypeEnum, LockType As ADODB.LockTypeEnum, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin execute..."
 End Sub
-
-
