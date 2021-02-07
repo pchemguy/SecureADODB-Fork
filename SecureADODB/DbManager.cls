@@ -61,7 +61,7 @@ Public Function BuildConnectionString( _
         ) As String
 Attribute BuildConnectionString.VB_Description = "Build connection config"
         
-    Errors.GuardEmptyString TypeOrConnString
+    Guard.EmptyString TypeOrConnString
     Dim connConfig As TConnectionConfig
         
     If Path = vbNullString Then
@@ -86,35 +86,28 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                     .Options = Options
                 End If
                 .Database = .Path & Application.PathSeparator & .Name
+                .connString = "Driver=" + .Driver + ";" + _
+                              "Database=" + .Database + ";" + _
+                              .Options
             End With
         Case "csv"                                                              ' ============ CSV db ============ '
-            connConfig.Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
-            connConfig.Database = connConfig.Path
-            If Options <> vbNullString Then
-                connConfig.Options = Options
-            End If
+            With connConfig
+                .Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
+                .Database = .Path
+                If Options <> vbNullString Then
+                    .Options = Options
+                End If
+                .connString = "Driver=" + .Driver + ";" + _
+                              "DefaultDir=" + .Database + ";" + _
+                              .Options
+            End With
         Case Else
             If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Then    ' ============ Raw Connection String ============ '
                 connConfig.connString = TypeOrConnString
-                BuildConnectionString = connConfig.connString
-                Exit Function
+            Else
+                connConfig.connString = vbNullString
             End If
-            
-            Dim errorDetails As TError
-            With errorDetails
-                .number = ErrNo.FeatureNotAvailableErr
-                .Name = "FeatureNotAvailable"
-                .source = "DbManager.BuildConnectionString"
-                .message = "Config assistance for database " & TypeOrConnString & " is not available. Use raw connection string."
-                .description = .message
-            End With
-            RaiseError errorDetails
     End Select
-    With connConfig
-        .connString = "Driver=" + .Driver + ";" + _
-                      "Database=" + .Database + ";" + _
-                      .Options
-    End With
     BuildConnectionString = connConfig.connString
 End Function
 
