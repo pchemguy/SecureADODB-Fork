@@ -23,7 +23,7 @@ Public Sub TestADODBSourceSQL()
 
     qtConnStr = "OLEDB;" + adoConnStr
     
-    sSQL = "SELECT * FROM categories WHERE category_id <= 3 AND section = 'machinery'"
+    sSQL = "SELECT * FROM people WHERE id <= 45 AND last_name <> 'machinery'"
     
     Dim AdoRecordset As ADODB.Recordset
     Set AdoRecordset = New ADODB.Recordset
@@ -52,7 +52,7 @@ Public Sub TestADODBSourceCMD()
 
     qtConnStr = "OLEDB;" + adoConnStr
     
-    sSQL = "SELECT * FROM categories WHERE category_id <= 3 AND section = 'machinery'"
+    sSQL = "SELECT * FROM people WHERE id <= 45 AND last_name <> 'machinery'"
     
     Dim AdoRecordset As ADODB.Recordset
     Set AdoRecordset = New ADODB.Recordset
@@ -98,7 +98,7 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
 
     qtConnStr = "OLEDB;" + adoConnStr
     
-    sSQL = "SELECT * FROM categories WHERE category_id <= ? AND section = ?"
+    sSQL = "SELECT * FROM people WHERE id <= ? AND last_name <> ?"
     
     Dim AdoRecordset As ADODB.Recordset
     Set AdoRecordset = New ADODB.Recordset
@@ -111,7 +111,7 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     Set provider = AdoParameterProvider.Create(mappings)
     
     Dim adoParameter As ADODB.Parameter
-    Set adoParameter = provider.FromValue(3)
+    Set adoParameter = provider.FromValue(45)
     'adoParameter.name = "@category_id"
     AdoCommand.Parameters.Append adoParameter
     Set adoParameter = provider.FromValue("machinery")
@@ -151,7 +151,7 @@ Public Sub TestADODBSourceSQLite()
     
     sDriver = "{SQLite3 ODBC Driver}"
     sDatabaseExt = ".db"
-    sTable = "categories"
+    sTable = "people"
     sDatabase = ThisWorkbook.Path & Application.PathSeparator & fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
     adoConnStr = "Driver=" & sDriver & ";" & _
                  "Database=" & sDatabase & ";"
@@ -185,9 +185,10 @@ Public Sub TestADODBSourceCSV()
     sDatabase = ThisWorkbook.Path
     sTable = fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
     adoConnStr = "Driver=" & sDriver & ";" & _
-                 "Database=" & sDatabase & ";"
+                 "DefaultDir=" & sDatabase & ";"
     
     sSQL = "SELECT * FROM """ & sTable & """"
+    sSQL = sTable
     
     Dim AdoRecordset As ADODB.Recordset
     Set AdoRecordset = New ADODB.Recordset
@@ -197,8 +198,50 @@ Public Sub TestADODBSourceCSV()
             ActiveConnection:=adoConnStr, _
             CursorType:=adOpenKeyset, _
             LockType:=adLockReadOnly, _
-            Options:=(adCmdText Or adAsyncFetch)
+            Options:=(adCmdTable Or adAsyncFetch)
     Set AdoRecordset.ActiveConnection = Nothing
 End Sub
+
+
+Public Sub TestADODBConnect()
+    On Error Resume Next
+    Dim fso As New Scripting.FileSystemObject
+    Dim sDriver As String
+    Dim sDatabase As String
+    Dim sDatabaseExt As String
+    Dim sTable As String
+    Dim adoConnStr As String
+    Dim sSQL As String
+    
+    sDriver = "{Microsoft Text Driver (*.txt; *.csv)}"
+    sDatabaseExt = ".csv"
+    sDatabase = ThisWorkbook.Path
+    sTable = fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
+    adoConnStr = "Driver=" & sDriver & ";" & _
+                 "DefaultDir=" & sDatabase & ";"
+    
+    sSQL = "SELECT * FROM """ & sTable & """"
+    sSQL = sTable
+    
+    Dim AdoConnection As ADODB.Connection
+    Set AdoConnection = New ADODB.Connection
+    AdoConnection.ConnectionString = adoConnStr
+    AdoConnection.Open
+    Debug.Print AdoConnection.Errors.Count
+    AdoConnection.BeginTrans
+    
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseClient
+    AdoRecordset.Open _
+            source:=sSQL, _
+            ActiveConnection:=adoConnStr, _
+            CursorType:=adOpenKeyset, _
+            LockType:=adLockReadOnly, _
+            Options:=(adCmdTable Or adAsyncFetch)
+    Set AdoRecordset.ActiveConnection = Nothing
+End Sub
+
+
 
 
