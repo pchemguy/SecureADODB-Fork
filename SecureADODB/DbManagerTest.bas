@@ -59,7 +59,7 @@ Private Sub Create_ThrowsGivenNullCommandFactory()
 End Sub
 
 
-'@TestMethod("Transaction")
+'@TestMethod("Create")
 Private Sub Command_CreatesDbCommandWithFactory()
     Dim stubCommandFactory As StubDbCommandFactory
     Set stubCommandFactory = New StubDbCommandFactory
@@ -101,8 +101,22 @@ End Sub
 
 
 '@TestMethod("Transaction")
+Private Sub Rollback_RollbacksTransaction()
+    Dim stubConnection As StubDbConnection
+    Set stubConnection = New StubDbConnection
+    
+    Dim sut As IDbManager
+    Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
+    
+    sut.Rollback
+    
+    Assert.IsTrue stubConnection.DidRollBackTransaction
+End Sub
+
+
+'@TestMethod("Transaction")
 Private Sub Commit_ThrowsIfAlreadyCommitted()
-    On Error GoTo TestFail
+    On Error Resume Next
     
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
@@ -111,20 +125,14 @@ Private Sub Commit_ThrowsIfAlreadyCommitted()
     Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
     
     sut.Commit
-    On Error GoTo CleanFail
     sut.Commit
-    On Error GoTo 0
-
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
+    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
 End Sub
 
 
 '@TestMethod("Transaction")
 Private Sub Commit_ThrowsIfAlreadyRolledBack()
-    On Error GoTo TestFail
+    On Error Resume Next
     
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
@@ -133,20 +141,14 @@ Private Sub Commit_ThrowsIfAlreadyRolledBack()
     Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
     
     sut.Rollback
-    On Error GoTo CleanFail
     sut.Commit
-    On Error GoTo 0
-
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
+    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
 End Sub
 
 
 '@TestMethod("Transaction")
 Private Sub Rollback_ThrowsIfAlreadyCommitted()
-    On Error GoTo TestFail
+    On Error Resume Next
     
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
@@ -155,14 +157,8 @@ Private Sub Rollback_ThrowsIfAlreadyCommitted()
     Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
     
     sut.Commit
-    On Error GoTo CleanFail
     sut.Rollback
-    On Error GoTo 0
-
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
+    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
 End Sub
 
 

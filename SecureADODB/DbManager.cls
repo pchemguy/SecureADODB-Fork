@@ -30,8 +30,6 @@ Private Type TDbManager
     CommandFactory As IDbCommandFactory
     UseTransactions As Boolean
     UseDisconnectedRecordset As Boolean
-    Committed As Boolean
-    RolledBack As Boolean
 End Type
 Private this As TDbManager
 
@@ -179,13 +177,6 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Private Sub Class_Terminate()
-    On Error Resume Next
-    If Not this.Committed Then this.Connection.RollbackTransaction
-    On Error GoTo 0
-End Sub
-
-
 '@Description("Returns class reference")
 Public Property Get IDbManager_Class() As DbManager
 Attribute IDbManager_Class.VB_Description = "Returns class reference"
@@ -200,21 +191,11 @@ End Function
 
 Private Sub IDbManager_Commit()
     Errors.GuardExpression (Not this.UseTransactions), message:="Transactions are disabled by the caller."
-    Errors.GuardExpression this.Committed, message:="Transaction is already committed."
-    Errors.GuardExpression this.RolledBack, message:="Transaction was rolled back."
-    On Error Resume Next ' not all providers support transactions
     this.Connection.CommitTransaction
-    this.Committed = True
-    On Error GoTo 0
 End Sub
 
 
 Private Sub IDbManager_Rollback()
     Errors.GuardExpression (Not this.UseTransactions), message:="Transactions are disabled by the caller."
-    Errors.GuardExpression this.Committed, message:="Transaction is already committed."
-    
-    On Error Resume Next ' not all providers support transactions
     this.Connection.RollbackTransaction
-    this.RolledBack = True
-    On Error GoTo 0
 End Sub
