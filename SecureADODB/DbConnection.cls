@@ -20,24 +20,29 @@ Implements IDbConnection
 '@MemberAttribute VB_VarHelpID, -1
 Private WithEvents AdoConnection As ADODB.Connection
 Attribute AdoConnection.VB_VarHelpID = -1
-Private HasActiveTransaction As Boolean
+Private Type TDbConnection
+    LogController As ILogger
+    HasActiveTransaction As Boolean
+End Type
+Private this As TDbConnection
 
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
-Public Function Create(ByVal connString As String) As IDbConnection
+Public Function Create(ByVal connString As String, Optional ByRef LogController As ILogger = Nothing) As IDbConnection
     Errors.GuardNonDefaultInstance Me, DbConnection
     
     Dim result As DbConnection
     Set result = New DbConnection
-    result.CreInit connString
+    result.CreInit connString, LogController
     Set Create = result
 End Function
 
 
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal connString As String)
+Friend Sub CreInit(ByVal connString As String, Optional ByRef LogController As ILogger = Nothing)
 Attribute CreInit.VB_Description = "Default constructor"
     Errors.GuardEmptyString connString
+    Set this.LogController = LogController
     AdoConnection.Open connString
 End Sub
 
@@ -48,6 +53,7 @@ End Sub
 
 Private Sub Class_Terminate()
     On Error Resume Next
+    If this.HasActiveTransaction Then AdoConnection.RollbackTrans
     AdoConnection.Close
     On Error GoTo 0
     Set AdoConnection = Nothing
@@ -71,24 +77,30 @@ Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
 End Property
 
 Private Sub IDbConnection_BeginTransaction()
+    Guard.inTransaction this.HasActiveTransaction
+    
     On Error Resume Next 'not all providers support transactions
     '@Ignore VariableNotUsed
     Dim result As Long
     result = AdoConnection.BeginTrans
     On Error GoTo 0
-    HasActiveTransaction = True
+    this.HasActiveTransaction = True
 End Sub
 
 Private Sub IDbConnection_CommitTransaction()
+    Guard.NotInTransaction this.HasActiveTransaction
+    
     On Error Resume Next
     AdoConnection.CommitTrans
     On Error GoTo 0
-    HasActiveTransaction = False
+    this.HasActiveTransaction = False
 End Sub
 
 Private Sub IDbConnection_RollbackTransaction()
-    If HasActiveTransaction Then AdoConnection.RollbackTrans
-    HasActiveTransaction = False
+    Guard.NotInTransaction this.HasActiveTransaction
+    
+    AdoConnection.RollbackTrans
+    this.HasActiveTransaction = False
 End Sub
 
 

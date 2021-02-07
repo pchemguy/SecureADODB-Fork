@@ -20,7 +20,7 @@ End Type
 Private this As TInvokeState
 
 
-Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String) As IDbConnection
+Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String, Optional ByRef LogController As ILogger = Nothing) As IDbConnection
     this.CreateConnectionInvokes = this.CreateConnectionInvokes + 1
     Set IDbConnectionFactory_CreateInstance = New StubDbConnection
 End Function

@@ -56,12 +56,27 @@ Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
     Set IDbConnection_AdoConnection = stubConnection
 End Property
 
+Private Property Get IDbConnection_Self() As IDbConnection
+    Set IDbConnection_Self = Me
+End Property
+
+Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
+    IDbConnection_State = State
+End Property
+
 Private Sub IDbConnection_BeginTransaction()
+    Guard.inTransaction beganTransaction
     beganTransaction = True
 End Sub
 
 Private Sub IDbConnection_CommitTransaction()
+    Guard.NotInTransaction beganTransaction And Not committedTransaction And Not rolledBackTransaction
     committedTransaction = True
+End Sub
+
+Private Sub IDbConnection_RollbackTransaction()
+    Guard.NotInTransaction beganTransaction And Not committedTransaction And Not rolledBackTransaction
+    rolledBackTransaction = True
 End Sub
 
 Private Function IDbConnection_CreateCommand(ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String) As ADODB.Command
@@ -73,14 +88,3 @@ Private Function IDbConnection_CreateCommand(ByVal CommandType As ADODB.CommandT
     Set IDbConnection_CreateCommand = result
 End Function
 
-Private Sub IDbConnection_RollbackTransaction()
-    rolledBackTransaction = True
-End Sub
-
-Private Property Get IDbConnection_Self() As IDbConnection
-    Set IDbConnection_Self = Me
-End Property
-
-Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
-    IDbConnection_State = State
-End Property
