@@ -203,8 +203,7 @@ Public Sub TestADODBSourceCSV()
 End Sub
 
 
-Public Sub TestADODBConnect()
-    On Error Resume Next
+Public Sub TestADODBConnectCSV()
     Dim fso As New Scripting.FileSystemObject
     Dim sDriver As String
     Dim sDatabase As String
@@ -226,9 +225,12 @@ Public Sub TestADODBConnect()
     Dim AdoConnection As ADODB.Connection
     Set AdoConnection = New ADODB.Connection
     AdoConnection.ConnectionString = adoConnStr
+    
+    On Error Resume Next
     AdoConnection.Open
     Debug.Print AdoConnection.Errors.Count
     AdoConnection.BeginTrans
+    On Error GoTo 0
     
     Dim AdoRecordset As ADODB.Recordset
     Set AdoRecordset = New ADODB.Recordset
@@ -243,5 +245,36 @@ Public Sub TestADODBConnect()
 End Sub
 
 
+Public Sub TestADODBConnectSQLite()
+    Dim fso As New Scripting.FileSystemObject
+    Dim sDriver As String
+    Dim sDatabase As String
+    Dim sDatabaseExt As String
+    Dim sTable As String
+    Dim adoConnStr As String
+    Dim sSQL As String
+    
+    sDriver = "{SQLite3 ODBC Driver}"
+    sDatabaseExt = ".db"
+    sTable = "people"
+    sDatabase = ThisWorkbook.Path & Application.PathSeparator & fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
+    adoConnStr = "Driver=" & sDriver & ";" & _
+                 "Database=" & sDatabase & ";"
+    
+    sSQL = "SELECT * FROM """ & sTable & """"
+        
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseServer
+    AdoRecordset.Open _
+            source:=sSQL, _
+            ActiveConnection:=adoConnStr, _
+            CursorType:=adOpenKeyset, _
+            LockType:=adLockReadOnly, _
+            Options:=(adCmdText Or adAsyncFetch)
+    On Error Resume Next
+    Set AdoRecordset.ActiveConnection = Nothing
+    On Error GoTo 0
+End Sub
 
 
