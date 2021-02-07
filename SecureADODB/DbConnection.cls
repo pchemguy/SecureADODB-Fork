@@ -23,12 +23,13 @@ Attribute AdoConnection.VB_VarHelpID = -1
 Private Type TDbConnection
     LogController As ILogger
     HasActiveTransaction As Boolean
+    StateMap As Variant
 End Type
 Private this As TDbConnection
 
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
-Public Function Create(ByVal connString As String, Optional ByRef LogController As ILogger = Nothing) As IDbConnection
+Public Function Create(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing) As IDbConnection
     Errors.GuardNonDefaultInstance Me, DbConnection
     
     Dim result As DbConnection
@@ -39,7 +40,7 @@ End Function
 
 
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal connString As String, Optional ByRef LogController As ILogger = Nothing)
+Friend Sub CreInit(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing)
 Attribute CreInit.VB_Description = "Default constructor"
     Errors.GuardEmptyString connString
     Set this.LogController = LogController
