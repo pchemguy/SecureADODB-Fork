@@ -16,6 +16,7 @@ Option Explicit
 Implements IDbCommand
 
 Private Type TInvokeState
+    stubCommand As ADODB.Command
     ExecuteInvokes As Long
     ExecuteNonQueryInvokes As Long
     ExecuteWithParameterInvokes As Long
@@ -38,6 +39,10 @@ End Property
 
 Public Property Get GetSingleValueInvokes() As Long
     GetSingleValueInvokes = this.GetSingleValueInvokes + 1
+End Property
+
+Private Property Get IDbCommand_AdoCommand() As ADODB.Command
+    Set IDbCommand_AdoCommand = this.stubCommand
 End Property
 
 Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
