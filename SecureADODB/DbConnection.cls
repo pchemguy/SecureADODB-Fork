@@ -11,7 +11,7 @@ Attribute VB_Description = "A thin wrapper around an ADODB connection."
 '@Folder "SecureADODB.DbConnection"
 '@ModuleDescription("A thin wrapper around an ADODB connection.")
 '@PredeclaredId
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
+'@IgnoreModule AssignmentNotUsed, UseMeaningfulName, IllegalAnnotation
 '@Exposed
 Option Explicit
 
