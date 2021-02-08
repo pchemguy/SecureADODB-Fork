@@ -174,7 +174,7 @@ Private Sub GetSingleValue_ThrowsGivenClosedConnection()
     
     On Error GoTo CleanFail
     Dim value As Variant
-    value = sut.GetSingleValue(db, adCmdText, "SQL", args)
+    value = sut.ExecuteScalar(db, adCmdText, "SQL", args)
     On Error GoTo 0
     
 CleanFail:
@@ -198,7 +198,7 @@ Private Sub GetSingleValue_ThrowsGivenEmptyCommandString()
     
     On Error GoTo CleanFail
     Dim rs As ADODB.Recordset
-    Set rs = sut.GetSingleValue(db, adCmdText, vbNullString, args)
+    Set rs = sut.ExecuteScalar(db, adCmdText, vbNullString, args)
     On Error GoTo 0
     
 CleanFail:

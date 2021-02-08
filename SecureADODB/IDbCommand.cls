@@ -32,6 +32,6 @@ Attribute ExecuteNonQuery.VB_Description = "Executes the specified parameterized
 End Sub
 
 '@Description("Returns the value of the first field of the first record returned by the specified parameterized query.")
-Public Function GetSingleValue(ByVal sql As String, ParamArray args()) As Variant
-Attribute GetSingleValue.VB_Description = "Returns the value of the first field of the first record returned by the specified parameterized query."
+Public Function ExecuteScalar(ByVal sql As String, ParamArray args()) As Variant
+Attribute ExecuteScalar.VB_Description = "Returns the value of the first field of the first record returned by the specified parameterized query."
 End Function

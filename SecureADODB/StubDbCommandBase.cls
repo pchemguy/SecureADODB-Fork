@@ -59,8 +59,8 @@ Private Function IDbCommandBase_GetDisconnectedRecordset(ByVal cmd As ADODB.Comm
     Set IDbCommandBase_GetDisconnectedRecordset = New ADODB.Recordset
 End Function
 
-Private Function IDbCommandBase_GetSingleValue(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, args() As Variant) As Variant
+Private Function IDbCommandBase_ExecuteScalar(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, args() As Variant) As Variant
     this.GetSingleValueInvokes = this.GetSingleValueInvokes + 1
-    IDbCommandBase_GetSingleValue = this.SingleValueResult
+    IDbCommandBase_ExecuteScalar = this.SingleValueResult
 End Function
 

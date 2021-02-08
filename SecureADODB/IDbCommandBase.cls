@@ -27,8 +27,5 @@ Attribute GetDisconnectedRecordset.VB_Description = "Executes specified ADODB.Co
 End Function
 
 '@Description("Executes specified ADODB.Command, and returns the value of the first field of the first returned record.")
-Public Function GetSingleValue(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
-Attribute GetSingleValue.VB_Description = "Executes specified ADODB.Command, and returns the value of the first field of the first returned record."
+Public Function ExecuteScalar(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
 End Function
-
-

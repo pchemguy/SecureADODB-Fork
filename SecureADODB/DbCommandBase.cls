@@ -83,7 +83,7 @@ Private Function GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.R
 End Function
 
 
-Private Function GetSingleValue(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
+Private Function ExecuteScalar(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
     Errors.GuardEmptyString sql
     
     Dim cmd As ADODB.Command
@@ -92,7 +92,7 @@ Private Function GetSingleValue(ByVal db As IDbConnection, ByVal CommandType As 
     Dim results As ADODB.Recordset
     Set results = GetDisconnectedRecordset(cmd)
     
-    GetSingleValue = results.Fields.Item(0).value
+    ExecuteScalar = results.Fields.Item(0).value
 End Function
 
 
@@ -115,6 +115,6 @@ Private Function IDbCommandBase_GetDisconnectedRecordset(ByVal cmd As ADODB.Comm
     Set IDbCommandBase_GetDisconnectedRecordset = GetDisconnectedRecordset(cmd)
 End Function
 
-Private Function IDbCommandBase_GetSingleValue(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
-    IDbCommandBase_GetSingleValue = GetSingleValue(db, CommandType, sql, args)
+Private Function IDbCommandBase_ExecuteScalar(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
+    IDbCommandBase_ExecuteScalar = ExecuteScalar(db, CommandType, sql, args)
 End Function

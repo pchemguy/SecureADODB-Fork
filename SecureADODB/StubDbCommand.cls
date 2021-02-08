@@ -52,7 +52,7 @@ Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As
 End Sub
 
 
-Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args() As Variant) As Variant
+Private Function IDbCommand_ExecuteScalar(ByVal sql As String, ParamArray args() As Variant) As Variant
     this.GetSingleValueInvokes = this.GetSingleValueInvokes + 1
-    IDbCommand_GetSingleValue = Empty
+    IDbCommand_ExecuteScalar = Empty
 End Function

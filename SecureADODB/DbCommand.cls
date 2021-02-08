@@ -84,10 +84,10 @@ Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As
 End Sub
 
 
-Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args() As Variant) As Variant
+Private Function IDbCommand_ExecuteScalar(ByVal sql As String, ParamArray args() As Variant) As Variant
     'cannot pass ParamArray array directly to ByRef array argument
     Dim localArgs() As Variant
     localArgs = args
     
-    IDbCommand_GetSingleValue = this.Base.GetSingleValue(this.Connection, adCmdText, sql, localArgs)
+    IDbCommand_ExecuteScalar = this.Base.ExecuteScalar(this.Connection, adCmdText, sql, localArgs)
 End Function
