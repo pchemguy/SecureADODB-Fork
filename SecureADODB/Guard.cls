@@ -61,7 +61,7 @@ Public Sub EmptyString(ByVal Text As Variant)
 Attribute EmptyString.VB_Description = "Raises a run-time error if the specified string is empty."
     Dim errorDetails As TError
     With errorDetails
-        .trapped = (TypeName(Text) <> "String")
+        .trapped = (VarType(Text) <> vbString)
         If .trapped Then
             .Name = "TypeMismatchErr"
             .number = ErrNo.TypeMismatchErr
@@ -235,7 +235,7 @@ End Sub
 '@Description("Raises a run-time error if the specified IDbConnection has active transaction.")
 Public Sub inTransaction(ByVal HasActiveTransaction As Boolean)
 Attribute inTransaction.VB_Description = "Raises a run-time error if the specified IDbConnection has active transaction."
-    Debug.Assert TypeName(HasActiveTransaction) = "Boolean"
+    Debug.Assert VarType(HasActiveTransaction) = vbBoolean
     
     Dim errorDetails As TError
     With errorDetails
@@ -255,7 +255,7 @@ End Sub
 '@Description("Raises a run-time error if the specified IDbConnection has no active transaction.")
 Public Sub NotInTransaction(ByVal HasActiveTransaction As Boolean)
 Attribute NotInTransaction.VB_Description = "Raises a run-time error if the specified IDbConnection has no active transaction."
-    Debug.Assert TypeName(HasActiveTransaction) = "Boolean"
+    Debug.Assert VarType(HasActiveTransaction) = vbBoolean
     
     Dim errorDetails As TError
     With errorDetails

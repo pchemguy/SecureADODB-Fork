@@ -11,7 +11,7 @@ Const MsgUnexpectedErrRaised As String = "Unexpected error was raised."
 
 
 Public Sub AssertExpectedError(ByVal Assert As Rubberduck.PermissiveAssertClass, Optional ByVal ExpectedErrorNo As ErrNo = ErrNo.PassedNoErr)
-    Debug.Assert TypeName(Assert) = "PermissiveAssertClass"
+    Debug.Assert TypeOf Assert Is Rubberduck.PermissiveAssertClass
     
     Dim ActualErrNo As Long
     ActualErrNo = VBA.Err.number
