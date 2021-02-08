@@ -97,23 +97,13 @@ End Function
 
 
 Public Function ValidateOrdinalArguments(ByVal sql As String, ByRef args() As Variant) As Boolean
-    On Error GoTo CleanFail
-    Dim result As Boolean
-    
     Dim expected As Long
     expected = Len(sql) - Len(Replace(sql, "?", vbNullString))
     
     Dim actual As Long
-    On Error GoTo CleanFail 'if there are no args, LBound/UBound are both out of bounds
     actual = UBound(args) + (1 - LBound(args))
     
-CleanExit:
-    result = (expected = actual)
-    ValidateOrdinalArguments = result
-    Exit Function
-CleanFail:
-    actual = 0
-    Resume CleanExit
+    ValidateOrdinalArguments = (expected = actual)
 End Function
 
 
