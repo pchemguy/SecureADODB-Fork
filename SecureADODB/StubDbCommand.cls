@@ -33,9 +33,6 @@ Public Property Get ExecuteNonQueryInvokes() As Long
     ExecuteNonQueryInvokes = this.ExecuteNonQueryInvokes
 End Property
 
-Public Property Get ExecuteWithParameterInvokes() As Long
-    ExecuteWithParameterInvokes = this.ExecuteWithParameterInvokes
-End Property
 
 Public Property Get GetSingleValueInvokes() As Long
     GetSingleValueInvokes = this.GetSingleValueInvokes + 1
@@ -54,10 +51,6 @@ Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As
     this.ExecuteNonQueryInvokes = this.ExecuteNonQueryInvokes + 1
 End Sub
 
-Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArray params() As Variant) As ADODB.Recordset
-    this.ExecuteWithParameterInvokes = this.ExecuteWithParameterInvokes + 1
-    Set IDbCommand_ExecuteWithParameters = New ADODB.Recordset
-End Function
 
 Private Function IDbCommand_GetSingleValue(ByVal sql As String, ParamArray args() As Variant) As Variant
     this.GetSingleValueInvokes = this.GetSingleValueInvokes + 1

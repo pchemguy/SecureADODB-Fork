@@ -26,11 +26,6 @@ Public Function Execute(ByVal sql As String, ParamArray args()) As ADODB.Records
 Attribute Execute.VB_Description = "Returns an ADODB.Recordset that contains the results of the specified parameterized query."
 End Function
 
-'@Description("Returns an ADODB.Recordset that contains the results of the specified parameterized query, using specified ADODB.Parameters.")
-Public Function ExecuteWithParameters(ByVal sql As String, ParamArray params()) As ADODB.Recordset
-Attribute ExecuteWithParameters.VB_Description = "Returns an ADODB.Recordset that contains the results of the specified parameterized query, using specified ADODB.Parameters."
-End Function
-
 '@Description("Executes the specified parameterized SQL statement/command.")
 Public Sub ExecuteNonQuery(ByVal sql As String, ParamArray args())
 Attribute ExecuteNonQuery.VB_Description = "Executes the specified parameterized SQL statement/command."

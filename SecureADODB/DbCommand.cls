@@ -73,26 +73,6 @@ Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Va
 End Function
 
 
-Private Function IDbCommand_ExecuteWithParameters(ByVal sql As String, ParamArray params() As Variant) As ADODB.Recordset
-    Dim localParams() As Variant
-    localParams = params
-        
-    Dim emptyArgs() As Variant
-    Set this.AdoCommand = this.Base.CreateCommand(this.Connection, adCmdText, sql, emptyArgs)
-    
-    Dim i As Long
-    For i = LBound(localParams) To UBound(localParams)
-        this.AdoCommand.Parameters.Append localParams(i)
-    Next
-    
-    If this.UseDisconnectedRecordset Then
-        Set IDbCommand_ExecuteWithParameters = this.Base.GetDisconnectedRecordset(this.AdoCommand)
-    Else
-        Set IDbCommand_ExecuteWithParameters = this.AdoCommand.Execute
-    End If
-End Function
-
-
 Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
     'cannot pass ParamArray array directly to ByRef array argument
     Dim localArgs() As Variant
