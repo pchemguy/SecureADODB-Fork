@@ -1,13 +1,11 @@
 Attribute VB_Name = "UnitOfWorkADODBSampleCode"
 '@Folder("-- DraftsTemplatesSnippets --")
-'@IgnoreModule EmptyModule, VariableNotUsed, ProcedureNotUsed, UseMeaningfulName
+'@IgnoreModule EmptyModule, VariableNotUsed, ProcedureNotUsed
 Option Explicit
 
 
     
-'Private Sub UnitOfWorkTest()
-'    Dim ConnectionStringObject As SqliteConnectionString
-'    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.Path, "SecureADODB.db")
+'Private Sub DbManager()
 '    Dim connString As String
 '    connString = ConnectionStringObject.ADOConnectionString
 '
@@ -17,7 +15,7 @@ Option Explicit
 ''    Dim SQLRecordset As ADODB.Recordset
 ''    Set SQLRecordset = UnitOfWork.FromConnectionString(connString).Command.Execute(SQLQuery)
 '
-'    With UnitOfWork.FromConnectionString(connString)
+'    With DbManager.FromConnectionString(connString)
 '        'connection is open, a transaction is initiated.
 '
 '        'IDbCommand.Execute returns a disconnected ADODB.Recordset:
@@ -32,8 +30,8 @@ Option Explicit
 '        rows = results.GetRows
 '    End With 'transaction is rolled back if not committed, connection is closed.
 'End Sub
-'
-'
+
+
 'Private Sub AutoDbCommandTest()
 '    Dim ConnectionStringObject As SqliteConnectionString
 '    Set ConnectionStringObject = SqliteConnectionString.Create(ThisWorkbook.Path, "SecureADODB.db")

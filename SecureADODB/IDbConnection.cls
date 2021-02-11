@@ -11,7 +11,6 @@ Attribute VB_Description = "Represents an object that wraps an active ADODB conn
 '@Folder "SecureADODB.DbConnection.Abstract"
 '@ModuleDescription("Represents an object that wraps an active ADODB connection.")
 '@Interface
-'@IgnoreModule UseMeaningfulName
 '@Exposed
 Option Explicit
 

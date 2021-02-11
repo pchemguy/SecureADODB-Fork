@@ -69,7 +69,7 @@ Private Function GetStubParameter() As ADODB.Parameter
     Set stubParameter = New ADODB.Parameter
     stubParameter.value = 42
     stubParameter.Type = adInteger
-    stubParameter.direction = adParamInput
+    stubParameter.Direction = adParamInput
     Set GetStubParameter = stubParameter
 End Function
 

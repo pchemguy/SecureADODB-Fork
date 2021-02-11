@@ -30,7 +30,7 @@ End Property
 
 
 '@Description "Adds item to the log database"
-Public Sub Log(ByVal LogLine As String, Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+Public Sub Log(ByVal LogLine As String, Optional ByVal LogDatabase As Scripting.Dictionary = Nothing)
 Attribute Log.VB_Description = "Adds item to the log database"
 End Sub
 

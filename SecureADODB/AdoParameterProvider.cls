@@ -11,7 +11,7 @@ Attribute VB_Description = "An object responsible for converting a value of a ma
 '@Folder "SecureADODB.DbParameterProvider"
 '@ModuleDescription("An object responsible for converting a value of a mapped data type to an ADODB.Parameter object.")
 '@PredeclaredId
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
+'@IgnoreModule IllegalAnnotation
 '@Exposed
 Option Explicit
 
@@ -44,6 +44,7 @@ End Sub
 Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA.Collection
     Dim results As VBA.Collection
     Set results = New VBA.Collection
+    '@Ignore UseMeaningfulName
     Dim i As Long
     For i = LBound(values) To UBound(values)
         results.Add IParameterProvider_FromValue(values(i))
@@ -66,7 +67,7 @@ Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional B
     Dim result As ADODB.Parameter
     Set result = New ADODB.Parameter
     result.Type = mappings.Mapping(localDataTypeName)
-    result.direction = ADODB.ParameterDirectionEnum.adParamInput
+    result.Direction = ADODB.ParameterDirectionEnum.adParamInput
     
     If result.Type = AdoTypeMappings.DefaultNullMapping Then
         result.Attributes = ADODB.ParameterAttributesEnum.adParamNullable

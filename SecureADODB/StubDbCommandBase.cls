@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbCommandBase implementation."
 '@Folder "SecureADODB.DbCommand. Tests"
 '@ModuleDescription("A stub acting as a IDbCommandBase implementation.")
-'@IgnoreModule UseMeaningfulName, ProcedureNotUsed
+'@IgnoreModule ProcedureNotUsed
 Option Explicit
 
 Implements IDbCommandBase
@@ -51,12 +51,17 @@ End Property
 
 Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, args() As Variant) As ADODB.Command
     this.CreateCommandInvokes = this.CreateCommandInvokes + 1
-    Set IDbCommandBase_CreateCommand = New ADODB.Command
+    Dim result As ADODB.Command
+    Set result = New ADODB.Command
+    result.CommandType = CommandType
+    result.CommandText = sql
+    Set IDbCommandBase_CreateCommand = result
 End Function
 
 Private Function IDbCommandBase_GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.Recordset
     this.GetDisconnectedRecordsetInvokes = this.GetDisconnectedRecordsetInvokes + 1
     Set IDbCommandBase_GetDisconnectedRecordset = New ADODB.Recordset
+
 End Function
 
 Private Function IDbCommandBase_ExecuteScalar(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, args() As Variant) As Variant

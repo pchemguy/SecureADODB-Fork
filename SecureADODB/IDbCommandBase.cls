@@ -11,7 +11,6 @@ Attribute VB_Description = "Defines an explicit public interface for the DbComma
 '@Folder "SecureADODB.DbCommand.Abstract"
 '@ModuleDescription("Defines an explicit public interface for the DbCommandBase class.")
 '@Interface
-'@IgnoreModule UseMeaningfulName
 '@Exposed
 Option Explicit
 
@@ -28,4 +27,5 @@ End Function
 
 '@Description("Executes specified ADODB.Command, and returns the value of the first field of the first returned record.")
 Public Function ExecuteScalar(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
+Attribute ExecuteScalar.VB_Description = "Executes specified ADODB.Command, and returns the value of the first field of the first returned record."
 End Function

@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbConnection implementation."
 '@Folder "SecureADODB.DbConnection. Tests"
 '@ModuleDescription("A stub acting as a IDbConnection implementation.")
-'@IgnoreModule UseMeaningfulName, ProcedureNotUsed
+'@IgnoreModule ProcedureNotUsed
 Option Explicit
 
 Implements IDbConnection
