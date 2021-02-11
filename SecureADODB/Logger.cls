@@ -16,6 +16,12 @@ Option Explicit
 
 Implements ILogger
 
+Public Enum LoggerTypeEnum
+    logDisabled = -1
+    logGlobal = 1
+    logPrivate = 2
+End Enum
+
 Private Type TLogger
     Database As Scripting.Dictionary
 End Type
@@ -115,7 +121,7 @@ Private Property Get ILogger_LogDatabase() As Scripting.Dictionary
 End Property
 
 
-Private Sub ILogger_Log(ByVal LogLine As String, Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
+Private Sub ILogger_Log(ByVal LogLine As String, Optional ByVal LogDatabase As Scripting.Dictionary = Nothing)
     Log LogLine, LogDatabase
 End Sub
 

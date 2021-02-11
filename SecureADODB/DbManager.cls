@@ -6,12 +6,13 @@ Attribute VB_Name = "DbManager"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 Attribute VB_Description = "An object that encapsulates a database transaction."
 '@Folder "SecureADODB.DbManager"
 '@ModuleDescription("An object that encapsulates a database transaction.")
 '@PredeclaredId
-'@IgnoreModule UseMeaningfulName, ProcedureNotUsed
+'@Exposed
+'@IgnoreModule ProcedureNotUsed
 Option Explicit
 
 Implements IDbManager
@@ -25,13 +26,13 @@ Private Type TConnectionConfig
     connString As String
 End Type
 
-Private Type TDbManager
+Private Type TManager
     Connection As IDbConnection
     CommandFactory As IDbCommandFactory
     UseTransactions As Boolean
-    UseDisconnectedRecordset As Boolean
+    LogController As ILogger
 End Type
-Private this As TDbManager
+Private this As TManager
 
 
 '@Description("Returns class reference")
@@ -117,7 +118,7 @@ Public Function FromConnectionParameters( _
         Optional ByVal Name As String = vbNullString, _
         Optional ByVal Options As String = vbNullString, _
         Optional ByVal UseTransactions As Boolean = True, _
-        Optional ByVal UseDisconnectedRecordset As Boolean = False _
+        Optional ByVal LoggerType As LoggerTypeEnum = LoggerTypeEnum.logGlobal _
         ) As IDbManager
 Attribute FromConnectionParameters.VB_Description = "Creates a new manager using connection parameters."
 
@@ -125,9 +126,18 @@ Attribute FromConnectionParameters.VB_Description = "Creates a new manager using
     
     Dim connString As String
     connString = BuildConnectionString(TypeOrConnString, Path, Name, Options)
+    Dim LogController As ILogger
+    Select Case LoggerType
+        Case LoggerTypeEnum.logDisabled
+            Set LogController = Nothing
+        Case LoggerTypeEnum.logGlobal
+            Set LogController = Logger
+        Case LoggerTypeEnum.logPrivate
+            Set LogController = Logger.Create
+    End Select
     
     Dim db As IDbConnection
-    Set db = DbConnection.Create(connString)
+    Set db = DbConnection.Create(connString, LogController)
     
     Dim provider As IParameterProvider
     Set provider = AdoParameterProvider.Create(AdoTypeMappings.Default)
@@ -138,41 +148,39 @@ Attribute FromConnectionParameters.VB_Description = "Creates a new manager using
     Dim factory As IDbCommandFactory
     Set factory = DbCommandFactory.Create(baseCommand)
     
-    Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions, UseDisconnectedRecordset)
+    Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions, LogController)
 End Function
 
 
-'@Ignore UseMeaningfulName
 Public Function Create(ByVal db As IDbConnection, _
                        ByVal factory As IDbCommandFactory, _
               Optional ByVal UseTransactions As Boolean = True, _
-              Optional ByVal UseDisconnectedRecordset As Boolean = False) As IDbManager
+              Optional ByVal LogController As ILogger = Nothing) As IDbManager
               
     Guard.NonDefaultInstance Me
     
     Dim result As DbManager
     Set result = New DbManager
-    result.CreInit db, factory, UseTransactions, UseDisconnectedRecordset
+    result.CreInit db, factory, UseTransactions, LogController
     Set Create = result
 End Function
 
 
-'@Ignore UseMeaningfulName
 '@Description("Default constructor")
 Friend Sub CreInit(ByVal db As IDbConnection, _
-                       ByVal factory As IDbCommandFactory, _
-              Optional ByVal UseTransactions As Boolean = True, _
-              Optional ByVal UseDisconnectedRecordset As Boolean = False)
+                   ByVal factory As IDbCommandFactory, _
+          Optional ByVal UseTransactions As Boolean = True, _
+          Optional ByVal LogController As ILogger = Nothing)
 Attribute CreInit.VB_Description = "Default constructor"
               
     Guard.NullReference factory
     Guard.NullReference db
     Errors.GuardExpression db.State <> adStateOpen, message:="Connection should be open."
 
+    Set this.LogController = LogController
     Set this.Connection = db
     Set this.CommandFactory = factory
     this.UseTransactions = UseTransactions
-    this.UseDisconnectedRecordset = UseDisconnectedRecordset
     If this.UseTransactions Then this.Connection.BeginTransaction
 End Sub
 
@@ -184,8 +192,32 @@ Attribute IDbManager_Class.VB_Description = "Returns class reference"
 End Property
 
 
+Private Property Get IDbManager_LogController() As ILogger
+    Set IDbManager_LogController = this.LogController
+End Property
+
+
+Private Property Get IDbManager_Connection() As IDbConnection
+    Set IDbManager_Connection = this.Connection
+End Property
+
+
 Private Function IDbManager_Command() As IDbCommand
-    Set IDbManager_Command = this.CommandFactory.CreateInstance(this.Connection, this.UseDisconnectedRecordset)
+    Set IDbManager_Command = this.CommandFactory.CreateInstance(this.Connection)
+End Function
+
+
+Private Function IDbManager_Recordset(Optional ByVal Scalar As Boolean = False, _
+                                      Optional ByVal Disconnected As Boolean = True, _
+                                      Optional ByVal CacheSize As Long = 10, _
+                                      Optional ByVal CursorType As ADODB.CursorTypeEnum = -1, _
+                                      Optional ByVal AsyncMode As Boolean = False, _
+                                      Optional ByVal AsyncOption As ADODB.ExecuteOptionEnum = 0) As IDbRecordset
+              
+    Dim cmd As IDbCommand
+    Set cmd = this.CommandFactory.CreateInstance(this.Connection)
+    Set IDbManager_Recordset = DbRecordset.Create( _
+        cmd, Scalar, Disconnected, CacheSize, CursorType, AsyncMode, AsyncOption)
 End Function
 
 

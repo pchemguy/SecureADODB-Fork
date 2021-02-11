@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbCommand implementation."
 '@Folder "SecureADODB.DbCommand. Tests"
 '@ModuleDescription("A stub acting as a IDbCommand implementation.")
-'@IgnoreModule UseMeaningfulName, ProcedureNotUsed
+'@IgnoreModule ProcedureNotUsed
 Option Explicit
 
 Implements IDbCommand
@@ -33,14 +33,13 @@ Public Property Get ExecuteNonQueryInvokes() As Long
     ExecuteNonQueryInvokes = this.ExecuteNonQueryInvokes
 End Property
 
-
 Public Property Get GetSingleValueInvokes() As Long
     GetSingleValueInvokes = this.GetSingleValueInvokes + 1
 End Property
 
-Private Property Get IDbCommand_AdoCommand() As ADODB.Command
+Public Function IDbCommand_AdoCommand(ByVal sql As String, ParamArray args()) As ADODB.Command
     Set IDbCommand_AdoCommand = this.stubCommand
-End Property
+End Function
 
 Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
     this.ExecuteInvokes = this.ExecuteInvokes + 1
@@ -51,8 +50,8 @@ Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As
     this.ExecuteNonQueryInvokes = this.ExecuteNonQueryInvokes + 1
 End Sub
 
-
 Private Function IDbCommand_ExecuteScalar(ByVal sql As String, ParamArray args() As Variant) As Variant
     this.GetSingleValueInvokes = this.GetSingleValueInvokes + 1
     IDbCommand_ExecuteScalar = Empty
 End Function
+

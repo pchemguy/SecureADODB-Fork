@@ -11,15 +11,14 @@ Attribute VB_Description = "Represents an object abstracting a database command.
 '@Folder "SecureADODB.DbCommand.Abstract"
 '@ModuleDescription("Represents an object abstracting a database command.")
 '@Interface
-'@IgnoreModule UseMeaningfulName
 '@Exposed
 Option Explicit
 
 
-'@Description("Gets the wrapped ADODB command.")
-Public Property Get AdoCommand() As ADODB.Command
-Attribute AdoCommand.VB_Description = "Gets the wrapped ADODB command."
-End Property
+'@Description("Returns an ADODB.Command, without executing it.")
+Public Function AdoCommand(ByVal sql As String, ParamArray args()) As ADODB.Command
+Attribute AdoCommand.VB_Description = "Returns an ADODB.Command, without executing it."
+End Function
 
 '@Description("Returns an ADODB.Recordset that contains the results of the specified parameterized query.")
 Public Function Execute(ByVal sql As String, ParamArray args()) As ADODB.Recordset

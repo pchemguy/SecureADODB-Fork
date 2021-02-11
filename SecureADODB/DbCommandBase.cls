@@ -11,7 +11,7 @@ Attribute VB_Description = "An object intended to be used as a private instance 
 '@Folder "SecureADODB.DbCommand"
 '@ModuleDescription("An object intended to be used as a private instance field in a class implementing the IDbCommand interface (composition in place of inheritance).")
 '@PredeclaredId
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
+'@IgnoreModule IllegalAnnotation
 '@Exposed
 Option Explicit
 
@@ -53,18 +53,14 @@ Private Function CreateCommand(ByVal db As IDbConnection, ByVal CommandType As A
     Set cmd.ActiveConnection = db.AdoConnection
     cmd.CommandType = CommandType
     cmd.CommandText = sql
+    cmd.Prepared = True
     
-    On Error GoTo CleanFail
     Dim arg As ADODB.Parameter
     For Each arg In this.ParameterProvider.FromValues(args)
         cmd.Parameters.Append arg
     Next
     
-CleanExit:
     Set CreateCommand = cmd
-    Exit Function
-CleanFail:
-    Resume CleanExit
 End Function
 
 

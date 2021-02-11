@@ -1,7 +1,7 @@
 Attribute VB_Name = "DbRecordsetTests"
 Attribute VB_Description = "Tests for the DbRecordset class."
 '@Folder "SecureADODB.DbRecordset"
-''@TestModule
+'@TestModule
 '@ModuleDescription("Tests for the DbRecordset class.")
 '@IgnoreModule LineLabelNotUsed, UnhandledOnErrorResumeNext
 Option Explicit
@@ -41,24 +41,175 @@ Private Sub TestCleanup()
     Err.Clear
 End Sub
 
-'==================================================
-'==================================================
+
+'===================================================='
+'===================== FIXTURES ====================='
+'===================================================='
 
 
-'@TestMethod("Guard.Class")
-Private Sub Class_CheckAvailability()
+Private Function GetSingleParameterSelectSql() As String
+    GetSingleParameterSelectSql = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
+End Function
+
+
+Private Function GetStubParameter() As ADODB.Parameter
+    Dim stubAdoCommand As ADODB.Command: Set stubAdoCommand = New ADODB.Command
+    Set GetStubParameter = stubAdoCommand.CreateParameter("StubInteger", adInteger, adParamInput, , 42)
+End Function
+
+
+Private Function GetStubDbCommand() As IDbCommand
+    Dim stubExConnection As StubDbConnection
+    Set stubExConnection = New StubDbConnection
+
+    Dim stubBase As StubDbCommandBase
+    Set stubBase = New StubDbCommandBase
+    
+    Set GetStubDbCommand = DbCommand.Create(stubExConnection, stubBase)
+End Function
+
+
+'===================================================='
+'==================== TEST CASES ===================='
+'===================================================='
+
+
+'@TestMethod("Test Fixture")
+Private Sub ztcGetStubParameter_ValidatesStubParameter()
     On Error GoTo TestFail
     
 Arrange:
-    Dim classVar As Object: Set classVar = DbRecordset
+    
 Act:
-    Dim classVarReturned As Object: Set classVarReturned = classVar.Create.Class
+    Dim stubParameter As ADODB.Parameter: Set stubParameter = GetStubParameter
 Assert:
-    Assert.AreEqual TypeName(classVar), TypeName(classVarReturned), "Error: type mismatch: " & TypeName(classVarReturned) & " type."
-    Assert.AreSame classVar, classVarReturned, "Error: bad Class pointer"
-
+    Assert.AreEqual "StubInteger", stubParameter.Name, "Stub ADODB.Parameter name mismatch: " & "StubInteger" & " vs. " & stubParameter.Name
+    Assert.AreEqual adInteger, stubParameter.Type, "Stub ADODB.Parameter type mismatch: " & adInteger & " vs. " & stubParameter.Type
+    Assert.AreEqual adParamInput, stubParameter.Direction, "Stub ADODB.Parameter direction mismatch: " & adParamInput & " vs. " & stubParameter.Direction
+    Assert.AreEqual 42, stubParameter.value, "Stub ADODB.Parameter value mismatch: " & 42 & " vs. " & stubParameter.value
+    
 CleanExit:
     Exit Sub
 TestFail:
     Assert.Fail "Error: " & Err.number & " - " & Err.description
 End Sub
+
+
+'@TestMethod("Test Fixture")
+Private Sub ztcGetSingleParameterSelectSql_ValidatesStubQuery()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim expected As String
+    expected = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
+Act:
+    Dim actual As String
+    actual = GetSingleParameterSelectSql
+Assert:
+    Assert.AreEqual expected, actual, "Stub query mismatch: " & expected & " vs. " & actual
+    
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("Test Fixture")
+Private Sub ztcGetStubDbCommand_ValidatesStubDbCommand()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim expected As String
+    expected = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
+Act:
+    Dim stubCommand As IDbCommand
+    Set stubCommand = GetStubDbCommand
+    
+    Dim stubAdoCommand As ADODB.Command
+    Set stubAdoCommand = stubCommand.AdoCommand(GetSingleParameterSelectSql, GetStubParameter)
+Assert:
+    Assert.IsNotNothing stubCommand, "GetStubDbCommand command did not return IDbCommand"
+    Assert.IsNotNothing stubAdoCommand, "GetStubDbCommand: AdoCommand was not set"
+    Assert.IsTrue TypeOf stubAdoCommand Is ADODB.Command, "GetStubDbCommand: AdoCommand type mismatch"
+    Assert.AreEqual ADODB.CommandTypeEnum.adCmdText, stubAdoCommand.CommandType, "GetStubDbCommand: command type mismatch"
+    Assert.AreEqual expected, stubAdoCommand.CommandText, "GetStubDbCommand: command text mismatch"
+    
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("Create")
+Private Sub ztcCreate_ValidatesCreationOfDisconnectedFullRecordser()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim Recordset As IDbRecordset
+    Set Recordset = DbRecordset.Create(GetStubDbCommand)
+Act:
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = Recordset.AdoRecordset
+Assert:
+    AssertExpectedError Assert, ErrNo.PassedNoErr
+    Assert.AreNotEqual 1, AdoRecordset.MaxRecords, "Regular recordset should have MaxRecords=0 or >1"
+    Assert.AreEqual ADODB.CursorLocationEnum.adUseClient, AdoRecordset.CursorLocation, "CursorLocation should be set to adUseClient for a disconnected recordset."
+    Assert.AreEqual 10, AdoRecordset.CacheSize, "Expected CacheSize=10"
+    Assert.AreEqual ADODB.CursorTypeEnum.adOpenStatic, AdoRecordset.CursorType, "Expectec CursorType=adOpenStatic for a disconnected recordset."
+    
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("Create")
+Private Sub ztcCreate_ValidatesCreationOfDisconnectedScalarRecordser()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim Recordset As IDbRecordset
+    Set Recordset = DbRecordset.Create(GetStubDbCommand, True)
+Act:
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = Recordset.AdoRecordset
+Assert:
+    AssertExpectedError Assert, ErrNo.PassedNoErr
+    Assert.AreEqual 1, AdoRecordset.MaxRecords, "Scalar recordset should have MaxRecords=1"
+    Assert.AreEqual ADODB.CursorLocationEnum.adUseClient, AdoRecordset.CursorLocation, "CursorLocation should be set to adUseClient for a disconnected recordset."
+    Assert.AreEqual 10, AdoRecordset.CacheSize, "Expected CacheSize=10"
+    Assert.AreEqual ADODB.CursorTypeEnum.adOpenStatic, AdoRecordset.CursorType, "Expected CursorType=adOpenStatic for a disconnected recordset."
+    
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("Create")
+Private Sub ztcCreate_ValidatesCreationOfOnlineFullRecordser()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim Recordset As IDbRecordset
+    Set Recordset = DbRecordset.Create(GetStubDbCommand, , False)
+Act:
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = Recordset.AdoRecordset
+Assert:
+    AssertExpectedError Assert, ErrNo.PassedNoErr
+    Assert.AreNotEqual 1, AdoRecordset.MaxRecords, "Regular recordset should have MaxRecords=0 or >1"
+    Assert.AreEqual ADODB.CursorLocationEnum.adUseServer, AdoRecordset.CursorLocation, "CursorLocation should be set to adUseServer for an online recordset."
+    Assert.AreEqual 10, AdoRecordset.CacheSize, "Expected CacheSize=10"
+    Assert.AreEqual ADODB.CursorTypeEnum.adOpenForwardOnly, AdoRecordset.CursorType, "Expected CursorType=adOpenForwardOnly for a disconnected recordset."
+    
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+

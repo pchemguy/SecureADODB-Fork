@@ -32,8 +32,13 @@ Private Sub ModuleCleanup()
 End Sub
 
 
+'===================================================='
+'==================== TEST CASES ===================='
+'===================================================='
+
+
 '@TestMethod("Factory Guard")
-Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
+Private Sub ztcCreate_ThrowsIfNotInvokedFromDefaultInstance()
     On Error Resume Next
     Dim sutObject As DbManager
     Set sutObject = New DbManager
@@ -44,7 +49,7 @@ End Sub
 
 
 '@TestMethod("Factory Guard")
-Private Sub Create_ThrowsGivenNullConnection()
+Private Sub ztcCreate_ThrowsGivenNullConnection()
     On Error Resume Next
     Dim sut As IDbManager: Set sut = DbManager.Create(Nothing, New StubDbCommandFactory)
     AssertExpectedError Assert, ErrNo.ObjectNotSetErr
@@ -52,7 +57,7 @@ End Sub
 
 
 '@TestMethod("Factory Guard")
-Private Sub Create_ThrowsGivenNullCommandFactory()
+Private Sub ztcCreate_ThrowsGivenNullCommandFactory()
     On Error Resume Next
     Dim sut As IDbManager: Set sut = DbManager.Create(New StubDbConnection, Nothing)
     AssertExpectedError Assert, ErrNo.ObjectNotSetErr
@@ -60,7 +65,7 @@ End Sub
 
 
 '@TestMethod("Create")
-Private Sub Command_CreatesDbCommandWithFactory()
+Private Sub ztcCommand_CreatesDbCommandWithFactory()
     Dim stubCommandFactory As StubDbCommandFactory
     Set stubCommandFactory = New StubDbCommandFactory
     
@@ -75,7 +80,7 @@ End Sub
 
 
 '@TestMethod("Transaction")
-Private Sub Create_StartsTransaction()
+Private Sub ztcCreate_StartsTransaction()
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
     
@@ -87,7 +92,7 @@ End Sub
 
 
 '@TestMethod("Transaction")
-Private Sub Commit_CommitsTransaction()
+Private Sub ztcCommit_CommitsTransaction()
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
     
@@ -101,7 +106,55 @@ End Sub
 
 
 '@TestMethod("Transaction")
-Private Sub Rollback_RollbacksTransaction()
+Private Sub ztcCommit_ThrowsIfAlreadyCommitted()
+    On Error Resume Next
+    
+    Dim stubConnection As StubDbConnection
+    Set stubConnection = New StubDbConnection
+    
+    Dim sut As IDbManager
+    Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
+    
+    sut.Commit
+    sut.Commit
+    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
+End Sub
+
+
+'@TestMethod("Transaction")
+Private Sub ztcCommit_ThrowsIfAlreadyRolledBack()
+    On Error Resume Next
+    
+    Dim stubConnection As StubDbConnection
+    Set stubConnection = New StubDbConnection
+    
+    Dim sut As IDbManager
+    Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
+    
+    sut.Rollback
+    sut.Commit
+    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
+End Sub
+
+
+'@TestMethod("Transaction")
+Private Sub ztcRollback_ThrowsIfAlreadyCommitted()
+    On Error Resume Next
+    
+    Dim stubConnection As StubDbConnection
+    Set stubConnection = New StubDbConnection
+    
+    Dim sut As IDbManager
+    Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
+    
+    sut.Commit
+    sut.Rollback
+    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
+End Sub
+
+
+'@TestMethod("Transaction")
+Private Sub ztcRollback_RollbacksTransaction()
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
     
@@ -114,56 +167,8 @@ Private Sub Rollback_RollbacksTransaction()
 End Sub
 
 
-'@TestMethod("Transaction")
-Private Sub Commit_ThrowsIfAlreadyCommitted()
-    On Error Resume Next
-    
-    Dim stubConnection As StubDbConnection
-    Set stubConnection = New StubDbConnection
-    
-    Dim sut As IDbManager
-    Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
-    
-    sut.Commit
-    sut.Commit
-    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
-End Sub
-
-
-'@TestMethod("Transaction")
-Private Sub Commit_ThrowsIfAlreadyRolledBack()
-    On Error Resume Next
-    
-    Dim stubConnection As StubDbConnection
-    Set stubConnection = New StubDbConnection
-    
-    Dim sut As IDbManager
-    Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
-    
-    sut.Rollback
-    sut.Commit
-    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
-End Sub
-
-
-'@TestMethod("Transaction")
-Private Sub Rollback_ThrowsIfAlreadyCommitted()
-    On Error Resume Next
-    
-    Dim stubConnection As StubDbConnection
-    Set stubConnection = New StubDbConnection
-    
-    Dim sut As IDbManager
-    Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
-    
-    sut.Commit
-    sut.Rollback
-    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
-End Sub
-
-
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_ThrowsGivenNullDatabaseType()
+Private Sub ztcBuildConnectionString_ThrowsGivenNullDatabaseType()
     On Error Resume Next
     Dim connString As String: connString = DbManager.BuildConnectionString(vbNullString)
     AssertExpectedError Assert, ErrNo.EmptyStringErr
@@ -171,7 +176,7 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_UnsupportedType()
+Private Sub ztcBuildConnectionString_ValidatesUnsupportedType()
     On Error GoTo TestFail
     Assert.AreEqual vbNullString, DbManager.BuildConnectionString("Access")
 
@@ -183,7 +188,7 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_DeafultCSVConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesDeafultCSVConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
@@ -198,7 +203,7 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_CSVConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesCSVConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
@@ -213,7 +218,7 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_DeafultSQLiteConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesDeafultSQLiteConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
@@ -229,7 +234,7 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_SQLiteConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesSQLiteConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
@@ -244,7 +249,7 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_RawConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesRawConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String

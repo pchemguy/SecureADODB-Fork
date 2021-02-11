@@ -9,9 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "An implementation of an abstract factory that creates DbCommand objects."
 '@Folder "SecureADODB.DbCommand"
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
-'@PredeclaredId
 '@ModuleDescription("An implementation of an abstract factory that creates DbCommand objects.")
+'@PredeclaredId
 
 Option Explicit
 
@@ -57,7 +56,7 @@ End Sub
 
 
 '@Description("Default interface factory")
-Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection, Optional ByVal UseDisconnectedRecordset As Boolean = False) As IDbCommand
+Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection) As IDbCommand
 Attribute IDbCommandFactory_CreateInstance.VB_Description = "Default interface factory"
-    Set IDbCommandFactory_CreateInstance = this.commandClass.Create(db, this.Base, UseDisconnectedRecordset)
+    Set IDbCommandFactory_CreateInstance = this.commandClass.Create(db, this.Base)
 End Function

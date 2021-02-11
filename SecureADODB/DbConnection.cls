@@ -11,7 +11,7 @@ Attribute VB_Description = "A thin wrapper around an ADODB connection."
 '@Folder "SecureADODB.DbConnection"
 '@ModuleDescription("A thin wrapper around an ADODB connection.")
 '@PredeclaredId
-'@IgnoreModule AssignmentNotUsed, UseMeaningfulName, IllegalAnnotation
+'@IgnoreModule AssignmentNotUsed, IllegalAnnotation
 '@Exposed
 Option Explicit
 
@@ -22,8 +22,11 @@ Private WithEvents AdoConnection As ADODB.Connection
 Attribute AdoConnection.VB_VarHelpID = -1
 Private Type TDbConnection
     LogController As ILogger
+    '''' If  particular backend does not support transaction, "begin" method raises an error, and the corresponding handler sets this flag
+    TransactionsDisabled As Boolean
     HasActiveTransaction As Boolean
-    StateMap As Variant     'Map for ADODB.ObjectStateEnum
+    '''' Map for ADODB.ObjectStateEnum
+    StateMap As Variant
 End Type
 Private this As TDbConnection
 
@@ -43,7 +46,9 @@ End Function
 Friend Sub CreInit(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing)
 Attribute CreInit.VB_Description = "Default constructor"
     Errors.GuardEmptyString connString
+    
     Set this.LogController = LogController
+    this.TransactionsDisabled = False
     AdoConnection.Open connString
 End Sub
 
@@ -62,7 +67,6 @@ Private Sub Class_Terminate()
     Set AdoConnection = Nothing
     
     On Error GoTo 0
-    LogAdoErrors
     Exit Sub
 
 ErrorHandler:
@@ -120,26 +124,36 @@ End Property
 Private Sub IDbConnection_BeginTransaction()
     Guard.inTransaction this.HasActiveTransaction
     
-    On Error Resume Next 'not all providers support transactions
+    On Error GoTo ErrorHandler
     '@Ignore VariableNotUsed
     Dim result As Long
+    '''' If  particular backend does not support transaction, the next line raises an error, and the corresponding handler sets this.TransactionsDisabled
     result = AdoConnection.BeginTrans
-    this.HasActiveTransaction = True
+    If Not this.TransactionsDisabled Then this.HasActiveTransaction = True
     LogAdoErrors
     On Error GoTo 0
+    Exit Sub
+
+ErrorHandler:
+    If VBA.Err.number = 3251 Then
+        this.TransactionsDisabled = True
+        Resume Next
+    Else
+        Err.Raise Err.number, Err.source, Err.description, Err.HelpFile, Err.HelpContext
+    End If
 End Sub
 
 Private Sub IDbConnection_CommitTransaction()
+    If this.TransactionsDisabled Then Exit Sub
     Guard.NotInTransaction this.HasActiveTransaction
     
-    On Error Resume Next
     AdoConnection.CommitTrans
     this.HasActiveTransaction = False
     LogAdoErrors
-    On Error GoTo 0
 End Sub
 
 Private Sub IDbConnection_RollbackTransaction()
+    If this.TransactionsDisabled Then Exit Sub
     Guard.NotInTransaction this.HasActiveTransaction
     
     AdoConnection.RollbackTrans
