@@ -117,7 +117,7 @@ Private Sub ztcCommit_ThrowsIfAlreadyCommitted()
     
     sut.Commit
     sut.Commit
-    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
+    AssertExpectedError Assert, ErrNo.AdoNotInTransactionErr
 End Sub
 
 
@@ -133,7 +133,7 @@ Private Sub ztcCommit_ThrowsIfAlreadyRolledBack()
     
     sut.Rollback
     sut.Commit
-    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
+    AssertExpectedError Assert, ErrNo.AdoNotInTransactionErr
 End Sub
 
 
@@ -149,7 +149,7 @@ Private Sub ztcRollback_ThrowsIfAlreadyCommitted()
     
     sut.Commit
     sut.Rollback
-    AssertExpectedError Assert, ErrNo.AdoNotInTransaction
+    AssertExpectedError Assert, ErrNo.AdoNotInTransactionErr
 End Sub
 
 
@@ -171,7 +171,7 @@ End Sub
 Private Sub ztcBuildConnectionString_ThrowsGivenNullDatabaseType()
     On Error Resume Next
     Dim connString As String: connString = DbManager.BuildConnectionString(vbNullString)
-    AssertExpectedError Assert, ErrNo.AdoConnectionStringError
+    AssertExpectedError Assert, ErrNo.AdoConnectionStringErr
 End Sub
 
 
@@ -179,7 +179,7 @@ End Sub
 Private Sub ztcBuildConnectionString_ThrowsGivenUnsupportedType()
     On Error Resume Next
     Dim connString As String: connString = DbManager.BuildConnectionString("Access")
-    AssertExpectedError Assert, ErrNo.AdoConnectionStringError
+    AssertExpectedError Assert, ErrNo.AdoConnectionStringErr
 End Sub
 
 
