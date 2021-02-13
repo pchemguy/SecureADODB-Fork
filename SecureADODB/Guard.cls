@@ -232,9 +232,9 @@ Attribute FileNotExist.VB_Description = "Raises a run-time error if the specifie
 End Sub
 
 
-'@Description("Raises a run-time error if the specified IDbConnection has active transaction.")
-Public Sub inTransaction(ByVal HasActiveTransaction As Boolean)
-Attribute inTransaction.VB_Description = "Raises a run-time error if the specified IDbConnection has active transaction."
+'@Description("Raises a run-time error if the specified connection has active transaction. (Trapped on True)")
+Public Sub InTransaction(ByVal HasActiveTransaction As Boolean)
+Attribute InTransaction.VB_Description = "Raises a run-time error if the specified connection has active transaction. (Trapped on True)"
     Debug.Assert VarType(HasActiveTransaction) = vbBoolean
     
     Dim errorDetails As TError
@@ -252,9 +252,9 @@ Attribute inTransaction.VB_Description = "Raises a run-time error if the specifi
 End Sub
 
 
-'@Description("Raises a run-time error if the specified IDbConnection has no active transaction.")
+'@Description("Raises a run-time error if the specified connection has no active transaction. (Trapped on False)")
 Public Sub NotInTransaction(ByVal HasActiveTransaction As Boolean)
-Attribute NotInTransaction.VB_Description = "Raises a run-time error if the specified IDbConnection has no active transaction."
+Attribute NotInTransaction.VB_Description = "Raises a run-time error if the specified connection has no active transaction. (Trapped on False)"
     Debug.Assert VarType(HasActiveTransaction) = vbBoolean
     
     Dim errorDetails As TError
@@ -270,3 +270,32 @@ Attribute NotInTransaction.VB_Description = "Raises a run-time error if the spec
         End If
     End With
 End Sub
+
+
+'@Description("Raises a run-time error if the specified connection string is not valid or provider cannot be found. (Trapped on Nothing or vbNullString)")
+Public Sub ConnectionStringError(ByVal dboOrConnStr As Variant)
+Attribute ConnectionStringError.VB_Description = "Raises a run-time error if the specified connection string is not valid or provider cannot be found. (Trapped on Nothing or vbNullString)"
+    Dim errorDetails As TError
+    With errorDetails
+        .trapped = IsFalsy(dboOrConnStr)
+        If .trapped Then
+            .Name = "ConnectionStringError"
+            .number = ErrNo.AdoConnectionStringError
+            .source = "Argument is Nothing"
+            .message = "Either the connection string is invalid or provider not found"
+            .description = .message
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
+
+'            Dim errorDetails As TError
+'            With errorDetails
+'                .number = ErrNo.NoObject
+'                .Name = "NoObject"
+'                .source = "DbCommandFactory"
+'                .message = "Unknown DbCommand class: " & commandClassName
+'                .description = .message
+'            End With
+'            RaiseError errorDetails
+'

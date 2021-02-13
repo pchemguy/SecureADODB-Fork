@@ -158,6 +158,44 @@ Private Sub DefaultInstance_ThrowsIfDefaultInstance()
 End Sub
 
 
+'@TestMethod("IsFalsy")
+Private Sub IsFalsy_VerifiesFalsiness()
+    On Error GoTo TestFail
+    
+Arrange:
+    '@Ignore VariableNotAssigned
+    Dim TestVar As Variant
+    '@Ignore VariableNotAssigned
+    Dim TestObj As Object
+    Dim TestColl As VBA.Collection
+    Set TestColl = New VBA.Collection
+Act:
+    
+Assert:
+    Assert.IsTrue IsFalsy(Empty), "Empty should be falsy"
+    Assert.IsTrue IsFalsy(Null), "Null should be falsy"
+    Assert.IsTrue IsFalsy(Nothing), "Nothing should be falsy"
+    Assert.IsTrue IsFalsy(False), "False should be falsy"
+    Assert.IsFalse IsFalsy(True), "True should be truthy"
+    Assert.IsTrue IsFalsy(vbNullString), "vbNullString should be falsy"
+    '@Ignore EmptyStringLiteral
+    Assert.IsTrue IsFalsy(""), "Empty string literal should be falsy"
+    Assert.IsFalse IsFalsy("Some text"), "Non-empty should be truthy"
+    '@Ignore UnassignedVariableUsage
+    Assert.IsTrue IsFalsy(TestVar), "Empty variant should be falsy"
+    Assert.IsTrue IsFalsy(0&), "0 should be falsy"
+    Assert.IsTrue IsFalsy(0#), "0.0 should be falsy"
+    '@Ignore UnassignedVariableUsage
+    Assert.IsTrue IsFalsy(TestObj), "Not set object should be falsy"
+    Assert.IsFalse IsFalsy(TestColl), "Set object should be truthy"
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
 '@TestMethod("Guard.Self")
 Private Sub Self_CheckAvailability()
     On Error GoTo TestFail
