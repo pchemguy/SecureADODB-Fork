@@ -21,12 +21,13 @@ Implements IDbConnection
 Private WithEvents AdoConnection As ADODB.Connection
 Attribute AdoConnection.VB_VarHelpID = -1
 Private Type TDbConnection
-    LogController As ILogger
+    ExecuteStatus As ADODB.EventStatusEnum
+    RecordsAffected As Long
     '''' If  particular backend does not support transaction, "begin" method raises an error, and the corresponding handler sets this flag
     TransactionsDisabled As Boolean
     HasActiveTransaction As Boolean
-    '''' Map for ADODB.ObjectStateEnum
-    StateMap As Variant
+    StateMap As Variant    '''' Map for ADODB.ObjectStateEnum
+    LogController As ILogger
 End Type
 Private this As TDbConnection
 
@@ -123,13 +124,27 @@ Private Property Get IDbConnection_Self() As IDbConnection
     Set IDbConnection_Self = Me
 End Property
 
+
 Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
     Set IDbConnection_AdoConnection = AdoConnection
 End Property
 
+
 Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
     IDbConnection_State = AdoConnection.State
 End Property
+
+
+
+Private Property Get IDbConnection_ExecuteStatus() As ADODB.EventStatusEnum
+    IDbConnection_ExecuteStatus = this.ExecuteStatus
+End Property
+
+
+Private Property Get IDbConnection_RecordsAffected() As Long
+    IDbConnection_RecordsAffected = this.RecordsAffected
+End Property
+
 
 Private Sub IDbConnection_BeginTransaction()
     Guard.InTransaction this.HasActiveTransaction
@@ -153,6 +168,7 @@ ErrorHandler:
     End If
 End Sub
 
+
 Private Sub IDbConnection_CommitTransaction()
     If this.TransactionsDisabled Then Exit Sub
     Guard.NotInTransaction this.HasActiveTransaction
@@ -161,6 +177,7 @@ Private Sub IDbConnection_CommitTransaction()
     this.HasActiveTransaction = False
     LogAdoErrors
 End Sub
+
 
 Private Sub IDbConnection_RollbackTransaction()
     If this.TransactionsDisabled Then Exit Sub
@@ -209,6 +226,8 @@ Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.Curs
 End Sub
 
 Private Sub AdoConnection_ExecuteComplete(ByVal RecordsAffected As Long, ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
+    this.ExecuteStatus = adStatus
+    this.RecordsAffected = RecordsAffected
     Debug.Print "Execute completed, " & RecordsAffected & " record(s) affected."
     If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
 End Sub

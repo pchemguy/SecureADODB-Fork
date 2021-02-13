@@ -65,6 +65,14 @@ Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
     IDbConnection_State = State
 End Property
 
+Private Property Get IDbConnection_ExecuteStatus() As ADODB.EventStatusEnum
+    IDbConnection_ExecuteStatus = ADODB.EventStatusEnum.adStatusOK
+End Property
+
+Private Property Get IDbConnection_RecordsAffected() As Long
+    IDbConnection_RecordsAffected = 1
+End Property
+
 Private Sub IDbConnection_BeginTransaction()
     Guard.InTransaction beganTransaction
     beganTransaction = True
@@ -79,4 +87,3 @@ Private Sub IDbConnection_RollbackTransaction()
     Guard.NotInTransaction beganTransaction And Not committedTransaction And Not rolledBackTransaction
     rolledBackTransaction = True
 End Sub
-
