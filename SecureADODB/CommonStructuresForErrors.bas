@@ -22,9 +22,10 @@ Public Enum ErrNo
     SingletonErr = VBA.vbObjectError + 1014&
     UnknownClassErr = VBA.vbObjectError + 1015&
     ObjectSetErr = VBA.vbObjectError + 1091&
-    AdoFeatureNotAvailableErr = VBA.vbObjectError + ADODB.ErrorValueEnum.adErrFeatureNotAvailable
-    AdoInTransaction = VBA.vbObjectError + ADODB.ErrorValueEnum.adErrInTransaction
-    AdoNotInTransaction = VBA.vbObjectError + ADODB.ErrorValueEnum.adErrInvalidTransaction
+    AdoFeatureNotAvailableErr = ADODB.ErrorValueEnum.adErrFeatureNotAvailable
+    AdoInTransaction = ADODB.ErrorValueEnum.adErrInTransaction
+    AdoNotInTransaction = ADODB.ErrorValueEnum.adErrInvalidTransaction
+    AdoConnectionStringError = ADODB.ErrorValueEnum.adErrProviderNotFound
 End Enum
 
 
@@ -66,3 +67,23 @@ Attribute RaiseError.VB_Description = "Formats and raises a run-time error."
         VBA.Err.Raise .number, .source, .message
     End With
 End Sub
+
+
+'@Description("Tests if argument is falsy: 0, False, vbNullString, Empty, Null, Nothing")
+Public Function IsFalsy(ByVal arg As Variant) As Boolean
+Attribute IsFalsy.VB_Description = "Tests if argument is falsy: 0, False, vbNullString, Empty, Null, Nothing"
+    Select Case VarType(arg)
+        Case vbEmpty, vbNull
+            IsFalsy = True
+        Case vbInteger, vbLong, vbSingle, vbDouble
+            IsFalsy = Not CBool(arg)
+        Case vbString
+            IsFalsy = (arg = vbNullString)
+        Case vbObject
+            IsFalsy = (arg Is Nothing)
+        Case vbBoolean
+            IsFalsy = Not arg
+        Case Else
+            IsFalsy = False
+    End Select
+End Function
