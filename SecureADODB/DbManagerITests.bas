@@ -62,18 +62,18 @@ Private Function zfxGetDbManagerFromConnectionString(ByVal TypeOrConnString As S
 End Function
 
 
-Private Function zfxGetSQLQuery(tableName As String) As String
-    zfxGetSQLQuery = "SELECT * FROM " & tableName & " WHERE age >= 45 AND country = 'South Korea'"
+Private Function zfxGetSQLSelect0P(tableName As String) As String
+    zfxGetSQLSelect0P = "SELECT * FROM " & tableName & " WHERE age >= 45 AND country = 'South Korea' ORDER BY id DESC"
 End Function
 
 
-Private Function zfxGetSQLQueryWithSingleParameter(tableName As String) As String
-    zfxGetSQLQueryWithSingleParameter = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea'"
+Private Function zfxGetSQLSelect1P(tableName As String) As String
+    zfxGetSQLSelect1P = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea' ORDER BY id DESC"
 End Function
 
 
-Private Function zfxGetSQLQueryWithTwoParameters(tableName As String) As String
-    zfxGetSQLQueryWithTwoParameters = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = ?"
+Private Function zfxGetSQLSelect2P(tableName As String) As String
+    zfxGetSQLSelect2P = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = ? ORDER BY id DESC"
 End Function
 
 
@@ -145,10 +145,10 @@ Private Sub ztiDbManagerCommand_VerifiesAdoCommand()
     
 Arrange:
     Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("sqlite"))
-    Dim SQLQuery2P As String: SQLQuery2P = zfxGetSQLQueryWithTwoParameters(zfxGetSQLiteTableName)
+    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim cmdAdo As ADODB.Command
-    Set cmdAdo = dbm.Command.AdoCommand(SQLQuery2P, zfxGetParameterOne, zfxGetParameterTwo)
+    Set cmdAdo = dbm.Command.AdoCommand(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
 Assert:
     Assert.IsNotNothing cmdAdo.ActiveConnection, "ActiveConnection of the Command object is not set."
     Assert.AreEqual ADODB.ObjectStateEnum.adStateOpen, cmdAdo.ActiveConnection.State, "ActiveConnection of the Command object is not open."
@@ -168,15 +168,15 @@ End Sub
 
 
 '@TestMethod("DbManager.Recordset")
-Private Sub ztiDbManagerCommand_VerifiesAdoRecordsetDefaultDisconnectedArray()
+Private Sub ztiDbManagerRecordset_VerifiesAdoRecordsetDefaultDisconnectedArray()
     On Error GoTo TestFail
     
 Arrange:
     Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("sqlite"))
-    Dim SQLQuery2P As String: SQLQuery2P = zfxGetSQLQueryWithTwoParameters(zfxGetSQLiteTableName)
+    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim rstAdo As ADODB.Recordset
-    Set rstAdo = dbm.Recordset.AdoRecordset(SQLQuery2P, zfxGetParameterOne, zfxGetParameterTwo)
+    Set rstAdo = dbm.Recordset.AdoRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
 Assert:
     Assert.IsNotNothing rstAdo.ActiveConnection, "ActiveConnection of the Recordset object is not set."
     Assert.IsNotNothing rstAdo.ActiveCommand, "ActiveCommand of the Recordset object is not set."
@@ -193,17 +193,17 @@ End Sub
 
 
 '@TestMethod("DbManager.Recordset")
-Private Sub ztiDbManagerCommand_VerifiesAdoRecordsetDisconnectedScalar()
+Private Sub ztiDbManagerRecordset_VerifiesAdoRecordsetDisconnectedScalar()
     On Error GoTo TestFail
     
 Arrange:
     Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("sqlite"))
-    Dim SQLQuery2P As String: SQLQuery2P = zfxGetSQLQueryWithTwoParameters(zfxGetSQLiteTableName)
+    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=True, CacheSize:=15)
     Dim rstAdo As ADODB.Recordset
-    Set rstAdo = rst.AdoRecordset(SQLQuery2P, zfxGetParameterOne, zfxGetParameterTwo)
+    Set rstAdo = rst.AdoRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
 Assert:
     Assert.AreEqual 1, rstAdo.MaxRecords, "The MaxRecords of the Recordset object should be set to 1 for a scalar query."
     Assert.AreEqual 15, rstAdo.CacheSize, "The CacheSize of the Recordset object should be set to 15."
@@ -216,17 +216,17 @@ End Sub
 
 
 '@TestMethod("DbManager.Recordset")
-Private Sub ztiDbManagerCommand_VerifiesAdoRecordsetOnlineArray()
+Private Sub ztiDbManagerRecordset_VerifiesAdoRecordsetOnlineArray()
     On Error GoTo TestFail
     
 Arrange:
     Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("sqlite"), , , , False)
-    Dim SQLQuery2P As String: SQLQuery2P = zfxGetSQLQueryWithTwoParameters(zfxGetSQLiteTableName)
+    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Disconnected:=False)
     Dim rstAdo As ADODB.Recordset
-    Set rstAdo = rst.AdoRecordset(SQLQuery2P, zfxGetParameterOne, zfxGetParameterTwo)
+    Set rstAdo = rst.AdoRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
 Assert:
     Assert.AreEqual ADODB.CursorTypeEnum.adOpenForwardOnly, rstAdo.CursorType, "The CursorType of the Recordset object should be adOpenForwardOnly."
     Assert.AreEqual ADODB.CursorLocationEnum.adUseServer, rstAdo.CursorLocation, "The CursorLocation of the Recordset object should be adUseServer."
@@ -237,3 +237,101 @@ TestFail:
     Assert.Fail "Error: " & Err.number & " - " & Err.description
 End Sub
 
+
+'@TestMethod("DbManager.Recordset.Query")
+Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetDisconnectedArraySQLite()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("sqlite"))
+    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
+Act:
+    Dim rst As IDbRecordset
+    Set rst = dbm.Recordset
+    Dim rstAdo As ADODB.Recordset
+    Set rstAdo = rst.OpenRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
+Assert:
+    Assert.AreEqual 11, rstAdo.RecordCount, "Recordset SQLite SELECT query RecordCount mismatch."
+    Assert.AreEqual 2, rstAdo.PageCount, "Recordset SQLite SELECT query PageCount mismatch."
+    Assert.AreEqual 8, rstAdo.Fields.Count, "Recordset SQLite SELECT query did not return expected number of fields."
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("DbManager.Recordset.Query")
+Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetDisconnectedArrayCSV()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("csv"))
+    Dim SQLSelect0P As String: SQLSelect0P = zfxGetSQLSelect0P(zfxGetCSVTableName) '''' CSV backend does not support parametrized queries
+Act:
+    Dim rst As IDbRecordset
+    Set rst = dbm.Recordset
+    Dim rstAdo As ADODB.Recordset
+    Set rstAdo = rst.OpenRecordset(SQLSelect0P)
+Assert:
+    Assert.AreEqual 11, rstAdo.RecordCount, "Recordset CSV SELECT query RecordCount mismatch."
+    Assert.AreEqual 2, rstAdo.PageCount, "Recordset CSV SELECT query PageCount mismatch."
+    Assert.AreEqual 8, rstAdo.Fields.Count, "Recordset CSV SELECT query did not return expected number of fields."
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("DbManager.Recordset.Query")
+Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetOnlineArraySQLite()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("sqlite"))
+    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
+Act:
+    Dim rst As IDbRecordset
+    Set rst = dbm.Recordset(Disconnected:=False)
+    Dim rstAdo As ADODB.Recordset
+    Set rstAdo = rst.OpenRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
+    Dim result As Variant
+    result = rstAdo.GetRows
+Assert:
+    Assert.AreEqual -1, rstAdo.RecordCount, "Recordset SQLite SELECT query RecordCount mismatch."
+    Assert.AreEqual -1, rstAdo.PageCount, "Recordset SQLite SELECT query PageCount mismatch."
+    Assert.AreEqual ADODB.PositionEnum.adPosEOF, rstAdo.AbsolutePosition, "Recordset SQLite SELECT - AbsolutePosition mismatch."
+    Assert.IsTrue IsArray(result), "GetRows on recordset SQLite SELECT query did not return an array."
+    Assert.AreEqual 7, UBound(result, 1), "Recordset SQLite SELECT query did not return expected number of fields."
+    Assert.AreEqual 10, UBound(result, 2), "Recordset SQLite SELECT query did not return expected number of records."
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("DbManager.Recordset.Query")
+Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetScalarCSV()
+    On Error GoTo TestFail
+    
+Arrange:
+    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("csv"))
+    Dim SQLSelect As String: SQLSelect = zfxGetSQLSelect0P(zfxGetCSVTableName)
+Act:
+    Dim rst As IDbRecordset
+    Set rst = dbm.Recordset
+    Dim result As Variant
+    result = rst.OpenScalar(SQLSelect)
+Assert:
+    Assert.AreEqual 906, result, "Scalar CSV SELECT query result mismatch."
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
+End Sub
