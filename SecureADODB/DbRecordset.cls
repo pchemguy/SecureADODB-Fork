@@ -144,7 +144,7 @@ End Function
 ' https://docs.microsoft.com/en-us/sql/ado/guide/data/ado-event-handler-summary
 ' https://docs.microsoft.com/en-us/sql/ado/reference/ado-api/fetchprogress-event-ado
 '
-'@Ignore ParameterCanBeByVal
+'@Ignore ParameterNotUsed, ParameterCanBeByVal
 Private Sub AdoRecordset_FetchProgress(ByVal Progress As Long, ByVal MaxProgress As Long, ByRef adStatus As ADODB.EventStatusEnum, ByVal pRecordset As ADODB.Recordset)
     Debug.Print "ADODB.Recordset fetch in progress. " & CStr(Progress) & " records of " & CStr(MaxProgress) & "have been retrived..."
 End Sub
@@ -152,7 +152,7 @@ End Sub
 
 ' https://docs.microsoft.com/en-us/sql/ado/reference/ado-api/fetchcomplete-event-ado
 '
-'@Ignore ParameterCanBeByVal
+'@Ignore ParameterNotUsed, ParameterCanBeByVal
 Private Sub AdoRecordset_FetchComplete(ByVal pError As ADODB.Error, ByRef adStatus As ADODB.EventStatusEnum, ByVal pRecordset As ADODB.Recordset)
     Debug.Print "ADODB.Recordset fetch completed. "
     If adStatus = ADODB.EventStatusEnum.adStatusErrorsOccurred And pError Is Nothing Then

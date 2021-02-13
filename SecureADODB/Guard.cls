@@ -242,7 +242,7 @@ Attribute InTransaction.VB_Description = "Raises a run-time error if the specifi
         .trapped = HasActiveTransaction
         If .trapped Then
             .Name = "InTransaction"
-            .number = ErrNo.AdoInTransaction
+            .number = ErrNo.AdoInTransactionErr
             .source = vbNullString
             .message = "Current database connection already in transaction"
             .description = "Attempted operation not permmited when transaction in progress (e.g. starting a new transaction)."
@@ -262,7 +262,7 @@ Attribute NotInTransaction.VB_Description = "Raises a run-time error if the spec
         .trapped = Not HasActiveTransaction
         If .trapped Then
             .Name = "NotInTransaction"
-            .number = ErrNo.AdoNotInTransaction
+            .number = ErrNo.AdoNotInTransactionErr
             .source = vbNullString
             .message = "Current database connection is not in transaction"
             .description = "Attempted operation not permmited when no  active transaction in progress (e.g. commit or rollback)."
@@ -280,7 +280,7 @@ Attribute ConnectionStringError.VB_Description = "Raises a run-time error if the
         .trapped = IsFalsy(dboOrConnStr)
         If .trapped Then
             .Name = "ConnectionStringError"
-            .number = ErrNo.AdoConnectionStringError
+            .number = ErrNo.AdoConnectionStringErr
             .source = "Argument is Nothing"
             .message = "Either the connection string is invalid or provider not found"
             .description = .message
