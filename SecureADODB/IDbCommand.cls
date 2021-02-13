@@ -20,17 +20,7 @@ Public Function AdoCommand(ByVal sql As String, ParamArray args()) As ADODB.Comm
 Attribute AdoCommand.VB_Description = "Returns an ADODB.Command, without executing it."
 End Function
 
-'@Description("Returns an ADODB.Recordset that contains the results of the specified parameterized query.")
-Public Function Execute(ByVal sql As String, ParamArray args()) As ADODB.Recordset
-Attribute Execute.VB_Description = "Returns an ADODB.Recordset that contains the results of the specified parameterized query."
-End Function
-
 '@Description("Executes the specified parameterized SQL statement/command.")
 Public Sub ExecuteNonQuery(ByVal sql As String, ParamArray args())
 Attribute ExecuteNonQuery.VB_Description = "Executes the specified parameterized SQL statement/command."
 End Sub
-
-'@Description("Returns the value of the first field of the first record returned by the specified parameterized query.")
-Public Function ExecuteScalar(ByVal sql As String, ParamArray args()) As Variant
-Attribute ExecuteScalar.VB_Description = "Returns the value of the first field of the first record returned by the specified parameterized query."
-End Function

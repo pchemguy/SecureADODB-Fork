@@ -19,13 +19,3 @@ Option Explicit
 Public Function CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
 Attribute CreateCommand.VB_Description = "Creates and returns an ADODB.Command, without executing it."
 End Function
-
-'@Description("Executes specified ADODB.Command, and returns a disconnected recordset containing the results.")
-Public Function GetDisconnectedRecordset(ByVal cmd As ADODB.Command) As ADODB.Recordset
-Attribute GetDisconnectedRecordset.VB_Description = "Executes specified ADODB.Command, and returns a disconnected recordset containing the results."
-End Function
-
-'@Description("Executes specified ADODB.Command, and returns the value of the first field of the first returned record.")
-Public Function ExecuteScalar(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As Variant
-Attribute ExecuteScalar.VB_Description = "Executes specified ADODB.Command, and returns the value of the first field of the first returned record."
-End Function

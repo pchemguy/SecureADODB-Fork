@@ -61,20 +61,6 @@ Public Function IDbCommand_AdoCommand(ByVal sql As String, ParamArray args()) As
 End Function
 
 
-Private Function IDbCommand_Execute(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
-    'cannot pass ParamArray array directly to ByRef array argument
-    Dim localArgs() As Variant
-    localArgs = args
-    
-    Set this.cmd = this.Base.CreateCommand(this.Connection, adCmdText, sql, localArgs)
-    If True Then
-        Set IDbCommand_Execute = this.Base.GetDisconnectedRecordset(this.cmd)
-    Else
-        Set IDbCommand_Execute = this.cmd.Execute
-    End If
-End Function
-
-
 Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As Variant)
     'cannot pass ParamArray array directly to ByRef array argument
     Dim localArgs() As Variant
@@ -84,12 +70,3 @@ Private Sub IDbCommand_ExecuteNonQuery(ByVal sql As String, ParamArray args() As
     '@Ignore FunctionReturnValueDiscarded
     this.cmd.Execute
 End Sub
-
-
-Private Function IDbCommand_ExecuteScalar(ByVal sql As String, ParamArray args() As Variant) As Variant
-    'cannot pass ParamArray array directly to ByRef array argument
-    Dim localArgs() As Variant
-    localArgs = args
-    
-    IDbCommand_ExecuteScalar = this.Base.ExecuteScalar(this.Connection, adCmdText, sql, localArgs)
-End Function
