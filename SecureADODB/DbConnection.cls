@@ -45,11 +45,21 @@ End Function
 '@Description("Default constructor")
 Friend Sub CreInit(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing)
 Attribute CreInit.VB_Description = "Default constructor"
-    Errors.GuardEmptyString connString
+    Guard.ConnectionStringError connString
     
     Set this.LogController = LogController
     this.TransactionsDisabled = False
+    On Error GoTo ConnectionError
     AdoConnection.Open connString
+    On Error GoTo 0
+    Exit Sub
+    
+ConnectionError:
+    If Err.number = &H80004005 Then
+        Guard.ConnectionStringError Nothing
+    Else
+        Err.Raise Err.number, Err.source, Err.description, Err.HelpFile, Err.HelpContext
+    End If
 End Sub
 
 
@@ -122,7 +132,7 @@ Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
 End Property
 
 Private Sub IDbConnection_BeginTransaction()
-    Guard.inTransaction this.HasActiveTransaction
+    Guard.InTransaction this.HasActiveTransaction
     
     On Error GoTo ErrorHandler
     '@Ignore VariableNotUsed
