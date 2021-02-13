@@ -89,33 +89,38 @@ Private Property Get IDbRecordset_Self() As IDbRecordset
 End Property
 
 
-Private Property Get IDbRecordset_AdoRecordset() As ADODB.Recordset
+Private Function IDbRecordset_AdoRecordset(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
+    If sql <> vbNullString And AdoRecordset.ActiveCommand Is Nothing Then
+        Dim localArgs() As Variant
+        If IsArray(args(0)) Then
+            localArgs = args(0)
+        Else
+            localArgs = args
+        End If
+        
+        Dim AdoCommand As ADODB.Command
+        Set AdoCommand = this.cmd.AdoCommand(sql, localArgs)
+        Set AdoRecordset.source = AdoCommand
+    End If
     Set IDbRecordset_AdoRecordset = AdoRecordset
-End Property
+End Function
 
 
 ' Execute and ExecuteScalar can be combined into one method returning Variant, where distinction
 ' is made based on the AdoRecordset.MaxRecords value (1 - Scalar, regular otherwise)
-Private Sub IDbRecordset_OpenRecordset(ByVal sql As String, ParamArray args() As Variant)
-    Dim localArgs() As Variant
-    localArgs = args
-
-    Dim AdoCommand As ADODB.Command
-    Set AdoCommand = this.cmd.AdoCommand(sql, localArgs)
-    Set AdoRecordset.source = AdoCommand
+Private Function IDbRecordset_OpenRecordset(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
+    '@Ignore FunctionReturnValueDiscarded
+    IDbRecordset_AdoRecordset sql, args
     
     AdoRecordset.Open Options:=this.OpenOptions
     If AdoRecordset.CursorLocation = adUseClient Then Set AdoRecordset.ActiveConnection = Nothing
-End Sub
+    Set IDbRecordset_OpenRecordset = AdoRecordset
+End Function
 
 
 Private Function IDbRecordset_OpenScalar(ByVal sql As String, ParamArray args() As Variant) As Variant
-    Dim localArgs() As Variant
-    localArgs = args
-
-    Dim AdoCommand As ADODB.Command
-    Set AdoCommand = this.cmd.AdoCommand(sql, localArgs)
-    Set AdoRecordset.source = AdoCommand
+    '@Ignore FunctionReturnValueDiscarded
+    IDbRecordset_AdoRecordset sql, args
     
     AdoRecordset.Open Options:=this.OpenOptions
     If AdoRecordset.CursorLocation = adUseClient Then Set AdoRecordset.ActiveConnection = Nothing

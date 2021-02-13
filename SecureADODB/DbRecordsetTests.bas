@@ -47,41 +47,41 @@ End Sub
 '===================================================='
 
 
-Private Function GetSingleParameterSelectSql() As String
-    GetSingleParameterSelectSql = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
+Private Function zfxGetSingleParameterSelectSql() As String
+    zfxGetSingleParameterSelectSql = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
 End Function
 
 
-Private Function GetStubParameter() As ADODB.Parameter
+Private Function zfxGetStubParameter() As ADODB.Parameter
     Dim stubAdoCommand As ADODB.Command: Set stubAdoCommand = New ADODB.Command
-    Set GetStubParameter = stubAdoCommand.CreateParameter("StubInteger", adInteger, adParamInput, , 42)
+    Set zfxGetStubParameter = stubAdoCommand.CreateParameter("StubInteger", adInteger, adParamInput, , 42)
 End Function
 
 
-Private Function GetStubDbCommand() As IDbCommand
+Private Function zfxGetStubDbCommand() As IDbCommand
     Dim stubExConnection As StubDbConnection
     Set stubExConnection = New StubDbConnection
 
     Dim stubBase As StubDbCommandBase
     Set stubBase = New StubDbCommandBase
     
-    Set GetStubDbCommand = DbCommand.Create(stubExConnection, stubBase)
+    Set zfxGetStubDbCommand = DbCommand.Create(stubExConnection, stubBase)
 End Function
 
 
 '===================================================='
-'==================== TEST CASES ===================='
+'================= TESTING FIXTURES ================='
 '===================================================='
 
 
 '@TestMethod("Test Fixture")
-Private Sub ztcGetStubParameter_ValidatesStubParameter()
+Private Sub zfxGetStubParameter_ValidatesStubParameter()
     On Error GoTo TestFail
     
 Arrange:
     
 Act:
-    Dim stubParameter As ADODB.Parameter: Set stubParameter = GetStubParameter
+    Dim stubParameter As ADODB.Parameter: Set stubParameter = zfxGetStubParameter
 Assert:
     Assert.AreEqual "StubInteger", stubParameter.Name, "Stub ADODB.Parameter name mismatch: " & "StubInteger" & " vs. " & stubParameter.Name
     Assert.AreEqual adInteger, stubParameter.Type, "Stub ADODB.Parameter type mismatch: " & adInteger & " vs. " & stubParameter.Type
@@ -104,7 +104,7 @@ Arrange:
     expected = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
 Act:
     Dim actual As String
-    actual = GetSingleParameterSelectSql
+    actual = zfxGetSingleParameterSelectSql
 Assert:
     Assert.AreEqual expected, actual, "Stub query mismatch: " & expected & " vs. " & actual
     
@@ -116,7 +116,7 @@ End Sub
 
 
 '@TestMethod("Test Fixture")
-Private Sub ztcGetStubDbCommand_ValidatesStubDbCommand()
+Private Sub zfxGetStubDbCommand_ValidatesStubDbCommand()
     On Error GoTo TestFail
     
 Arrange:
@@ -124,10 +124,10 @@ Arrange:
     expected = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
 Act:
     Dim stubCommand As IDbCommand
-    Set stubCommand = GetStubDbCommand
+    Set stubCommand = zfxGetStubDbCommand
     
     Dim stubAdoCommand As ADODB.Command
-    Set stubAdoCommand = stubCommand.AdoCommand(GetSingleParameterSelectSql, GetStubParameter)
+    Set stubAdoCommand = stubCommand.AdoCommand(zfxGetSingleParameterSelectSql, zfxGetStubParameter)
 Assert:
     Assert.IsNotNothing stubCommand, "GetStubDbCommand command did not return IDbCommand"
     Assert.IsNotNothing stubAdoCommand, "GetStubDbCommand: AdoCommand was not set"
@@ -142,16 +142,21 @@ TestFail:
 End Sub
 
 
+'===================================================='
+'==================== TEST CASES ===================='
+'===================================================='
+
+
 '@TestMethod("Create")
 Private Sub ztcCreate_ValidatesCreationOfDisconnectedFullRecordser()
     On Error GoTo TestFail
     
 Arrange:
     Dim Recordset As IDbRecordset
-    Set Recordset = DbRecordset.Create(GetStubDbCommand)
+    Set Recordset = DbRecordset.Create(zfxGetStubDbCommand)
 Act:
     Dim AdoRecordset As ADODB.Recordset
-    Set AdoRecordset = Recordset.AdoRecordset
+    Set AdoRecordset = Recordset.AdoRecordset(vbNullString)
 Assert:
     AssertExpectedError Assert, ErrNo.PassedNoErr
     Assert.AreNotEqual 1, AdoRecordset.MaxRecords, "Regular recordset should have MaxRecords=0 or >1"
@@ -172,10 +177,10 @@ Private Sub ztcCreate_ValidatesCreationOfDisconnectedScalarRecordser()
     
 Arrange:
     Dim Recordset As IDbRecordset
-    Set Recordset = DbRecordset.Create(GetStubDbCommand, True)
+    Set Recordset = DbRecordset.Create(zfxGetStubDbCommand, True)
 Act:
     Dim AdoRecordset As ADODB.Recordset
-    Set AdoRecordset = Recordset.AdoRecordset
+    Set AdoRecordset = Recordset.AdoRecordset(vbNullString)
 Assert:
     AssertExpectedError Assert, ErrNo.PassedNoErr
     Assert.AreEqual 1, AdoRecordset.MaxRecords, "Scalar recordset should have MaxRecords=1"
@@ -196,10 +201,10 @@ Private Sub ztcCreate_ValidatesCreationOfOnlineFullRecordser()
     
 Arrange:
     Dim Recordset As IDbRecordset
-    Set Recordset = DbRecordset.Create(GetStubDbCommand, , False)
+    Set Recordset = DbRecordset.Create(zfxGetStubDbCommand, , False)
 Act:
     Dim AdoRecordset As ADODB.Recordset
-    Set AdoRecordset = Recordset.AdoRecordset
+    Set AdoRecordset = Recordset.AdoRecordset(vbNullString)
 Assert:
     AssertExpectedError Assert, ErrNo.PassedNoErr
     Assert.AreNotEqual 1, AdoRecordset.MaxRecords, "Regular recordset should have MaxRecords=0 or >1"
