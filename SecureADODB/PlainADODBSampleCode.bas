@@ -285,3 +285,26 @@ Public Sub TestADODBConnectSQLite()
 End Sub
 
 
+
+Private Sub Test()
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+End Sub
