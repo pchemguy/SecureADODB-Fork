@@ -3,6 +3,7 @@ Attribute VB_Name = "CommonStructuresForErrors"
 Option Explicit
 
 
+Private Const adErrInvalidParameterType As Long = &HE3D&
 Public Enum ErrNo
     PassedNoErr = 0&
     TypeMismatchErr = 13&
@@ -23,9 +24,10 @@ Public Enum ErrNo
     UnknownClassErr = VBA.vbObjectError + 1015&
     ObjectSetErr = VBA.vbObjectError + 1091&
     AdoFeatureNotAvailableErr = ADODB.ErrorValueEnum.adErrFeatureNotAvailable
-    AdoInTransaction = ADODB.ErrorValueEnum.adErrInTransaction
-    AdoNotInTransaction = ADODB.ErrorValueEnum.adErrInvalidTransaction
-    AdoConnectionStringError = ADODB.ErrorValueEnum.adErrProviderNotFound
+    AdoInTransactionErr = ADODB.ErrorValueEnum.adErrInTransaction
+    AdoNotInTransactionErr = ADODB.ErrorValueEnum.adErrInvalidTransaction
+    AdoConnectionStringErr = ADODB.ErrorValueEnum.adErrProviderNotFound
+    AdoInvalidParameterTypeErr = VBA.vbObjectError + adErrInvalidParameterType
 End Enum
 
 
