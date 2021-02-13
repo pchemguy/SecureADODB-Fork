@@ -1,8 +1,9 @@
 Attribute VB_Name = "CommonStructuresForErrors"
-'@Folder "SecureADODBmod.Guard"
+'@Folder "SecureADODB.Guard"
 Option Explicit
 
 
+Private Const adErrInvalidParameterType As Long = &HE3D&
 Public Enum ErrNo
     PassedNoErr = 0&
     TypeMismatchErr = 13&
@@ -22,7 +23,11 @@ Public Enum ErrNo
     SingletonErr = VBA.vbObjectError + 1014&
     UnknownClassErr = VBA.vbObjectError + 1015&
     ObjectSetErr = VBA.vbObjectError + 1091&
-    FeatureNotAvailableErr = VBA.vbObjectError + ADODB.ErrorValueEnum.adErrFeatureNotAvailable
+    AdoFeatureNotAvailableErr = ADODB.ErrorValueEnum.adErrFeatureNotAvailable
+    AdoInTransactionErr = ADODB.ErrorValueEnum.adErrInTransaction
+    AdoNotInTransactionErr = ADODB.ErrorValueEnum.adErrInvalidTransaction
+    AdoConnectionStringErr = ADODB.ErrorValueEnum.adErrProviderNotFound
+    AdoInvalidParameterTypeErr = VBA.vbObjectError + adErrInvalidParameterType
 End Enum
 
 
@@ -64,3 +69,23 @@ Attribute RaiseError.VB_Description = "Formats and raises a run-time error."
         VBA.Err.Raise .number, .source, .message
     End With
 End Sub
+
+
+'@Description("Tests if argument is falsy: 0, False, vbNullString, Empty, Null, Nothing")
+Public Function IsFalsy(ByVal arg As Variant) As Boolean
+Attribute IsFalsy.VB_Description = "Tests if argument is falsy: 0, False, vbNullString, Empty, Null, Nothing"
+    Select Case VarType(arg)
+        Case vbEmpty, vbNull
+            IsFalsy = True
+        Case vbInteger, vbLong, vbSingle, vbDouble
+            IsFalsy = Not CBool(arg)
+        Case vbString
+            IsFalsy = (arg = vbNullString)
+        Case vbObject
+            IsFalsy = (arg Is Nothing)
+        Case vbBoolean
+            IsFalsy = Not arg
+        Case Else
+            IsFalsy = False
+    End Select
+End Function

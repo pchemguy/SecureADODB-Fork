@@ -6,12 +6,13 @@ Attribute VB_Name = "DbManager"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 Attribute VB_Description = "An object that encapsulates a database transaction."
-'@Folder "SecureADODBmod.DbManager"
+'@Folder "SecureADODB.DbManager"
 '@ModuleDescription("An object that encapsulates a database transaction.")
 '@PredeclaredId
-'@IgnoreModule UseMeaningfulName, ProcedureNotUsed
+'@Exposed
+'@IgnoreModule ProcedureNotUsed
 Option Explicit
 
 Implements IDbManager
@@ -25,15 +26,13 @@ Private Type TConnectionConfig
     connString As String
 End Type
 
-Private Type TDbManager
+Private Type TManager
     Connection As IDbConnection
     CommandFactory As IDbCommandFactory
     UseTransactions As Boolean
-    UseDisconnectedRecordset As Boolean
-    Committed As Boolean
-    RolledBack As Boolean
+    LogController As ILogger
 End Type
-Private this As TDbManager
+Private this As TManager
 
 
 '@Description("Returns class reference")
@@ -43,6 +42,15 @@ Attribute Class.VB_Description = "Returns class reference"
 End Property
 
 
+' Basic connection string construction facility
+'
+' The first argument specifies either the type of the target database or, for reasons of
+' flexibility can take a completed connection string. Select Case implements the core
+' functionality. If the first argument matches any of the Case block, the corresponding
+' configuration will be applied and a connection string is built and returned. Otherwise,
+' if the first argument contains "Driver=" substring, it is assumed to be a completed
+' connection string, which is returned as is.
+'
 '@Description("Build connection config")
 Public Function BuildConnectionString( _
                  ByVal TypeOrConnString As String, _
@@ -52,7 +60,7 @@ Public Function BuildConnectionString( _
         ) As String
 Attribute BuildConnectionString.VB_Description = "Build connection config"
         
-    Errors.GuardEmptyString TypeOrConnString
+    Guard.ConnectionStringError TypeOrConnString
     Dim connConfig As TConnectionConfig
         
     If Path = vbNullString Then
@@ -61,7 +69,7 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
         connConfig.Path = Path
     End If
     Select Case LCase(TypeOrConnString)
-        Case "sqlite"
+        Case "sqlite"                                                           ' ========== SQLite db ========== '
             With connConfig
                 .Driver = "{SQLite3 ODBC Driver}"
                 If Name = vbNullString Then
@@ -77,35 +85,28 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                     .Options = Options
                 End If
                 .Database = .Path & Application.PathSeparator & .Name
+                .connString = "Driver=" + .Driver + ";" + _
+                              "Database=" + .Database + ";" + _
+                              .Options
             End With
-        Case "csv"
-            connConfig.Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
-            connConfig.Database = connConfig.Path
-            If Options <> vbNullString Then
-                connConfig.Options = Options
-            End If
+        Case "csv"                                                              ' ============ CSV db ============ '
+            With connConfig
+                .Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
+                .Database = .Path
+                If Options <> vbNullString Then
+                    .Options = Options
+                End If
+                .connString = "Driver=" + .Driver + ";" + _
+                              "DefaultDir=" + .Database + ";" + _
+                              .Options
+            End With
         Case Else
-            If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Then
+            If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Then    ' ============ Raw Connection String ============ '
                 connConfig.connString = TypeOrConnString
-                BuildConnectionString = connConfig.connString
-                Exit Function
+            Else
+                Guard.ConnectionStringError vbNullString
             End If
-            
-            Dim errorDetails As TError
-            With errorDetails
-                .number = ErrNo.FeatureNotAvailableErr
-                .Name = "FeatureNotAvailable"
-                .source = "DbManager.BuildConnectionString"
-                .message = "Config assistance for database " & TypeOrConnString & " is not available. Use raw connection string."
-                .description = .message
-            End With
-            RaiseError errorDetails
     End Select
-    With connConfig
-        .connString = "Driver=" + .Driver + ";" + _
-                      "Database=" + .Database + ";" + _
-                      .Options
-    End With
     BuildConnectionString = connConfig.connString
 End Function
 
@@ -117,16 +118,27 @@ Public Function FromConnectionParameters( _
         Optional ByVal Name As String = vbNullString, _
         Optional ByVal Options As String = vbNullString, _
         Optional ByVal UseTransactions As Boolean = True, _
-        Optional ByVal UseDisconnectedRecordset As Boolean = False _
+        Optional ByVal LoggerType As LoggerTypeEnum = LoggerTypeEnum.logGlobal _
         ) As IDbManager
+Attribute FromConnectionParameters.VB_Description = "Creates a new manager using connection parameters."
 
     Guard.NonDefaultInstance Me
     
     Dim connString As String
     connString = BuildConnectionString(TypeOrConnString, Path, Name, Options)
     
+    Dim LogController As ILogger
+    Select Case LoggerType
+        Case LoggerTypeEnum.logDisabled
+            Set LogController = Nothing
+        Case LoggerTypeEnum.logGlobal
+            Set LogController = Logger
+        Case LoggerTypeEnum.logPrivate
+            Set LogController = Logger.Create
+    End Select
+    
     Dim db As IDbConnection
-    Set db = DbConnection.Create(connString)
+    Set db = DbConnection.Create(connString, LogController)
     
     Dim provider As IParameterProvider
     Set provider = AdoParameterProvider.Create(AdoTypeMappings.Default)
@@ -137,48 +149,41 @@ Public Function FromConnectionParameters( _
     Dim factory As IDbCommandFactory
     Set factory = DbCommandFactory.Create(baseCommand)
     
-    Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions, UseDisconnectedRecordset)
+    Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions, LogController)
 End Function
 
 
-'@Ignore UseMeaningfulName
 Public Function Create(ByVal db As IDbConnection, _
                        ByVal factory As IDbCommandFactory, _
               Optional ByVal UseTransactions As Boolean = True, _
-              Optional ByVal UseDisconnectedRecordset As Boolean = False) As IDbManager
+              Optional ByVal LogController As ILogger = Nothing) As IDbManager
               
     Guard.NonDefaultInstance Me
     
     Dim result As DbManager
     Set result = New DbManager
-    result.CreInit db, factory, UseTransactions, UseDisconnectedRecordset
+    result.CreInit db, factory, UseTransactions, LogController
+    Debug.Print " "
     Set Create = result
 End Function
 
 
-'@Ignore UseMeaningfulName
 '@Description("Default constructor")
 Friend Sub CreInit(ByVal db As IDbConnection, _
-                       ByVal factory As IDbCommandFactory, _
-              Optional ByVal UseTransactions As Boolean = True, _
-              Optional ByVal UseDisconnectedRecordset As Boolean = False)
+                   ByVal factory As IDbCommandFactory, _
+          Optional ByVal UseTransactions As Boolean = True, _
+          Optional ByVal LogController As ILogger = Nothing)
+Attribute CreInit.VB_Description = "Default constructor"
               
     Guard.NullReference factory
     Guard.NullReference db
     Errors.GuardExpression db.State <> adStateOpen, message:="Connection should be open."
 
+    Set this.LogController = LogController
     Set this.Connection = db
     Set this.CommandFactory = factory
     this.UseTransactions = UseTransactions
-    this.UseDisconnectedRecordset = UseDisconnectedRecordset
     If this.UseTransactions Then this.Connection.BeginTransaction
-End Sub
-
-
-Private Sub Class_Terminate()
-    On Error Resume Next
-    If Not this.Committed Then this.Connection.RollbackTransaction
-    On Error GoTo 0
 End Sub
 
 
@@ -189,28 +194,42 @@ Attribute IDbManager_Class.VB_Description = "Returns class reference"
 End Property
 
 
+Private Property Get IDbManager_LogController() As ILogger
+    Set IDbManager_LogController = this.LogController
+End Property
+
+
+Private Property Get IDbManager_Connection() As IDbConnection
+    Set IDbManager_Connection = this.Connection
+End Property
+
+
 Private Function IDbManager_Command() As IDbCommand
-    Set IDbManager_Command = this.CommandFactory.CreateInstance(this.Connection, this.UseDisconnectedRecordset)
+    Set IDbManager_Command = this.CommandFactory.CreateInstance(this.Connection)
+End Function
+
+
+Private Function IDbManager_Recordset(Optional ByVal Scalar As Boolean = False, _
+                                      Optional ByVal Disconnected As Boolean = True, _
+                                      Optional ByVal CacheSize As Long = 10, _
+                                      Optional ByVal CursorType As ADODB.CursorTypeEnum = -1, _
+                                      Optional ByVal AsyncMode As Boolean = False, _
+                                      Optional ByVal AsyncOption As ADODB.ExecuteOptionEnum = 0) As IDbRecordset
+              
+    Dim cmd As IDbCommand
+    Set cmd = this.CommandFactory.CreateInstance(this.Connection)
+    Set IDbManager_Recordset = DbRecordset.Create( _
+        cmd, Scalar, Disconnected, CacheSize, CursorType, AsyncMode, AsyncOption)
 End Function
 
 
 Private Sub IDbManager_Commit()
     Errors.GuardExpression (Not this.UseTransactions), message:="Transactions are disabled by the caller."
-    Errors.GuardExpression this.Committed, message:="Transaction is already committed."
-    Errors.GuardExpression this.RolledBack, message:="Transaction was rolled back."
-    On Error Resume Next ' not all providers support transactions
     this.Connection.CommitTransaction
-    this.Committed = True
-    On Error GoTo 0
 End Sub
 
 
 Private Sub IDbManager_Rollback()
     Errors.GuardExpression (Not this.UseTransactions), message:="Transactions are disabled by the caller."
-    Errors.GuardExpression this.Committed, message:="Transaction is already committed."
-    
-    On Error Resume Next ' not all providers support transactions
     this.Connection.RollbackTransaction
-    this.RolledBack = True
-    On Error GoTo 0
 End Sub

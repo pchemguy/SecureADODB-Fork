@@ -1,5 +1,5 @@
 Attribute VB_Name = "ParameterProviderTests"
-'@Folder "SecureADODB.ParameterProvider"
+'@Folder "SecureADODB.DbParameterProvider. Tests"
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -134,7 +134,7 @@ Private Sub FromValue_CreatesInputParameters()
     Dim p As ADODB.Parameter
     Set p = sut.FromValue(value)
     
-    Assert.AreEqual expected, p.direction
+    Assert.AreEqual expected, p.Direction
 End Sub
 
 
