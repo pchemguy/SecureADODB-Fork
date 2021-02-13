@@ -112,9 +112,15 @@ Private Function IDbRecordset_OpenRecordset(ByVal sql As String, ParamArray args
     '@Ignore FunctionReturnValueDiscarded
     IDbRecordset_AdoRecordset sql, args
     
+    On Error GoTo RecordsetOpenError
     AdoRecordset.Open Options:=this.OpenOptions
+    On Error GoTo 0
     If AdoRecordset.CursorLocation = adUseClient Then Set AdoRecordset.ActiveConnection = Nothing
     Set IDbRecordset_OpenRecordset = AdoRecordset
+    Exit Function
+    
+RecordsetOpenError:
+    Err.Raise Err.number, Err.source, "DbRecordset->IDbRecordset_OpenRecordset->AdoRecordset.Open: " & Err.description, Err.HelpFile, Err.HelpContext
 End Function
 
 
@@ -122,9 +128,15 @@ Private Function IDbRecordset_OpenScalar(ByVal sql As String, ParamArray args() 
     '@Ignore FunctionReturnValueDiscarded
     IDbRecordset_AdoRecordset sql, args
     
+    On Error GoTo RecordsetOpenError
     AdoRecordset.Open Options:=this.OpenOptions
+    On Error GoTo 0
     If AdoRecordset.CursorLocation = adUseClient Then Set AdoRecordset.ActiveConnection = Nothing
     IDbRecordset_OpenScalar = AdoRecordset.Fields.Item(0).value
+    Exit Function
+
+RecordsetOpenError:
+    Err.Raise Err.number, Err.source, "DbRecordset->IDbRecordset_OpenScalar->AdoRecordset.Open: " & Err.description, Err.HelpFile, Err.HelpContext
 End Function
 
 
