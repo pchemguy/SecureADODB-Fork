@@ -26,5 +26,5 @@ End Property
 
 Private Function IDbCommandFactory_CreateInstance(ByVal db As IDbConnection) As IDbCommand
     this.CreateCommandInvokes = this.CreateCommandInvokes + 1
-    Set IDbCommandFactory_CreateInstance = New stubDbCommand
+    Set IDbCommandFactory_CreateInstance = New StubDbCommand
 End Function

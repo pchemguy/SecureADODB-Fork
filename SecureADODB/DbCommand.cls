@@ -46,10 +46,10 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 Public Function IDbCommand_AdoCommand(ByVal sql As String, ParamArray args()) As ADODB.Command
-    Dim localArgs() As Variant
     '''' Recordset routines pass their (sql, ParamArray) for processing here.
     '''' If the first item in args is also an array, assume ParamArray to ParamArray
     '''' delegation. Should unfold the outer array.
+    Dim localArgs() As Variant
     If IsArray(args(0)) Then
         localArgs = args(0)
     Else

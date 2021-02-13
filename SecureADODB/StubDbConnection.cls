@@ -66,7 +66,7 @@ Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
 End Property
 
 Private Sub IDbConnection_BeginTransaction()
-    Guard.inTransaction beganTransaction
+    Guard.InTransaction beganTransaction
     beganTransaction = True
 End Sub
 

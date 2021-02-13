@@ -25,6 +25,13 @@ Public Sub TestADODBSourceSQL()
     
     sSQL = "SELECT * FROM people WHERE id <= 45 AND last_name <> 'machinery'"
     
+    Dim AdoConnection As ADODB.Connection
+    Set AdoConnection = New ADODB.Connection
+    On Error Resume Next
+    AdoConnection.Open adoConnStr
+    On Error GoTo 0
+    If AdoConnection.State = ADODB.ObjectStateEnum.adStateOpen Then AdoConnection.Close
+    
     Dim AdoRecordset As ADODB.Recordset
     Set AdoRecordset = New ADODB.Recordset
     AdoRecordset.CursorLocation = adUseClient
