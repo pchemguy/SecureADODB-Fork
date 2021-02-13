@@ -60,7 +60,7 @@ Public Function BuildConnectionString( _
         ) As String
 Attribute BuildConnectionString.VB_Description = "Build connection config"
         
-    Guard.EmptyString TypeOrConnString
+    Guard.ConnectionStringError TypeOrConnString
     Dim connConfig As TConnectionConfig
         
     If Path = vbNullString Then
@@ -104,7 +104,7 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
             If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Then    ' ============ Raw Connection String ============ '
                 connConfig.connString = TypeOrConnString
             Else
-                connConfig.connString = vbNullString
+                Guard.ConnectionStringError vbNullString
             End If
     End Select
     BuildConnectionString = connConfig.connString
@@ -126,6 +126,7 @@ Attribute FromConnectionParameters.VB_Description = "Creates a new manager using
     
     Dim connString As String
     connString = BuildConnectionString(TypeOrConnString, Path, Name, Options)
+    
     Dim LogController As ILogger
     Select Case LoggerType
         Case LoggerTypeEnum.logDisabled
@@ -162,6 +163,7 @@ Public Function Create(ByVal db As IDbConnection, _
     Dim result As DbManager
     Set result = New DbManager
     result.CreInit db, factory, UseTransactions, LogController
+    Debug.Print " "
     Set Create = result
 End Function
 

@@ -3,22 +3,40 @@ Attribute VB_Name = "DbManagerSampleCode"
 '@IgnoreModule AssignmentNotUsed, EmptyModule, VariableNotUsed, ProcedureNotUsed, FunctionReturnValueDiscarded, FunctionReturnValueAlwaysDiscarded
 Option Explicit
 
-
     
 Private Sub DbManagerCSVTest()
     Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
     Dim fileName As String: fileName = fso.GetBaseName(ThisWorkbook.Name) & ".csv"
 
     Dim tableName As String: tableName = fileName
-    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE id <= ? AND last_name <> 'machinery'"
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea'"
     
     Dim dbm As IDbManager
-    Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, fileName, vbNullString, True, LoggerTypeEnum.logPrivate)
+    Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, fileName, vbNullString, False, LoggerTypeEnum.logPrivate)
 
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
     
-    rst.OpenRecordset SQLQuery, 45
+    Dim result As ADODB.Recordset
+    Set result = rst.OpenRecordset(SQLQuery, 45)
+End Sub
+
+
+Private Sub DbManagerInvalidTypeTest()
+    Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
+    Dim fileName As String: fileName = fso.GetBaseName(ThisWorkbook.Name) & ".csv"
+
+    Dim tableName As String: tableName = fileName
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea'"
+    
+    Dim dbm As IDbManager
+    Set dbm = DbManager.FromConnectionParameters("Driver=", ThisWorkbook.Path, fileName, vbNullString, True, LoggerTypeEnum.logPrivate)
+
+    Dim rst As IDbRecordset
+    Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
+    
+    Dim result As ADODB.Recordset
+    Set result = rst.OpenRecordset(SQLQuery, 45)
 End Sub
 
 
@@ -27,7 +45,7 @@ Private Sub DbManagerScalarCSVTest()
     Dim fileName As String: fileName = fso.GetBaseName(ThisWorkbook.Name) & ".csv"
 
     Dim tableName As String: tableName = fileName
-    Dim SQLQuery As String: SQLQuery = "SELECT last_name FROM " & tableName & " WHERE id = ? AND last_name <> 'machinery'"
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea' ORDER BY id DESC"
     
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, fileName, vbNullString, True, LoggerTypeEnum.logPrivate)
@@ -45,7 +63,7 @@ Private Sub DbManagerSQLiteTest()
     Dim fileName As String: fileName = fso.GetBaseName(ThisWorkbook.Name) & ".db"
 
     Dim tableName As String: tableName = "people"
-    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE id <= ? AND last_name <> 'machinery'"
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea'"
     
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("sqlite", ThisWorkbook.Path, fileName, vbNullString, True, LoggerTypeEnum.logPrivate)
@@ -53,7 +71,8 @@ Private Sub DbManagerSQLiteTest()
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
     
-    rst.OpenRecordset SQLQuery, 45
+    Dim result As ADODB.Recordset
+    Set result = rst.OpenRecordset(SQLQuery, 45)
 End Sub
 
 
@@ -65,8 +84,8 @@ Private Sub DbManagerExTest()
     Dim connString As String
     connString = DbManager.BuildConnectionString("csv", ThisWorkbook.Path, fileName)
 
-    Dim SQLQuery As String
-    SQLQuery = "SELECT * FROM " & fileName & " WHERE id <= ? AND last_name <> 'machinery'"
+    Dim tableName As String: tableName = fileName
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea'"
     
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, fileName, vbNullString, True, LoggerTypeEnum.logPrivate)
@@ -87,9 +106,10 @@ Private Sub DbManagerExTest()
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
     Dim rstAdo As ADODB.Recordset
-    Set rstAdo = rst.AdoRecordset
+    Set rstAdo = rst.AdoRecordset(SQLQuery, 45)
     
-    rst.OpenRecordset SQLQuery, 45
+    Dim result As ADODB.Recordset
+    Set result = rst.OpenRecordset(SQLQuery, 45)
 End Sub
 
 
