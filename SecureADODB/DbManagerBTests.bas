@@ -1,4 +1,4 @@
-Attribute VB_Name = "DbManagerTest"
+Attribute VB_Name = "DbManagerBTests"
 '@Folder "SecureADODB.DbManager"
 '@TestModule
 '@IgnoreModule
@@ -171,19 +171,15 @@ End Sub
 Private Sub ztcBuildConnectionString_ThrowsGivenNullDatabaseType()
     On Error Resume Next
     Dim connString As String: connString = DbManager.BuildConnectionString(vbNullString)
-    AssertExpectedError Assert, ErrNo.EmptyStringErr
+    AssertExpectedError Assert, ErrNo.AdoConnectionStringError
 End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub ztcBuildConnectionString_ValidatesUnsupportedType()
-    On Error GoTo TestFail
-    Assert.AreEqual vbNullString, DbManager.BuildConnectionString("Access")
-
-CleanExit:
-    Exit Sub
-TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+Private Sub ztcBuildConnectionString_ThrowsGivenUnsupportedType()
+    On Error Resume Next
+    Dim connString As String: connString = DbManager.BuildConnectionString("Access")
+    AssertExpectedError Assert, ErrNo.AdoConnectionStringError
 End Sub
 
 
