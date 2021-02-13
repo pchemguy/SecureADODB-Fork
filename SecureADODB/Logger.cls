@@ -62,11 +62,6 @@ Attribute Create.VB_Description = "Default class factory"
 End Function
 
 
-Private Function GetTimeStampMs() As String
-    GetTimeStampMs = Strings.Format(Now, "yyyy-MM-dd HH:mm:ss") & Strings.Right(Strings.Format(Timer, "#0.000"), 4)
-End Function
-
-
 '@Description "Adds item to the log database"
 Public Sub Log(ByVal LogLine As String, Optional ByRef LogDatabase As Scripting.Dictionary = Nothing)
 Attribute Log.VB_Description = "Adds item to the log database"
