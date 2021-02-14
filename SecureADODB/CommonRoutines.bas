@@ -7,7 +7,7 @@ Public Function GetTimeStampMs() As String
     '''' On Windows, the Timer resolution is subsecond, the fractional part (the four characters at the end
     '''' given the format) is concatenated with DateTime. It appears that the Windows' high precision time
     '''' source available via API yields garbage for the fractional part.
-    GetTimeStampMs = Strings.Format(Now, "yyyy-MM-dd HH:mm:ss") & Strings.Right(Strings.Format(Timer, "#0.000"), 4)
+    GetTimeStampMs = Format$(Now, "yyyy-MM-dd HH:mm:ss") & Right$(Format$(Timer, "#0.000"), 4)
 End Function
 
 
