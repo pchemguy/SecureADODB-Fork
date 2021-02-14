@@ -89,24 +89,6 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                               "Database=" + .Database + ";" + _
                               .Options
             End With
-'            With connConfig
-'                If Name = vbNullString Then
-'                    Dim fso As Scripting.FileSystemObject
-'                    Set fso = New Scripting.FileSystemObject
-'                    .Name = fso.GetBaseName(ThisWorkbook.Name) & ".db"
-'                Else
-'                    .Name = Name
-'                End If
-'                If Options = vbNullString Then
-'                    .Options = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
-'                Else
-'                    .Options = Options
-'                End If
-'                .Database = .Path & Application.PathSeparator & .Name
-'                .connString = "DSN=SQLite3 Datasource;" + _
-'                              "Database=" + .Database + ";" + _
-'                              .Options
-'            End With
         Case "csv"                                                              ' ============ CSV db ============ '
             With connConfig
                 #If Win64 Then
@@ -160,9 +142,6 @@ Attribute FromConnectionParameters.VB_Description = "Creates a new manager using
             Set LogController = Logger.Create
     End Select
     
-    Dim db As IDbConnection
-    Set db = DbConnection.Create(connString, LogController)
-    
     Dim provider As IParameterProvider
     Set provider = AdoParameterProvider.Create(AdoTypeMappings.Default)
     
@@ -171,6 +150,9 @@ Attribute FromConnectionParameters.VB_Description = "Creates a new manager using
     
     Dim factory As IDbCommandFactory
     Set factory = DbCommandFactory.Create(baseCommand)
+    
+    Dim db As IDbConnection
+    Set db = DbConnection.Create(connString, LogController)
     
     Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions, LogController)
 End Function
