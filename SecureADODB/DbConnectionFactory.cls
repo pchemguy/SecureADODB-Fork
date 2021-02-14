@@ -8,13 +8,13 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "An implementation of an abstract factory that creates DbConnection objects."
-'@Folder("SecureADODB.DbConnection")
+'@Folder "SecureADODB.DbConnection"
 '@ModuleDescription("An implementation of an abstract factory that creates DbConnection objects.")
 '@Exposed
 Option Explicit
 
 Implements IDbConnectionFactory
 
-Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String) As IDbConnection
-    Set IDbConnectionFactory_CreateInstance = DbConnection.Create(connString)
+Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing) As IDbConnection
+    Set IDbConnectionFactory_CreateInstance = DbConnection.Create(connString, LogController)
 End Function

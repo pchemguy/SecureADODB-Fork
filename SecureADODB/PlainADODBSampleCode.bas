@@ -14,8 +14,8 @@ Public Sub TestADODBSourceSQL()
     Dim sSQL As String
     Dim sQTName As String
     
-    sDatabase = ThisWorkbook.path + "\" + "SecureADODB.db"
-    sDriver = "{SQLite3 ODBC Driver}"
+    sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
+    sDriver = "SQLite3 ODBC Driver"
     sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
                  "Database=" + sDatabase + ";" + _
@@ -23,13 +23,20 @@ Public Sub TestADODBSourceSQL()
 
     qtConnStr = "OLEDB;" + adoConnStr
     
-    sSQL = "SELECT * FROM categories WHERE category_id <= 3 AND section = 'machinery'"
+    sSQL = "SELECT * FROM people WHERE id <= 45 AND last_name <> 'machinery'"
     
-    Dim adoRecordSet As ADODB.Recordset
-    Set adoRecordSet = New ADODB.Recordset
-    adoRecordSet.CursorLocation = adUseClient
-    adoRecordSet.Open source:=sSQL, ActiveConnection:=adoConnStr, CursorType:=adOpenKeyset, LockType:=adLockReadOnly, options:=(adCmdText Or adAsyncFetch)
-    Set adoRecordSet.ActiveConnection = Nothing
+    Dim AdoConnection As ADODB.Connection
+    Set AdoConnection = New ADODB.Connection
+    On Error Resume Next
+    AdoConnection.Open adoConnStr
+    On Error GoTo 0
+    If AdoConnection.State = ADODB.ObjectStateEnum.adStateOpen Then AdoConnection.Close
+    
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseClient
+    AdoRecordset.Open source:=sSQL, ActiveConnection:=adoConnStr, CursorType:=adOpenKeyset, LockType:=adLockReadOnly, Options:=(adCmdText Or adAsyncFetch)
+    Set AdoRecordset.ActiveConnection = Nothing
 End Sub
 
 
@@ -43,8 +50,8 @@ Public Sub TestADODBSourceCMD()
     Dim sSQL As String
     Dim sQTName As String
     
-    sDatabase = ThisWorkbook.path + "\" + "SecureADODB.db"
-    sDriver = "{SQLite3 ODBC Driver}"
+    sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
+    sDriver = "SQLite3 ODBC Driver"
     sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
                  "Database=" + sDatabase + ";" + _
@@ -52,29 +59,29 @@ Public Sub TestADODBSourceCMD()
 
     qtConnStr = "OLEDB;" + adoConnStr
     
-    sSQL = "SELECT * FROM categories WHERE category_id <= 3 AND section = 'machinery'"
+    sSQL = "SELECT * FROM people WHERE id <= 45 AND last_name <> 'machinery'"
     
-    Dim adoRecordSet As ADODB.Recordset
-    Set adoRecordSet = New ADODB.Recordset
-    Dim adoCommand As ADODB.Command
-    Set adoCommand = New ADODB.Command
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    Dim AdoCommand As ADODB.Command
+    Set AdoCommand = New ADODB.Command
     
-    With adoCommand
-        .commandType = adCmdText
+    With AdoCommand
+        .CommandType = adCmdText
         .CommandText = sSQL
         .ActiveConnection = adoConnStr
         .ActiveConnection.CursorLocation = adUseClient
     End With
     
-    With adoRecordSet
-        Set .source = adoCommand
+    With AdoRecordset
+        Set .source = AdoCommand
         .CursorLocation = adUseClient
         .CursorType = adOpenKeyset
         .LockType = adLockReadOnly
-        .Open options:=adAsyncFetch
+        .Open Options:=adAsyncFetch
         Set .ActiveConnection = Nothing
     End With
-    adoCommand.ActiveConnection.Close
+    AdoCommand.ActiveConnection.Close
 End Sub
 
 
@@ -89,8 +96,8 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     Dim sSQL As String
     Dim sQTName As String
     
-    sDatabase = ThisWorkbook.path + "\" + "SecureADODB.db"
-    sDriver = "{SQLite3 ODBC Driver}"
+    sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
+    sDriver = "SQLite3 ODBC Driver"
     sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
                  "Database=" + sDatabase + ";" + _
@@ -98,12 +105,12 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
 
     qtConnStr = "OLEDB;" + adoConnStr
     
-    sSQL = "SELECT * FROM categories WHERE category_id <= ? AND section = ?"
+    sSQL = "SELECT * FROM people WHERE id <= ? AND last_name <> ?"
     
-    Dim adoRecordSet As ADODB.Recordset
-    Set adoRecordSet = New ADODB.Recordset
-    Dim adoCommand As ADODB.Command
-    Set adoCommand = New ADODB.Command
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    Dim AdoCommand As ADODB.Command
+    Set AdoCommand = New ADODB.Command
     
     Dim mappings As ITypeMap
     Set mappings = AdoTypeMappings.Default
@@ -111,15 +118,15 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     Set provider = AdoParameterProvider.Create(mappings)
     
     Dim adoParameter As ADODB.Parameter
-    Set adoParameter = provider.FromValue(3)
+    Set adoParameter = provider.FromValue(45)
     'adoParameter.name = "@category_id"
-    adoCommand.Parameters.Append adoParameter
+    AdoCommand.Parameters.Append adoParameter
     Set adoParameter = provider.FromValue("machinery")
     'adoParameter.name = "@section"
-    adoCommand.Parameters.Append adoParameter
+    AdoCommand.Parameters.Append adoParameter
     
-    With adoCommand
-        .commandType = adCmdText
+    With AdoCommand
+        .CommandType = adCmdText
         .CommandText = sSQL
         .Prepared = True
         '.NamedParameters = True
@@ -127,16 +134,165 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
         .ActiveConnection.CursorLocation = adUseClient
     End With
         
-    With adoRecordSet
-        Set .source = adoCommand
+    With AdoRecordset
+        Set .source = AdoCommand
         .CursorLocation = adUseClient
         .CursorType = adOpenKeyset
         .LockType = adLockReadOnly
-        .Open options:=adAsyncFetch
+        .Open Options:=adAsyncFetch
         Set .ActiveConnection = Nothing
     End With
-    adoCommand.ActiveConnection.Close
-    Debug.Print "RecordCount: " & CStr(adoRecordSet.RecordCount)
+    AdoCommand.ActiveConnection.Close
+    Debug.Print "RecordCount: " & CStr(AdoRecordset.RecordCount)
 End Sub
 
 
+Public Sub TestADODBSourceSQLite()
+    Dim fso As New Scripting.FileSystemObject
+    Dim sDriver As String
+    Dim sDatabase As String
+    Dim sDatabaseExt As String
+    Dim sTable As String
+    Dim adoConnStr As String
+    Dim sSQL As String
+    
+    sDriver = "SQLite3 ODBC Driver"
+    sDatabaseExt = ".db"
+    sTable = "people"
+    sDatabase = ThisWorkbook.Path & Application.PathSeparator & fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
+    adoConnStr = "Driver=" & sDriver & ";" & _
+                 "Database=" & sDatabase & ";"
+    
+    sSQL = "SELECT * FROM """ & sTable & """"
+        
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseClient
+    AdoRecordset.Open _
+            source:=sSQL, _
+            ActiveConnection:=adoConnStr, _
+            CursorType:=adOpenKeyset, _
+            LockType:=adLockReadOnly, _
+            Options:=(adCmdText Or adAsyncFetch)
+    Set AdoRecordset.ActiveConnection = Nothing
+End Sub
+
+
+Public Sub TestADODBSourceCSV()
+    Dim fso As New Scripting.FileSystemObject
+    Dim sDriver As String
+    Dim sDatabase As String
+    Dim sDatabaseExt As String
+    Dim sTable As String
+    Dim adoConnStr As String
+    Dim sSQL As String
+    
+    #If Win64 Then
+        sDriver = "Microsoft Access Text Driver (*.txt, *.csv)"
+    #Else
+        sDriver = "{Microsoft Text Driver (*.txt; *.csv)}"
+    #End If
+    sDatabaseExt = ".csv"
+    sDatabase = ThisWorkbook.Path
+    sTable = fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
+    adoConnStr = "Driver=" & sDriver & ";" & _
+                 "DefaultDir=" & sDatabase & ";"
+    
+    sSQL = "SELECT * FROM """ & sTable & """"
+    sSQL = sTable
+    
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseClient
+    AdoRecordset.Open _
+            source:=sSQL, _
+            ActiveConnection:=adoConnStr, _
+            CursorType:=adOpenKeyset, _
+            LockType:=adLockReadOnly, _
+            Options:=(adCmdTable Or adAsyncFetch)
+    Set AdoRecordset.ActiveConnection = Nothing
+End Sub
+
+
+Public Sub TestADODBConnectCSV()
+    Dim fso As New Scripting.FileSystemObject
+    Dim sDriver As String
+    Dim sDatabase As String
+    Dim sDatabaseExt As String
+    Dim sTable As String
+    Dim adoConnStr As String
+    Dim sSQL As String
+    
+    #If Win64 Then
+        sDriver = "Microsoft Access Text Driver (*.txt, *.csv)"
+    #Else
+        sDriver = "{Microsoft Text Driver (*.txt; *.csv)}"
+    #End If
+    sDatabaseExt = ".csv"
+    sDatabase = ThisWorkbook.Path
+    sTable = fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
+    adoConnStr = "Driver=" & sDriver & ";" & _
+                 "DefaultDir=" & sDatabase & ";"
+    
+    sSQL = "SELECT * FROM """ & sTable & """"
+    sSQL = sTable
+    
+    Dim AdoConnection As ADODB.Connection
+    Set AdoConnection = New ADODB.Connection
+    AdoConnection.ConnectionString = adoConnStr
+    
+    On Error Resume Next
+    AdoConnection.Open
+    Debug.Print AdoConnection.Errors.Count
+    AdoConnection.BeginTrans
+    On Error GoTo 0
+    
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseClient
+    AdoRecordset.Open _
+            source:=sSQL, _
+            ActiveConnection:=adoConnStr, _
+            CursorType:=adOpenKeyset, _
+            LockType:=adLockReadOnly, _
+            Options:=(adCmdTable Or adAsyncFetch)
+    Set AdoRecordset.ActiveConnection = Nothing
+End Sub
+
+
+Public Sub TestADODBConnectSQLite()
+    Dim fso As New Scripting.FileSystemObject
+    Dim sDriver As String
+    Dim sDatabase As String
+    Dim sDatabaseExt As String
+    Dim sTable As String
+    Dim adoConnStr As String
+    Dim sSQL As String
+    
+    sDriver = "SQLite3 ODBC Driver"
+    sDatabaseExt = ".db"
+    sTable = "people"
+    sDatabase = ThisWorkbook.Path & Application.PathSeparator & fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
+    adoConnStr = "Driver=" & sDriver & ";" & _
+                 "Database=" & sDatabase & ";"
+    
+    sSQL = "SELECT * FROM """ & sTable & """"
+        
+    Dim AdoRecordset As ADODB.Recordset
+    Set AdoRecordset = New ADODB.Recordset
+    AdoRecordset.CursorLocation = adUseServer
+    AdoRecordset.Open _
+            source:=sSQL, _
+            ActiveConnection:=adoConnStr, _
+            CursorType:=adOpenKeyset, _
+            LockType:=adLockReadOnly, _
+            Options:=(adCmdText Or adAsyncFetch)
+    On Error Resume Next
+    Set AdoRecordset.ActiveConnection = Nothing
+    On Error GoTo 0
+End Sub
+
+
+Private Sub Test()
+    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
+End Sub

@@ -1,5 +1,5 @@
 Attribute VB_Name = "DbConnectionTests"
-'@Folder("SecureADODB.Tests")
+'@Folder "SecureADODB.DbConnection. Tests"
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -70,4 +70,5 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 

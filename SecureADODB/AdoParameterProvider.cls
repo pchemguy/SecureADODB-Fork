@@ -8,10 +8,10 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "An object responsible for converting a value of a mapped data type to an ADODB.Parameter object."
-'@Folder("SecureADODB.ParameterProvider")
+'@Folder "SecureADODB.DbParameterProvider"
 '@ModuleDescription("An object responsible for converting a value of a mapped data type to an ADODB.Parameter object.")
 '@PredeclaredId
-'@IgnoreModule UseMeaningfulName, IllegalAnnotation
+'@IgnoreModule IllegalAnnotation
 '@Exposed
 Option Explicit
 
@@ -41,7 +41,19 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
+Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA.Collection
+    Dim results As VBA.Collection
+    Set results = New VBA.Collection
+    '@Ignore UseMeaningfulName
+    Dim i As Long
+    For i = LBound(values) To UBound(values)
+        results.Add IParameterProvider_FromValue(values(i))
+    Next
+    Set IParameterProvider_FromValues = results
+End Function
+
+
+Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
     If TypeOf value Is ADODB.Parameter Then
         Set IParameterProvider_FromValue = value
         Exit Function
@@ -55,17 +67,17 @@ Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional B
     Dim result As ADODB.Parameter
     Set result = New ADODB.Parameter
     result.Type = mappings.Mapping(localDataTypeName)
-    result.direction = ADODB.adParamInput
+    result.Direction = ADODB.ParameterDirectionEnum.adParamInput
     
     If result.Type = AdoTypeMappings.DefaultNullMapping Then
-        result.Attributes = ParameterAttributesEnum.adParamNullable
+        result.Attributes = ADODB.ParameterAttributesEnum.adParamNullable
         result.value = Null
     Else
         result.value = value
     End If
     
     If IsCharMapping(result.Type) And Len(value) > 0 Then result.Size = Len(value)
-    If name <> vbNullString Then result.name = name
+    If Name <> vbNullString Then result.Name = Name
     
     Set IParameterProvider_FromValue = result
 End Function
@@ -76,24 +88,4 @@ Private Function IsCharMapping(ByVal value As ADODB.DataTypeEnum) As Boolean
                   Or (value = adWChar) _
                   Or (value = adVarChar) _
                   Or (value = adVarWChar))
-End Function
-
-
-Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA.Collection
-    Dim results As VBA.Collection
-    Set results = New VBA.Collection
-    On Error GoTo CleanFail
-    Dim i As Long
-    For i = LBound(values) To UBound(values)
-        results.Add IParameterProvider_FromValue(values(i))
-    Next
-
-CleanExit:
-    Set IParameterProvider_FromValues = results
-    Exit Function
-CleanFail:
-    If Err.number <> 9 Then
-        Errors.RethrowOnError
-    End If
-    Resume CleanExit
 End Function

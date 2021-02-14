@@ -1,5 +1,5 @@
 Attribute VB_Name = "DbCommandBaseTests"
-'@Folder("SecureADODB.Tests")
+'@Folder "SecureADODB.DbCommand. Tests"
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -138,72 +138,3 @@ CleanFail:
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
-
-
-'@TestMethod("Guard Clauses")
-Private Sub GetDisconnectedRecordset_ThrowsGivenNullConnection()
-    On Error GoTo TestFail
-    
-    Dim sut As IDbCommandBase
-    Set sut = DbCommandBase.Create(GetParameterProvider)
-    
-    On Error GoTo CleanFail
-    Dim rs As ADODB.Recordset
-    Set rs = sut.GetDisconnectedRecordset(Nothing)
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
-'@TestMethod("DbCommandBase")
-Private Sub GetSingleValue_ThrowsGivenClosedConnection()
-    On Error GoTo TestFail
-    
-    Dim sut As IDbCommandBase
-    Set sut = DbCommandBase.Create(GetParameterProvider)
-    
-    Dim db As StubDbConnection
-    Set db = New StubDbConnection
-    db.State = adStateClosed
-    
-    Dim args() As Variant
-    
-    On Error GoTo CleanFail
-    Dim value As Variant
-    value = sut.GetSingleValue(db, "SQL", args)
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
-'@TestMethod("Guard Clauses")
-Private Sub GetSingleValue_ThrowsGivenEmptyCommandString()
-    On Error GoTo TestFail
-    
-    Dim sut As IDbCommandBase
-    Set sut = DbCommandBase.Create(GetParameterProvider)
-    
-    Dim db As StubDbConnection
-    Set db = New StubDbConnection
-    
-    Dim args() As Variant
-    
-    On Error GoTo CleanFail
-    Dim rs As ADODB.Recordset
-    Set rs = sut.GetSingleValue(db, vbNullString, args)
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-

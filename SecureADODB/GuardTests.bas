@@ -1,6 +1,6 @@
 Attribute VB_Name = "GuardTests"
 Attribute VB_Description = "Tests for the Guard class."
-'@Folder("Guard.Tests")
+'@Folder "SecureADODB.Guard.Tests"
 ''@TestModule
 '@ModuleDescription("Tests for the Guard class.")
 '@IgnoreModule LineLabelNotUsed, UnhandledOnErrorResumeNext
@@ -48,42 +48,42 @@ End Sub
 Private Sub EmptyString_Pass()
     On Error Resume Next
     Guard.EmptyString "Non-empty string"
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.EmptyString")
 Private Sub EmptyString_ThrowsIfNotString()
     On Error Resume Next
     Guard.EmptyString True
-    AssertExpectedError ErrNo.TypeMismatchErr
+    AssertExpectedError Assert, ErrNo.TypeMismatchErr
 End Sub
 
 '@TestMethod("Guard.EmptyString")
 Private Sub EmptyString_ThrowsIfEmptyString()
     On Error Resume Next
     Guard.EmptyString vbNullString
-    AssertExpectedError ErrNo.EmptyStringErr
+    AssertExpectedError Assert, ErrNo.EmptyStringErr
 End Sub
 
 '@TestMethod("Guard.Singleton")
 Private Sub Singleton_Pass()
     On Error Resume Next
     Guard.Singleton Guard
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.Singleton")
 Private Sub Singleton_DefaultFactoryPass()
     On Error Resume Next
     Guard.Singleton Guard.Create
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.Singleton")
 Private Sub Singleton_NothingCheck()
     On Error Resume Next
     Guard.Singleton Nothing
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 '@TestMethod("Guard.Singleton")
@@ -91,70 +91,108 @@ Private Sub Singleton_ThrowsIfNewingObject()
     On Error Resume Next
     '@Ignore VariableNotUsed, AssignmentNotUsed
     Dim GuardInstance As Guard: Set GuardInstance = New Guard
-    AssertExpectedError ErrNo.SingletonErr
+    AssertExpectedError Assert, ErrNo.SingletonErr
 End Sub
 
 '@TestMethod("Guard.ObjectNotSet")
 Private Sub ObjectNotSet_Pass()
     On Error Resume Next
     Guard.NullReference Guard
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.ObjectNotSet")
 Private Sub ObjectNotSet_ThrowsIfNotObject()
     On Error Resume Next
     Guard.NullReference Empty
-    AssertExpectedError ErrNo.ObjectRequiredErr
+    AssertExpectedError Assert, ErrNo.ObjectRequiredErr
 End Sub
 
 '@TestMethod("Guard.ObjectNotSet")
 Private Sub ObjectNotSet_ThrowsIfNothing()
     On Error Resume Next
     Guard.NullReference Nothing
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 '@TestMethod("Guard.ObjectSet")
 Private Sub ObjectSet_Pass()
     On Error Resume Next
     Guard.NonNullReference Nothing
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.ObjectSet")
 Private Sub ObjectSet_ThrowsIfNotObject()
     On Error Resume Next
     Guard.NonNullReference Empty
-    AssertExpectedError ErrNo.ObjectRequiredErr
+    AssertExpectedError Assert, ErrNo.ObjectRequiredErr
 End Sub
 
 '@TestMethod("Guard.ObjectSet")
 Private Sub ObjectSet_ThrowsIfNotNothing()
     On Error Resume Next
     Guard.NonNullReference Guard
-    AssertExpectedError ErrNo.ObjectSetErr
+    AssertExpectedError Assert, ErrNo.ObjectSetErr
 End Sub
 
 '@TestMethod("Guard.NonDefaultInstance")
 Private Sub NonDefaultInstance_Pass()
     On Error Resume Next
     Guard.NonDefaultInstance Guard
-    AssertExpectedError ErrNo.PassedNoErr
+    AssertExpectedError Assert, ErrNo.PassedNoErr
 End Sub
 
 '@TestMethod("Guard.NonDefaultInstance")
 Private Sub NonDefaultInstance_ThrowsIfNothing()
     On Error Resume Next
     Guard.NonDefaultInstance Nothing
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 '@TestMethod("Guard.DefaultInstance")
 Private Sub DefaultInstance_ThrowsIfDefaultInstance()
     On Error Resume Next
     Guard.DefaultInstance Guard
-    AssertExpectedError ErrNo.DefaultInstanceErr
+    AssertExpectedError Assert, ErrNo.DefaultInstanceErr
+End Sub
+
+
+'@TestMethod("IsFalsy")
+Private Sub IsFalsy_VerifiesFalsiness()
+    On Error GoTo TestFail
+    
+Arrange:
+    '@Ignore VariableNotAssigned
+    Dim TestVar As Variant
+    '@Ignore VariableNotAssigned
+    Dim TestObj As Object
+    Dim TestColl As VBA.Collection
+    Set TestColl = New VBA.Collection
+Act:
+    
+Assert:
+    Assert.IsTrue IsFalsy(Empty), "Empty should be falsy"
+    Assert.IsTrue IsFalsy(Null), "Null should be falsy"
+    Assert.IsTrue IsFalsy(Nothing), "Nothing should be falsy"
+    Assert.IsTrue IsFalsy(False), "False should be falsy"
+    Assert.IsFalse IsFalsy(True), "True should be truthy"
+    Assert.IsTrue IsFalsy(vbNullString), "vbNullString should be falsy"
+    '@Ignore EmptyStringLiteral
+    Assert.IsTrue IsFalsy(""), "Empty string literal should be falsy"
+    Assert.IsFalse IsFalsy("Some text"), "Non-empty should be truthy"
+    '@Ignore UnassignedVariableUsage
+    Assert.IsTrue IsFalsy(TestVar), "Empty variant should be falsy"
+    Assert.IsTrue IsFalsy(0&), "0 should be falsy"
+    Assert.IsTrue IsFalsy(0#), "0.0 should be falsy"
+    '@Ignore UnassignedVariableUsage
+    Assert.IsTrue IsFalsy(TestObj), "Not set object should be falsy"
+    Assert.IsFalse IsFalsy(TestColl), "Set object should be truthy"
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.number & " - " & Err.description
 End Sub
 
 
@@ -177,17 +215,17 @@ TestFail:
 End Sub
 
 
-'@TestMethod("Guard.ClassName")
-Private Sub ClassName_CheckAvailability()
+'@TestMethod("Guard.Class")
+Private Sub Class_CheckAvailability()
     On Error GoTo TestFail
     
 Arrange:
     Dim classVar As Object: Set classVar = Guard
 Act:
-    Dim classNameVar As Object: Set classNameVar = classVar.Create.ClassName
+    Dim classVarReturned As Object: Set classVarReturned = classVar.Create.Class
 Assert:
-    Assert.AreEqual TypeName(classVar), TypeName(classNameVar), "Error: type mismatch: " & TypeName(classNameVar) & " type."
-    Assert.AreSame classVar, classNameVar, "Error: bad Class pointer"
+    Assert.AreEqual TypeName(classVar), TypeName(classVarReturned), "Error: type mismatch: " & TypeName(classVarReturned) & " type."
+    Assert.AreSame classVar, classVarReturned, "Error: bad Class pointer"
 
 CleanExit:
     Exit Sub
