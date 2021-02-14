@@ -8,136 +8,234 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "A thin wrapper around an ADODB connection."
-'@Exposed
-'@Folder("SecureADODB.DbConnection")
+'@Folder "SecureADODB.DbConnection"
 '@ModuleDescription("A thin wrapper around an ADODB connection.")
 '@PredeclaredId
+'@IgnoreModule AssignmentNotUsed, IllegalAnnotation
+'@Exposed
 Option Explicit
+
 Implements IDbConnection
-'@Ignore MissingMemberAnnotation
+
+'@MemberAttribute VB_VarHelpID, -1
 Private WithEvents AdoConnection As ADODB.Connection
 Attribute AdoConnection.VB_VarHelpID = -1
-Private HasActiveTransaction As Boolean
+Private Type TDbConnection
+    ExecuteStatus As ADODB.EventStatusEnum
+    RecordsAffected As Long
+    '''' If  particular backend does not support transaction, "begin" method raises an error, and the corresponding handler sets this flag
+    TransactionsDisabled As Boolean
+    HasActiveTransaction As Boolean
+    StateMap As Variant    '''' Map for ADODB.ObjectStateEnum
+    LogController As ILogger
+End Type
+Private this As TDbConnection
+
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
-Public Function Create(ByVal connString As String) As IDbConnection
+Public Function Create(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing) As IDbConnection
     Errors.GuardNonDefaultInstance Me, DbConnection
     
     Dim result As DbConnection
     Set result = New DbConnection
-    
-    result.Connect connString
+    result.CreInit connString, LogController
     Set Create = result
-
 End Function
 
-'@Inject: this member should only be invoked by Me.Create, where Me is the class' default/predeclared instance.
-Friend Sub Connect(ByVal connString As String)
-    Errors.GuardExpression AdoConnection.ConnectionString <> vbNullString, message:="Object is already initialized."
-    Errors.GuardEmptyString connString
-    
-    AdoConnection.Open connString
 
+'@Description("Default constructor")
+Friend Sub CreInit(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing)
+Attribute CreInit.VB_Description = "Default constructor"
+    Guard.ConnectionStringError connString
+    
+    Set this.LogController = LogController
+    this.TransactionsDisabled = False
+    On Error GoTo ConnectionError
+    AdoConnection.Open connString
+    On Error GoTo 0
+    Exit Sub
+    
+ConnectionError:
+    If Err.number = &H80004005 Then
+        Guard.ConnectionStringError Nothing
+    Else
+        Err.Raise Err.number, Err.source, Err.description, Err.HelpFile, Err.HelpContext
+    End If
 End Sub
+
+
+Private Sub Class_Initialize()
+    Set AdoConnection = New ADODB.Connection
+    '@Ignore EmptyStringLiteral
+    this.StateMap = Array("adStateClosed", "adStateOpen", "adStateConnecting", "", "adStateExecuting", "", "", "", "adStateFetching")
+End Sub
+
+
+Private Sub Class_Terminate()
+    On Error GoTo ErrorHandler
+    If this.HasActiveTransaction Then AdoConnection.RollbackTrans
+    AdoConnection.Close
+    Set AdoConnection = Nothing
+    
+    On Error GoTo 0
+    Exit Sub
+
+ErrorHandler:
+    LogAdoErrors
+    Resume Next
+End Sub
+
+
+Private Sub LogAdoErrors()
+    If this.LogController Is Nothing Then Exit Sub
+    
+    Dim AdoError As ADODB.Error
+    Dim message As String
+    message = "ADODB.Connection State: " + CStr(this.StateMap(AdoConnection.State))
+    this.LogController.Log message
+    For Each AdoError In AdoConnection.Errors
+        With AdoError
+            message = "ADODB.Error #" + CStr(.number) + ", " + _
+                      "SQLState: " + CStr(.SqlState) + ", " + _
+                      "Source: " + CStr(.source) + ", " + _
+                      "Description: " + CStr(.description)
+        End With
+        this.LogController.Log message
+    Next AdoError
+    AdoConnection.Errors.Clear
+        
+    With VBA.Err
+        If .number > 0 And Left$(.source, 6) = "ADODB." Then
+            message = "VBA.Err #" + CStr(.number) + ", " + _
+                      "Source: " + CStr(.source) + ", " + _
+                      "Description: " + CStr(.description)
+        End If
+    End With
+    this.LogController.Log message
+    VBA.Err.Clear
+End Sub
+
+
+'================================================================================'
+'============================ IDbConnection INTERFACE ==========================='
+'================================================================================'
+
+Private Property Get IDbConnection_Self() As IDbConnection
+    Set IDbConnection_Self = Me
+End Property
+
+
+Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
+    Set IDbConnection_AdoConnection = AdoConnection
+End Property
+
+
+Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
+    IDbConnection_State = AdoConnection.State
+End Property
+
+
+
+Private Property Get IDbConnection_ExecuteStatus() As ADODB.EventStatusEnum
+    IDbConnection_ExecuteStatus = this.ExecuteStatus
+End Property
+
+
+Private Property Get IDbConnection_RecordsAffected() As Long
+    IDbConnection_RecordsAffected = this.RecordsAffected
+End Property
+
+
+Private Sub IDbConnection_BeginTransaction()
+    Guard.InTransaction this.HasActiveTransaction
+    
+    On Error GoTo ErrorHandler
+    '@Ignore VariableNotUsed
+    Dim result As Long
+    '''' If  particular backend does not support transaction, the next line raises an error, and the corresponding handler sets this.TransactionsDisabled
+    result = AdoConnection.BeginTrans
+    If Not this.TransactionsDisabled Then this.HasActiveTransaction = True
+    LogAdoErrors
+    On Error GoTo 0
+    Exit Sub
+
+ErrorHandler:
+    If VBA.Err.number = 3251 Then
+        this.TransactionsDisabled = True
+        Resume Next
+    Else
+        Err.Raise Err.number, Err.source, Err.description, Err.HelpFile, Err.HelpContext
+    End If
+End Sub
+
+
+Private Sub IDbConnection_CommitTransaction()
+    If this.TransactionsDisabled Then Exit Sub
+    Guard.NotInTransaction this.HasActiveTransaction
+    
+    AdoConnection.CommitTrans
+    this.HasActiveTransaction = False
+    LogAdoErrors
+End Sub
+
+
+Private Sub IDbConnection_RollbackTransaction()
+    If this.TransactionsDisabled Then Exit Sub
+    Guard.NotInTransaction this.HasActiveTransaction
+    
+    AdoConnection.RollbackTrans
+    this.HasActiveTransaction = False
+    LogAdoErrors
+End Sub
+
+
+'================================================================================'
+'========================= AdoConnection EVENT HANDLERS ========================='
+'================================================================================'
 
 Private Sub AdoConnection_BeginTransComplete(ByVal TransactionLevel As Long, ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin transaction completed. "
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
 End Sub
 
 Private Sub AdoConnection_CommitTransComplete(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Commit transaction completed. "
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
-End Sub
-
-Private Sub AdoConnection_ConnectComplete(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
-    Debug.Print "Connect completed. Status: " & adStatus
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
-End Sub
-
-Private Sub AdoConnection_Disconnect(adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
-    Debug.Print "Disconnect completed. Status: " & adStatus
-End Sub
-
-Private Sub AdoConnection_ExecuteComplete(ByVal RecordsAffected As Long, ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
-    Debug.Print "Execute completed, " & RecordsAffected & " record(s) affected."
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
-End Sub
-
-Private Sub AdoConnection_InfoMessage(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
-    If pError.Number = 0 Then
-        Debug.Print "Info: " & pError.Description
-    Else
-        Debug.Print "Error: " & pError.Number, pError.Description
-    End If
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
 End Sub
 
 Private Sub AdoConnection_RollbackTransComplete(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Rollback transaction completed."
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
 End Sub
 
 Private Sub AdoConnection_WillConnect(ConnectionString As String, UserID As String, Password As String, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin connect..."
 End Sub
 
-Private Sub AdoConnection_WillExecute(Source As String, CursorType As ADODB.CursorTypeEnum, LockType As ADODB.LockTypeEnum, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
+Private Sub AdoConnection_ConnectComplete(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
+    Debug.Print "Connect completed. Status: " & adStatus
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
+End Sub
+
+Private Sub AdoConnection_Disconnect(adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
+    Debug.Print "Disconnect completed. Status: " & adStatus
+End Sub
+
+Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.CursorTypeEnum, LockType As ADODB.LockTypeEnum, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin execute..."
 End Sub
 
-Private Sub Class_Initialize()
-    Set AdoConnection = New ADODB.Connection
+Private Sub AdoConnection_ExecuteComplete(ByVal RecordsAffected As Long, ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
+    this.ExecuteStatus = adStatus
+    this.RecordsAffected = RecordsAffected
+    Debug.Print "Execute completed, " & RecordsAffected & " record(s) affected."
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
 End Sub
 
-Private Sub Class_Terminate()
-    On Error Resume Next
-    AdoConnection.Close
-    On Error GoTo 0
-    Set AdoConnection = Nothing
+Private Sub AdoConnection_InfoMessage(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
+    If pError.number = 0 Then
+        Debug.Print "Info: " & pError.description
+    Else
+        Debug.Print "Error: " & pError.number, pError.description
+    End If
 End Sub
-
-Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
-    Set IDbConnection_AdoConnection = AdoConnection
-End Property
-
-Private Sub IDbConnection_BeginTransaction()
-    On Error Resume Next 'not all providers support transactions
-    Dim result As Long
-    result = AdoConnection.BeginTrans
-    On Error GoTo 0
-    HasActiveTransaction = True
-End Sub
-
-Private Sub IDbConnection_CommitTransaction()
-    On Error Resume Next
-    AdoConnection.CommitTrans
-    On Error GoTo 0
-    HasActiveTransaction = False
-End Sub
-
-Private Function IDbConnection_CreateCommand(ByVal commandType As ADODB.CommandTypeEnum, ByVal sql As String) As ADODB.Command
-    Errors.GuardEmptyString sql
-    Errors.GuardExpression AdoConnection.State <> adStateOpen, message:="Connection is not open."
-    
-    Dim result As ADODB.Command
-    Set result = New ADODB.Command
-    
-    Set result.ActiveConnection = AdoConnection
-    result.commandType = commandType
-    result.CommandText = sql
-    
-    Set IDbConnection_CreateCommand = result
-End Function
-
-Private Sub IDbConnection_RollbackTransaction()
-    If HasActiveTransaction Then AdoConnection.RollbackTrans
-    HasActiveTransaction = False
-End Sub
-
-Private Property Get IDbConnection_Self() As IDbConnection
-    Set IDbConnection_Self = Me
-End Property
-
-Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
-    IDbConnection_State = AdoConnection.State
-End Property

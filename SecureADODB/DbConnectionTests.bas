@@ -1,6 +1,6 @@
 Attribute VB_Name = "DbConnectionTests"
+'@Folder "SecureADODB.DbConnection. Tests"
 '@TestModule
-'@Folder("Tests")
 '@IgnoreModule
 Option Explicit
 Option Private Module
@@ -16,6 +16,7 @@ Private Const ExpectedError As Long = SecureADODBCustomError
     Private Assert As Rubberduck.PermissiveAssertClass
 #End If
 
+
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     #If LateBind Then
@@ -25,14 +26,17 @@ Private Sub ModuleInitialize()
     #End If
 End Sub
 
+
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     Set Assert = Nothing
 End Sub
 
+
 Private Function GetTestConnectionString() As String
     GetTestConnectionString = "connection string"
 End Function
+
 
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
@@ -45,10 +49,11 @@ Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
         On Error GoTo 0
     End With
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsWithEmptyConnectionString()
@@ -61,7 +66,7 @@ Private Sub Create_ThrowsWithEmptyConnectionString()
         On Error GoTo 0
     End With
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub

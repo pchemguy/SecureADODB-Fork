@@ -1,6 +1,6 @@
 Attribute VB_Name = "TypeMappingTests"
+'@Folder "SecureADODB.DbParameterProvider. Tests"
 '@TestModule
-'@Folder("Tests")
 '@IgnoreModule
 Option Explicit
 Option Private Module
@@ -16,6 +16,7 @@ Private Const ExpectedError As Long = SecureADODBCustomError
     Private Assert As Rubberduck.PermissiveAssertClass
 #End If
 
+
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     #If LateBind Then
@@ -25,10 +26,12 @@ Private Sub ModuleInitialize()
     #End If
 End Sub
 
+
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     Set Assert = Nothing
 End Sub
+
 
 '@TestMethod("Factory Guard")
 Private Sub Default_ThrowsIfNotInvokedFromDefaultInstance()
@@ -40,16 +43,18 @@ Private Sub Default_ThrowsIfNotInvokedFromDefaultInstance()
         On Error GoTo 0
     End With
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
-Private Sub DefaultMapping_MapsType(ByVal name As String)
+
+Private Sub DefaultMapping_MapsType(ByVal Name As String)
     Dim sut As ITypeMap
     Set sut = AdoTypeMappings.Default
-    Assert.IsTrue sut.IsMapped(name)
+    Assert.IsTrue sut.IsMapped(Name)
 End Sub
+
 
 '@TestMethod("Type Mappings")
 Private Sub Mapping_ThrowsIfUndefined()
@@ -61,7 +66,7 @@ Private Sub Mapping_ThrowsIfUndefined()
         On Error GoTo 0
     End With
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -73,11 +78,13 @@ Private Sub IsMapped_FalseIfUndefined()
     Assert.IsFalse sut.IsMapped(InvalidTypeName)
 End Sub
 
+
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsBoolean()
     Dim value As Boolean
     DefaultMapping_MapsType TypeName(value)
 End Sub
+
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsByte()
@@ -140,14 +147,14 @@ Private Sub DefaultMapping_MapsNull()
     DefaultMapping_MapsType TypeName(value)
 End Sub
 
-Private Function GetDefaultMappingFor(ByVal name As String) As ADODB.DataTypeEnum
+Private Function GetDefaultMappingFor(ByVal Name As String) As ADODB.DataTypeEnum
     On Error GoTo CleanFail
     Dim sut As ITypeMap
     Set sut = AdoTypeMappings.Default
-    GetDefaultMappingFor = sut.Mapping(name)
+    GetDefaultMappingFor = sut.Mapping(Name)
     Exit Function
 CleanFail:
-    Assert.Inconclusive "Default mapping is undefined for '" & name & "'."
+    Assert.Inconclusive "Default mapping is undefined for '" & Name & "'."
 End Function
 
 '@TestMethod("Default Type Mappings")

@@ -1,6 +1,6 @@
 Attribute VB_Name = "DbCommandBaseTests"
+'@Folder "SecureADODB.DbCommand. Tests"
 '@TestModule
-'@Folder("Tests")
 '@IgnoreModule
 Option Explicit
 Option Private Module
@@ -15,6 +15,7 @@ Private Const ExpectedError As Long = SecureADODBCustomError
     Private Assert As Rubberduck.PermissiveAssertClass
 #End If
 
+
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     #If LateBind Then
@@ -24,14 +25,17 @@ Private Sub ModuleInitialize()
     #End If
 End Sub
 
+
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     Set Assert = Nothing
 End Sub
 
+
 Private Function GetParameterProvider() As IParameterProvider
     Set GetParameterProvider = AdoParameterProvider.Create(AdoTypeMappings.Default)
 End Function
+
 
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
@@ -45,41 +49,25 @@ Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
     End With
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
+
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenNullParameterProvider()
-    
     On Error GoTo CleanFail
     Dim sut As DbCommandBase
     Set sut = DbCommandBase.Create(Nothing)
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
 
-'@TestMethod("Guard Clauses")
-Private Sub ParameterProvider_ThrowsIfAlreadySet()
-    On Error GoTo TestFail
-    
-    Dim sut As DbCommandBase
-    Set sut = DbCommandBase.Create(GetParameterProvider)
-    
-    On Error GoTo CleanFail
-    Set sut.ParameterProvider = GetParameterProvider
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
 
 '@TestMethod("Guard Clauses")
 Private Sub CreateCommand_ThrowsGivenNullConnection()
@@ -96,10 +84,11 @@ Private Sub CreateCommand_ThrowsGivenNullConnection()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("Guard Clauses")
 Private Sub CreateCommand_ThrowsGivenClosedConnection()
@@ -120,10 +109,11 @@ Private Sub CreateCommand_ThrowsGivenClosedConnection()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
+
 
 '@TestMethod("Guard Clauses")
 Private Sub CreateCommand_ThrowsGivenEmptyCommandString()
@@ -144,74 +134,7 @@ Private Sub CreateCommand_ThrowsGivenEmptyCommandString()
     On Error GoTo 0
     
 CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
+    If Err.number = ExpectedError Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
-
-'@TestMethod("Guard Clauses")
-Private Sub GetDisconnectedRecordset_ThrowsGivenNullConnection()
-    On Error GoTo TestFail
-    
-    Dim sut As IDbCommandBase
-    Set sut = DbCommandBase.Create(GetParameterProvider)
-    
-    On Error GoTo CleanFail
-    Dim rs As ADODB.Recordset
-    Set rs = sut.GetDisconnectedRecordset(Nothing)
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-'@TestMethod("DbCommandBase")
-Private Sub GetSingleValue_ThrowsGivenClosedConnection()
-    On Error GoTo TestFail
-    
-    Dim sut As IDbCommandBase
-    Set sut = DbCommandBase.Create(GetParameterProvider)
-    
-    Dim db As StubDbConnection
-    Set db = New StubDbConnection
-    db.State = adStateClosed
-    
-    Dim args() As Variant
-    
-    On Error GoTo CleanFail
-    Dim value As Variant
-    value = sut.GetSingleValue(db, "SQL", args)
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-'@TestMethod("Guard Clauses")
-Private Sub GetSingleValue_ThrowsGivenEmptyCommandString()
-    On Error GoTo TestFail
-    
-    Dim sut As IDbCommandBase
-    Set sut = DbCommandBase.Create(GetParameterProvider)
-    
-    Dim db As StubDbConnection
-    Set db = New StubDbConnection
-    
-    Dim args() As Variant
-    
-    On Error GoTo CleanFail
-    Dim rs As ADODB.Recordset
-    Set rs = sut.GetSingleValue(db, vbNullString, args)
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.Number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
