@@ -6,9 +6,9 @@ I started working on SecureADODB to
 
 So, this project is largely a learning exercise for me, but I also plan to use it in another project, which can benefit from an ADODB VBA library.  
  
- ## Class diagram and mapping to ADODB
+ ## Class diagram and mapping to `ADODB`
 
-The class diagram below shows the core SecureADODB classes (this fork, blue) and the mapping to the core ADODB classes (green).
+The class diagram below shows the core SecureADODB classes (this fork, blue) and the mapping to the core `ADODB` classes (green).
 
 ![SecureADODB-ADODB](https://github.com/pchemguy/RDVBA-examples/blob/develop/UML%20Class%20Diagrams/SecureADODB%20-%20ADODB%20Class%20Mapping.svg)
 
