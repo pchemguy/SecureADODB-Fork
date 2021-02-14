@@ -122,15 +122,18 @@ Private Sub zfxGetConnectionString_VerifiesDefaultMockConnectionStrings()
     
 Arrange:
     Dim CSVString As String
-    CSVString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=" + ThisWorkbook.Path + ";"
+    #If Win64 Then
+        CSVString = "Driver=Microsoft Access Text Driver (*.txt, *.csv);DefaultDir=" + ThisWorkbook.Path + ";"
+    #Else
+        CSVString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=" + ThisWorkbook.Path + ";"
+    #End If
     Dim SQLiteString As String
-    SQLiteString = "Driver={SQLite3 ODBC Driver};Database=" + ThisWorkbook.Path + Application.PathSeparator + "SecureADODB.db;" + _
+    SQLiteString = "Driver=SQLite3 ODBC Driver;Database=" + ThisWorkbook.Path + Application.PathSeparator + "SecureADODB.db;" + _
                    "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
 Act:
-
 Assert:
-    Assert.AreEqual CSVString, DbManager.BuildConnectionString("csv"), "Default CSV string mismatch"
-    Assert.AreEqual SQLiteString, DbManager.BuildConnectionString("sqlite")
+    Assert.AreEqual CSVString, DbManager.BuildConnectionString("csv"), "CSV string mismatch"
+    Assert.AreEqual SQLiteString, DbManager.BuildConnectionString("sqlite"), "SQLite string mismatch"
 
 CleanExit:
     Exit Sub
@@ -142,7 +145,7 @@ End Sub
 '@TestMethod("Connection String")
 Private Sub zfxGetDbManagerFromConnectionParameters_ThrowsGivenInvalidConnectionString()
     On Error Resume Next
-    Dim TypeOrConnString As String: TypeOrConnString = "Driver={SQLite3 ODBC Driver};Database=C:\TMP\db.db;"
+    Dim TypeOrConnString As String: TypeOrConnString = "Driver=SQLite3 ODBC Driver;Database=C:\TMP\db.db;"
     Dim dbm As IDbManager: Set dbm = zfxGetDbManagerFromConnectionParameters(TypeOrConnString)
     AssertExpectedError Assert, ErrNo.AdoConnectionStringErr
 End Sub

@@ -188,8 +188,12 @@ Private Sub ztcBuildConnectionString_ValidatesDeafultCSVConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
-    connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=" + ThisWorkbook.Path + ";"
-    Assert.AreEqual connString, DbManager.BuildConnectionString("csv")
+    #If Win64 Then
+        connString = "Driver=Microsoft Access Text Driver (*.txt, *.csv);DefaultDir=" + ThisWorkbook.Path + ";"
+    #Else
+        connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=" + ThisWorkbook.Path + ";"
+    #End If
+    Assert.AreEqual connString, DbManager.BuildConnectionString("csv"), "Default CSV connection string mismatch"
 
 CleanExit:
     Exit Sub
@@ -203,8 +207,12 @@ Private Sub ztcBuildConnectionString_ValidatesCSVConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
-    connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=C:\TMP;;"
-    Assert.AreEqual connString, DbManager.BuildConnectionString("csv", "C:\TMP", "db.csv", ";")
+    #If Win64 Then
+        connString = "Driver=Microsoft Access Text Driver (*.txt, *.csv);DefaultDir=C:\TMP;;"
+    #Else
+        connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=C:\TMP;;"
+    #End If
+    Assert.AreEqual connString, DbManager.BuildConnectionString("csv", "C:\TMP", "db.csv", ";"), "CSV connection string mismatch"
 
 CleanExit:
     Exit Sub
@@ -218,9 +226,9 @@ Private Sub ztcBuildConnectionString_ValidatesDeafultSQLiteConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
-    connString = "Driver={SQLite3 ODBC Driver};Database=" + ThisWorkbook.Path + Application.PathSeparator + "SecureADODB.db;" + _
+    connString = "Driver=SQLite3 ODBC Driver;Database=" + ThisWorkbook.Path + Application.PathSeparator + "SecureADODB.db;" + _
                  "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
-    Assert.AreEqual connString, DbManager.BuildConnectionString("sqlite")
+    Assert.AreEqual connString, DbManager.BuildConnectionString("sqlite"), "Default SQLite connection string mismatch"
 
 CleanExit:
     Exit Sub
@@ -233,9 +241,8 @@ End Sub
 Private Sub ztcBuildConnectionString_ValidatesSQLiteConnectionString()
     On Error GoTo TestFail
     
-    Dim connString As String
-    connString = "Driver={SQLite3 ODBC Driver};Database=C:\TMP\db.db;_"
-    Assert.AreEqual connString, DbManager.BuildConnectionString("sqlite", "C:\TMP", "db.db", "_")
+    Dim connString As String: connString = "Driver=SQLite3 ODBC Driver;Database=C:\TMP\db.db;_"
+    Assert.AreEqual connString, DbManager.BuildConnectionString("sqlite", "C:\TMP", "db.db", "_"), "SQLite connection string mismatch"
 
 CleanExit:
     Exit Sub
@@ -248,14 +255,11 @@ End Sub
 Private Sub ztcBuildConnectionString_ValidatesRawConnectionString()
     On Error GoTo TestFail
     
-    Dim connString As String
-    connString = "Driver={SQLite3 ODBC Driver};Database=C:\TMP\db.db;_"
-    Assert.AreEqual connString, DbManager.BuildConnectionString(connString)
+    Dim connString As String: connString = "Driver=SQLite3 ODBC Driver;Database=C:\TMP\db.db;_"
+    Assert.AreEqual connString, DbManager.BuildConnectionString(connString), "SQLite connection string mismatch"
 
 CleanExit:
     Exit Sub
 TestFail:
     Assert.Fail "Error: " & Err.number & " - " & Err.description
 End Sub
-
-

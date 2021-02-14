@@ -105,7 +105,7 @@ Private Sub LogAdoErrors()
     AdoConnection.Errors.Clear
         
     With VBA.Err
-        If .number > 0 And Left(.source, 6) = "ADODB." Then
+        If .number > 0 And Left$(.source, 6) = "ADODB." Then
             message = "VBA.Err #" + CStr(.number) + ", " + _
                       "Source: " + CStr(.source) + ", " + _
                       "Description: " + CStr(.description)

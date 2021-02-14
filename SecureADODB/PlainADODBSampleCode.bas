@@ -15,7 +15,7 @@ Public Sub TestADODBSourceSQL()
     Dim sQTName As String
     
     sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
-    sDriver = "{SQLite3 ODBC Driver}"
+    sDriver = "SQLite3 ODBC Driver"
     sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
                  "Database=" + sDatabase + ";" + _
@@ -51,7 +51,7 @@ Public Sub TestADODBSourceCMD()
     Dim sQTName As String
     
     sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
-    sDriver = "{SQLite3 ODBC Driver}"
+    sDriver = "SQLite3 ODBC Driver"
     sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
                  "Database=" + sDatabase + ";" + _
@@ -97,7 +97,7 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     Dim sQTName As String
     
     sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
-    sDriver = "{SQLite3 ODBC Driver}"
+    sDriver = "SQLite3 ODBC Driver"
     sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
                  "Database=" + sDatabase + ";" + _
@@ -156,7 +156,7 @@ Public Sub TestADODBSourceSQLite()
     Dim adoConnStr As String
     Dim sSQL As String
     
-    sDriver = "{SQLite3 ODBC Driver}"
+    sDriver = "SQLite3 ODBC Driver"
     sDatabaseExt = ".db"
     sTable = "people"
     sDatabase = ThisWorkbook.Path & Application.PathSeparator & fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
@@ -187,7 +187,11 @@ Public Sub TestADODBSourceCSV()
     Dim adoConnStr As String
     Dim sSQL As String
     
-    sDriver = "{Microsoft Text Driver (*.txt; *.csv)}"
+    #If Win64 Then
+        sDriver = "Microsoft Access Text Driver (*.txt, *.csv)"
+    #Else
+        sDriver = "{Microsoft Text Driver (*.txt; *.csv)}"
+    #End If
     sDatabaseExt = ".csv"
     sDatabase = ThisWorkbook.Path
     sTable = fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
@@ -219,7 +223,11 @@ Public Sub TestADODBConnectCSV()
     Dim adoConnStr As String
     Dim sSQL As String
     
-    sDriver = "{Microsoft Text Driver (*.txt; *.csv)}"
+    #If Win64 Then
+        sDriver = "Microsoft Access Text Driver (*.txt, *.csv)"
+    #Else
+        sDriver = "{Microsoft Text Driver (*.txt; *.csv)}"
+    #End If
     sDatabaseExt = ".csv"
     sDatabase = ThisWorkbook.Path
     sTable = fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
@@ -261,7 +269,7 @@ Public Sub TestADODBConnectSQLite()
     Dim adoConnStr As String
     Dim sSQL As String
     
-    sDriver = "{SQLite3 ODBC Driver}"
+    sDriver = "SQLite3 ODBC Driver"
     sDatabaseExt = ".db"
     sTable = "people"
     sDatabase = ThisWorkbook.Path & Application.PathSeparator & fso.GetBaseName(ThisWorkbook.Name) & sDatabaseExt
@@ -285,26 +293,6 @@ Public Sub TestADODBConnectSQLite()
 End Sub
 
 
-
 Private Sub Test()
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
-    Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
     Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
 End Sub

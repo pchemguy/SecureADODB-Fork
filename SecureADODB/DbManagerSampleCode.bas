@@ -3,7 +3,7 @@ Attribute VB_Name = "DbManagerSampleCode"
 '@IgnoreModule AssignmentNotUsed, EmptyModule, VariableNotUsed, ProcedureNotUsed, FunctionReturnValueDiscarded, FunctionReturnValueAlwaysDiscarded
 Option Explicit
 
-    
+
 Private Sub DbManagerCSVTest()
     Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
     Dim fileName As String: fileName = fso.GetBaseName(ThisWorkbook.Name) & ".csv"
