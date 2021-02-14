@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IParameterProvider implementation."
-'@Folder "SecureADODB.ParameterProvider"
+'@Folder "SecureADODB.DbParameterProvider. Tests"
 '@ModuleDescription("A stub acting as a IParameterProvider implementation.")
 Option Explicit
 

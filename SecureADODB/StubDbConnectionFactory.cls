@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A stub acting as a IDbConnectionFactory implementation."
-'@Folder "SecureADODB.DbConnection.Abstract"
+'@Folder "SecureADODB.DbConnection. Tests"
 '@ModuleDescription("A stub acting as a IDbConnectionFactory implementation.")
 Option Explicit
 
@@ -20,11 +20,12 @@ End Type
 Private this As TInvokeState
 
 
-Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String) As IDbConnection
+Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing) As IDbConnection
     this.CreateConnectionInvokes = this.CreateConnectionInvokes + 1
     Set IDbConnectionFactory_CreateInstance = New StubDbConnection
 End Function
 
+'@Ignore ProcedureNotUsed
 Public Property Get CreateConnectionInvokes() As Long
     CreateConnectionInvokes = this.CreateConnectionInvokes
 End Property

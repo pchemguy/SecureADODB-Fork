@@ -1,5 +1,5 @@
-Attribute VB_Name = "DbManagerTest"
-'@Folder "SecureADODBmod.DbManager"
+Attribute VB_Name = "DbManagerBTests"
+'@Folder "SecureADODB.DbManager"
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -32,35 +32,40 @@ Private Sub ModuleCleanup()
 End Sub
 
 
+'===================================================='
+'==================== TEST CASES ===================='
+'===================================================='
+
+
 '@TestMethod("Factory Guard")
-Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
+Private Sub ztcCreate_ThrowsIfNotInvokedFromDefaultInstance()
     On Error Resume Next
-    With New DbManager
-        Dim sut As IDbManager
-        Set sut = .Create(New StubDbConnection, New StubDbCommandFactory)
-    End With
-    AssertExpectedError ErrNo.NonDefaultInstanceErr
+    Dim sutObject As DbManager
+    Set sutObject = New DbManager
+    Dim sutInterface As IDbManager
+    Set sutInterface = sutObject.Create(New StubDbConnection, New StubDbCommandFactory)
+    AssertExpectedError Assert, ErrNo.NonDefaultInstanceErr
 End Sub
 
 
 '@TestMethod("Factory Guard")
-Private Sub Create_ThrowsGivenNullConnection()
+Private Sub ztcCreate_ThrowsGivenNullConnection()
     On Error Resume Next
     Dim sut As IDbManager: Set sut = DbManager.Create(Nothing, New StubDbCommandFactory)
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 
 '@TestMethod("Factory Guard")
-Private Sub Create_ThrowsGivenNullCommandFactory()
+Private Sub ztcCreate_ThrowsGivenNullCommandFactory()
     On Error Resume Next
     Dim sut As IDbManager: Set sut = DbManager.Create(New StubDbConnection, Nothing)
-    AssertExpectedError ErrNo.ObjectNotSetErr
+    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 
-'@TestMethod("Transaction")
-Private Sub Command_CreatesDbCommandWithFactory()
+'@TestMethod("Create")
+Private Sub ztcCommand_CreatesDbCommandWithFactory()
     Dim stubCommandFactory As StubDbCommandFactory
     Set stubCommandFactory = New StubDbCommandFactory
     
@@ -75,7 +80,7 @@ End Sub
 
 
 '@TestMethod("Transaction")
-Private Sub Create_StartsTransaction()
+Private Sub ztcCreate_StartsTransaction()
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
     
@@ -87,7 +92,7 @@ End Sub
 
 
 '@TestMethod("Transaction")
-Private Sub Commit_CommitsTransaction()
+Private Sub ztcCommit_CommitsTransaction()
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
     
@@ -101,8 +106,8 @@ End Sub
 
 
 '@TestMethod("Transaction")
-Private Sub Commit_ThrowsIfAlreadyCommitted()
-    On Error GoTo TestFail
+Private Sub ztcCommit_ThrowsIfAlreadyCommitted()
+    On Error Resume Next
     
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
@@ -111,20 +116,14 @@ Private Sub Commit_ThrowsIfAlreadyCommitted()
     Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
     
     sut.Commit
-    On Error GoTo CleanFail
     sut.Commit
-    On Error GoTo 0
-
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
+    AssertExpectedError Assert, ErrNo.AdoNotInTransactionErr
 End Sub
 
 
 '@TestMethod("Transaction")
-Private Sub Commit_ThrowsIfAlreadyRolledBack()
-    On Error GoTo TestFail
+Private Sub ztcCommit_ThrowsIfAlreadyRolledBack()
+    On Error Resume Next
     
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
@@ -133,20 +132,14 @@ Private Sub Commit_ThrowsIfAlreadyRolledBack()
     Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
     
     sut.Rollback
-    On Error GoTo CleanFail
     sut.Commit
-    On Error GoTo 0
-
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
+    AssertExpectedError Assert, ErrNo.AdoNotInTransactionErr
 End Sub
 
 
 '@TestMethod("Transaction")
-Private Sub Rollback_ThrowsIfAlreadyCommitted()
-    On Error GoTo TestFail
+Private Sub ztcRollback_ThrowsIfAlreadyCommitted()
+    On Error Resume Next
     
     Dim stubConnection As StubDbConnection
     Set stubConnection = New StubDbConnection
@@ -155,40 +148,52 @@ Private Sub Rollback_ThrowsIfAlreadyCommitted()
     Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
     
     sut.Commit
-    On Error GoTo CleanFail
     sut.Rollback
-    On Error GoTo 0
+    AssertExpectedError Assert, ErrNo.AdoNotInTransactionErr
+End Sub
 
-CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
+
+'@TestMethod("Transaction")
+Private Sub ztcRollback_RollbacksTransaction()
+    Dim stubConnection As StubDbConnection
+    Set stubConnection = New StubDbConnection
+    
+    Dim sut As IDbManager
+    Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
+    
+    sut.Rollback
+    
+    Assert.IsTrue stubConnection.DidRollBackTransaction
 End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_ThrowsGivenNullDatabaseFlavor()
+Private Sub ztcBuildConnectionString_ThrowsGivenNullDatabaseType()
     On Error Resume Next
     Dim connString As String: connString = DbManager.BuildConnectionString(vbNullString)
-    AssertExpectedError ErrNo.EmptyStringErr
+    AssertExpectedError Assert, ErrNo.AdoConnectionStringErr
 End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_ThrowsGivenNullUnsupportedFlavor()
+Private Sub ztcBuildConnectionString_ThrowsGivenUnsupportedType()
     On Error Resume Next
     Dim connString As String: connString = DbManager.BuildConnectionString("Access")
-    AssertExpectedError ErrNo.FeatureNotAvailableErr
+    AssertExpectedError Assert, ErrNo.AdoConnectionStringErr
 End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_DeafultCSVConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesDeafultCSVConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
-    connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};Database=" + ThisWorkbook.Path + ";"
-    Assert.AreEqual connString, DbManager.BuildConnectionString("csv")
+    #If Win64 Then
+        connString = "Driver=Microsoft Access Text Driver (*.txt, *.csv);DefaultDir=" + ThisWorkbook.Path + ";"
+    #Else
+        connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=" + ThisWorkbook.Path + ";"
+    #End If
+    Assert.AreEqual connString, DbManager.BuildConnectionString("csv"), "Default CSV connection string mismatch"
 
 CleanExit:
     Exit Sub
@@ -198,12 +203,16 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_CSVConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesCSVConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
-    connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};Database=C:\TMP;;"
-    Assert.AreEqual connString, DbManager.BuildConnectionString("csv", "C:\TMP", "db.csv", ";")
+    #If Win64 Then
+        connString = "Driver=Microsoft Access Text Driver (*.txt, *.csv);DefaultDir=C:\TMP;;"
+    #Else
+        connString = "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=C:\TMP;;"
+    #End If
+    Assert.AreEqual connString, DbManager.BuildConnectionString("csv", "C:\TMP", "db.csv", ";"), "CSV connection string mismatch"
 
 CleanExit:
     Exit Sub
@@ -213,13 +222,13 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_DeafultSQLiteConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesDeafultSQLiteConnectionString()
     On Error GoTo TestFail
     
     Dim connString As String
-    connString = "Driver={SQLite3 ODBC Driver};Database=" + ThisWorkbook.Path + Application.PathSeparator + "SecureADODB.db;" + _
+    connString = "Driver=SQLite3 ODBC Driver;Database=" + ThisWorkbook.Path + Application.PathSeparator + "SecureADODB.db;" + _
                  "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
-    Assert.AreEqual connString, DbManager.BuildConnectionString("sqlite")
+    Assert.AreEqual connString, DbManager.BuildConnectionString("sqlite"), "Default SQLite connection string mismatch"
 
 CleanExit:
     Exit Sub
@@ -229,12 +238,11 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_SQLiteConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesSQLiteConnectionString()
     On Error GoTo TestFail
     
-    Dim connString As String
-    connString = "Driver={SQLite3 ODBC Driver};Database=C:\TMP\db.db;_"
-    Assert.AreEqual connString, DbManager.BuildConnectionString("sqlite", "C:\TMP", "db.db", "_")
+    Dim connString As String: connString = "Driver=SQLite3 ODBC Driver;Database=C:\TMP\db.db;_"
+    Assert.AreEqual connString, DbManager.BuildConnectionString("sqlite", "C:\TMP", "db.db", "_"), "SQLite connection string mismatch"
 
 CleanExit:
     Exit Sub
@@ -244,17 +252,14 @@ End Sub
 
 
 '@TestMethod("Connection String")
-Private Sub BuildConnectionString_RawConnectionString()
+Private Sub ztcBuildConnectionString_ValidatesRawConnectionString()
     On Error GoTo TestFail
     
-    Dim connString As String
-    connString = "Driver={SQLite3 ODBC Driver};Database=C:\TMP\db.db;_"
-    Assert.AreEqual connString, DbManager.BuildConnectionString(connString)
+    Dim connString As String: connString = "Driver=SQLite3 ODBC Driver;Database=C:\TMP\db.db;_"
+    Assert.AreEqual connString, DbManager.BuildConnectionString(connString), "SQLite connection string mismatch"
 
 CleanExit:
     Exit Sub
 TestFail:
     Assert.Fail "Error: " & Err.number & " - " & Err.description
 End Sub
-
-

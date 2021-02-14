@@ -11,11 +11,10 @@ Attribute VB_Description = "An abstract factory that creates IDbCommand objects.
 '@Folder "SecureADODB.DbCommand.Abstract"
 '@ModuleDescription("An abstract factory that creates IDbCommand objects.")
 '@Interface
-'@IgnoreModule UseMeaningfulName
 '@Exposed
 Option Explicit
 
 '@Description("Creates a new IDbCommand object.")
-Public Function CreateInstance(ByVal db As IDbConnection, Optional ByVal UseDisconnectedRecordset As Boolean = False) As IDbCommand
+Public Function CreateInstance(ByVal db As IDbConnection) As IDbCommand
 Attribute CreateInstance.VB_Description = "Creates a new IDbCommand object."
 End Function
