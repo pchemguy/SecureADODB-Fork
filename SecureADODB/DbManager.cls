@@ -68,10 +68,10 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
     Else
         connConfig.Path = Path
     End If
-    Select Case LCase(TypeOrConnString)
+    Select Case LCase$(TypeOrConnString)
         Case "sqlite"                                                           ' ========== SQLite db ========== '
             With connConfig
-                .Driver = "{SQLite3 ODBC Driver}"
+                .Driver = "SQLite3 ODBC Driver"
                 If Name = vbNullString Then
                     Dim fso As Scripting.FileSystemObject
                     Set fso = New Scripting.FileSystemObject
@@ -89,9 +89,31 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                               "Database=" + .Database + ";" + _
                               .Options
             End With
+'            With connConfig
+'                If Name = vbNullString Then
+'                    Dim fso As Scripting.FileSystemObject
+'                    Set fso = New Scripting.FileSystemObject
+'                    .Name = fso.GetBaseName(ThisWorkbook.Name) & ".db"
+'                Else
+'                    .Name = Name
+'                End If
+'                If Options = vbNullString Then
+'                    .Options = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
+'                Else
+'                    .Options = Options
+'                End If
+'                .Database = .Path & Application.PathSeparator & .Name
+'                .connString = "DSN=SQLite3 Datasource;" + _
+'                              "Database=" + .Database + ";" + _
+'                              .Options
+'            End With
         Case "csv"                                                              ' ============ CSV db ============ '
             With connConfig
-                .Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
+                #If Win64 Then
+                    .Driver = "Microsoft Access Text Driver (*.txt, *.csv)"
+                #Else
+                    .Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
+                #End If
                 .Database = .Path
                 If Options <> vbNullString Then
                     .Options = Options
@@ -101,7 +123,8 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                               .Options
             End With
         Case Else
-            If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Then    ' ============ Raw Connection String ============ '
+            If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Or _
+               InStr(1, TypeOrConnString, "DSN=", vbTextCompare) > 0 Then    ' ============ Raw Connection String ============ '
                 connConfig.connString = TypeOrConnString
             Else
                 Guard.ConnectionStringError vbNullString
@@ -163,7 +186,6 @@ Public Function Create(ByVal db As IDbConnection, _
     Dim result As DbManager
     Set result = New DbManager
     result.CreInit db, factory, UseTransactions, LogController
-    Debug.Print " "
     Set Create = result
 End Function
 
