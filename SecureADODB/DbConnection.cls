@@ -52,7 +52,15 @@ Attribute CreInit.VB_Description = "Default constructor"
     this.TransactionsDisabled = False
     On Error GoTo ConnectionError
     AdoConnection.Open connString
+    On Error GoTo TransactionCheckError
+    Dim TransactionDDL As Long
+    TransactionDDL = AdoConnection.Properties("Transaction DDL")
+    this.TransactionsDisabled = IIf(TransactionDDL = 0, True, False)
     On Error GoTo 0
+    Exit Sub
+    
+TransactionCheckError:
+    this.TransactionsDisabled = True
     Exit Sub
     
 ConnectionError:

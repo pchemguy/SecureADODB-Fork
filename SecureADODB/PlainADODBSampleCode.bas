@@ -1,5 +1,5 @@
 Attribute VB_Name = "PlainADODBSampleCode"
-'@Folder("-- DraftsTemplatesSnippets --")
+'@Folder "SecureADODB.-- DraftsTemplatesSnippets --"
 '@IgnoreModule
 Option Explicit
 
@@ -244,6 +244,7 @@ Public Sub TestADODBConnectCSV()
     On Error Resume Next
     AdoConnection.Open
     Debug.Print AdoConnection.Errors.Count
+    Debug.Print AdoConnection.Properties("Transaction DDL")
     AdoConnection.BeginTrans
     On Error GoTo 0
     
@@ -296,3 +297,5 @@ End Sub
 Private Sub Test()
     Debug.Print Fix((CDbl(Now) + Timer - Fix(Timer)) * 100000#)
 End Sub
+
+
