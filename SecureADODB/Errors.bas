@@ -1,6 +1,6 @@
 Attribute VB_Name = "Errors"
 Attribute VB_Description = "Global procedures for throwing common errors."
-'@Folder "SecureADODB"
+'@Folder "Common"
 '@ModuleDescription("Global procedures for throwing common errors.")
 Option Explicit
 Option Private Module

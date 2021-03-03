@@ -1,5 +1,5 @@
 Attribute VB_Name = "WinAPI"
-'@Folder("SecureADODB.Shared.WinAPI")
+'@Folder "Common.Shared.WinAPI"
 Option Explicit
 
 

@@ -1,2 +1,2 @@
-﻿'@Folder("Excel Objects")
+﻿'@Folder "Common.Excel Objects"
 Option Explicit

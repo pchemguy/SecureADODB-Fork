@@ -8,7 +8,8 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "Class for common guards."
-'@Folder "SecureADODB.Guard"
+'@IgnoreModule ProcedureNotUsed
+'@Folder "Common.Guard"
 '@PredeclaredId
 '@ModuleDescription("Class for common guards.")
 Option Explicit
@@ -180,6 +181,24 @@ Attribute NonDefaultInstance.VB_Description = "Raises a run-time error if the sp
             .number = ErrNo.NonDefaultInstanceErr
             .source = TypeName(classVar) & " Class"
             .message = "Default (" & TypeName(classVar) & ") object instance must be used"
+            .description = vbNullString
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
+
+
+'@Description("Raises a run-time error if the specified expression is false.")
+Public Sub Expression(ByVal AssertionResult As Boolean, ByVal source As String, ByVal message As String)
+Attribute Expression.VB_Description = "Raises a run-time error if the specified expression is false."
+    Dim errorDetails As TError
+    With errorDetails
+        .trapped = Not AssertionResult
+        If .trapped Then
+            .Name = "CustomErr"
+            .number = ErrNo.CustomErr
+            .source = source
+            .message = message
             .description = vbNullString
             RaiseError errorDetails
         End If

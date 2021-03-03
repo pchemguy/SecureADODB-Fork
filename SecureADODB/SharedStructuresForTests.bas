@@ -1,5 +1,5 @@
 Attribute VB_Name = "SharedStructuresForTests"
-'@Folder "SecureADODB.Guard.Tests"
+'@Folder "Common.Guard.Tests"
 '@TestModule
 '@IgnoreModule VariableNotAssigned, UnassignedVariableUsage
 Option Explicit

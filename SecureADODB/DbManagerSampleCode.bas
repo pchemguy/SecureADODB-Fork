@@ -1,5 +1,5 @@
 Attribute VB_Name = "DbManagerSampleCode"
-'@Folder("-- DraftsTemplatesSnippets --")
+'@Folder "SecureADODB.-- DraftsTemplatesSnippets --"
 '@IgnoreModule AssignmentNotUsed, EmptyModule, VariableNotUsed, ProcedureNotUsed, FunctionReturnValueDiscarded, FunctionReturnValueAlwaysDiscarded
 Option Explicit
 
@@ -14,6 +14,8 @@ Private Sub DbManagerCSVTest()
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, fileName, vbNullString, False, LoggerTypeEnum.logPrivate)
 
+    Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL")
+    
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
     
@@ -70,6 +72,8 @@ Private Sub DbManagerSQLiteTest()
 
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
+    
+    Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL")
     
     Dim result As ADODB.Recordset
     Set result = rst.OpenRecordset(SQLQuery, 45)
@@ -136,3 +140,5 @@ Private Sub DbManagerExTest()
     Dim result As ADODB.Recordset
     Set result = rst.OpenRecordset(SQLQuery, 45, "South Korea")
 End Sub
+
+

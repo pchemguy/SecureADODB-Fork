@@ -1,6 +1,6 @@
 Attribute VB_Name = "LoggerTests"
 Attribute VB_Description = "Tests for the Logger class."
-'@Folder "SecureADODB.Logger"
+'@Folder "Common.Logger"
 '@TestModule
 '@ModuleDescription("Tests for the Logger class.")
 '@IgnoreModule VariableNotUsed, AssignmentNotUsed, LineLabelNotUsed, UnhandledOnErrorResumeNext

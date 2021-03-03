@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "Logging facility using a dictionary object as the database."
-'@Folder("SecureADODB.Logger")
+'@Folder "Common.Logger"
 '@ModuleDescription "Logging facility using a dictionary object as the database."
 '@PredeclaredId
 '@Exposed

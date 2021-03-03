@@ -1,5 +1,5 @@
 Attribute VB_Name = "CommonRoutines"
-'@Folder("SecureADODB.Shared")
+'@Folder "Common.Shared"
 Option Explicit
 
 

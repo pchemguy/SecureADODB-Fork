@@ -1,11 +1,12 @@
 Attribute VB_Name = "CommonStructuresForErrors"
-'@Folder "SecureADODB.Guard"
+'@Folder "Common.Guard"
 Option Explicit
 
 
 Private Const adErrInvalidParameterType As Long = &HE3D&
 Public Enum ErrNo
     PassedNoErr = 0&
+    SubscriptOutOfRange = 9&
     TypeMismatchErr = 13&
     FileNotFoundErr = 53&
     ObjectNotSetErr = 91&
