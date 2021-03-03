@@ -6,11 +6,12 @@ Attribute VB_Name = "DbCommand"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 Attribute VB_Description = "An object that builds and executes a parameterized ADODB command from a command string and parameter values. Returns connected recordsets that the client should close or disconnected recordset."
 '@Folder "SecureADODB.DbCommand"
 '@ModuleDescription("An object that builds and executes a parameterized ADODB command from a command string and parameter values. Returns connected recordsets that the client should close or disconnected recordset.")
 '@PredeclaredId
+'@Exposed
 '@IgnoreModule IllegalAnnotation
 Option Explicit
 
@@ -26,7 +27,7 @@ Private this As TCommand
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase) As IDbCommand
-    Errors.GuardNonDefaultInstance Me, DbCommand
+    Guard.NonDefaultInstance Me
     
     Dim result As DbCommand
     Set result = New DbCommand
@@ -38,12 +39,37 @@ End Function
 '@Description("Default constructor")
 Friend Sub CreInit(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase)
 Attribute CreInit.VB_Description = "Default constructor"
-    Errors.GuardNullReference db
-    Errors.GuardNullReference baseCommand
+    Guard.NullReference db
+    Guard.NullReference baseCommand
 
     Set this.Connection = db
     Set this.Base = baseCommand
 End Sub
+
+
+'@Ignore ProcedureNotUsed
+Public Property Get Self() As IDbCommand
+    Set Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+'@Ignore ProcedureNotUsed
+Public Property Get Class() As DbCommand
+    Set Class = DbCommand
+End Property
+
+
+Private Property Get IDbCommand_Self() As IDbCommand
+    Set IDbCommand_Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+Private Property Get IDbCommand_Class() As Object
+    Set IDbCommand_Class = DbCommand
+End Property
+
 
 Public Function IDbCommand_AdoCommand(ByVal sql As String, ParamArray args()) As ADODB.Command
     '''' Recordset routines pass their (sql, ParamArray) for processing here.

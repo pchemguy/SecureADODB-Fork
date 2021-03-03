@@ -49,7 +49,7 @@ Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
     End With
     
 CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
+    If Err.number = ErrNo.NonDefaultInstanceErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -63,7 +63,7 @@ Private Sub Create_ThrowsGivenNullParameterProvider()
     On Error GoTo 0
     
 CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
+    If Err.number = ErrNo.ObjectNotSetErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -84,7 +84,7 @@ Private Sub CreateCommand_ThrowsGivenNullConnection()
     On Error GoTo 0
     
 CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
+    If Err.number = ErrNo.ObjectNotSetErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -109,7 +109,7 @@ Private Sub CreateCommand_ThrowsGivenClosedConnection()
     On Error GoTo 0
     
 CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
+    If Err.number = ErrNo.CustomErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -134,7 +134,7 @@ Private Sub CreateCommand_ThrowsGivenEmptyCommandString()
     On Error GoTo 0
     
 CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
+    If Err.number = ErrNo.EmptyStringErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub

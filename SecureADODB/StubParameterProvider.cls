@@ -24,3 +24,15 @@ Private Function IParameterProvider_FromValues(values() As Variant) As Collectio
     Set result = New VBA.Collection
     Set IParameterProvider_FromValues = result
 End Function
+
+
+Private Property Get IParameterProvider_Self() As IParameterProvider
+    Set IParameterProvider_Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+Private Property Get IParameterProvider_Class() As Object
+    Set IParameterProvider_Class = AdoParameterProvider
+End Property
+

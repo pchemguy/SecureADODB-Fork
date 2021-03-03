@@ -25,7 +25,7 @@ Private this As TCommand
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal provider As IParameterProvider) As IDbCommandBase
-    Errors.GuardNonDefaultInstance Me, DbCommandBase
+    Guard.NonDefaultInstance Me
     
     Dim result As DbCommandBase
     Set result = New DbCommandBase
@@ -37,16 +37,16 @@ End Function
 '@Description("Default constructor")
 Friend Sub CreInit(ByVal provider As IParameterProvider)
 Attribute CreInit.VB_Description = "Default constructor"
-    Errors.GuardNullReference provider
+    Guard.NullReference provider
     Set this.ParameterProvider = provider
 End Sub
 
 
 Private Function CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
-    Errors.GuardNullReference db
-    Errors.GuardExpression db.State <> adStateOpen, message:="Connection is not open."
-    Errors.GuardEmptyString sql
-    Errors.GuardExpression Not ValidateOrdinalArguments(sql, args), message:="Arguments supplied are inconsistent with the provided command string parameters."
+    Guard.NullReference db
+    Guard.Expression db.State = adStateOpen, source:="DbCommandBase", message:="Connection is not open."
+    Guard.EmptyString sql
+    Guard.Expression ValidateOrdinalArguments(sql, args), source:="DbCommandBase", message:="Arguments supplied are inconsistent with the provided command string parameters."
     
     Dim cmd As ADODB.Command
     Set cmd = New ADODB.Command
@@ -73,6 +73,30 @@ Public Function ValidateOrdinalArguments(ByVal sql As String, ByRef args() As Va
     
     ValidateOrdinalArguments = (expected = actual)
 End Function
+
+
+'@Ignore ProcedureNotUsed
+Public Property Get Self() As IDbCommandBase
+    Set Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+'@Ignore ProcedureNotUsed
+Public Property Get Class() As DbCommandBase
+    Set Class = DbCommandBase
+End Property
+
+
+Private Property Get IDbCommandBase_Self() As IDbCommandBase
+    Set IDbCommandBase_Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+Private Property Get IDbCommandBase_Class() As Object
+    Set IDbCommandBase_Class = DbCommandBase
+End Property
 
 
 Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command

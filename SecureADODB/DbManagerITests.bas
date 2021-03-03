@@ -280,7 +280,7 @@ Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetDisconnectedArrayCSV()
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("csv"))
+    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("csv"), , , , False)
     Dim SQLSelect1P As String: SQLSelect1P = zfxGetSQLSelect1P(zfxGetCSVTableName)
 Act:
     Dim rstAdo As ADODB.Recordset
@@ -298,11 +298,19 @@ End Sub
 
 
 '@TestMethod("DbManager.Recordset.Query")
+Private Sub ztiDbManagerFactoryGuard_ThrowsIfRequestedTransactionNotSupported()
+    On Error Resume Next
+    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("csv"))
+    AssertExpectedError Assert, ErrNo.AdoInvalidTransactionErr
+End Sub
+
+
+'@TestMethod("DbManager.Recordset.Query")
 Private Sub ztiDbManagerOpenRecordset_ThrowsGivenUnsupportedParameterTypeCSV()
     '''' Present mapping maps VBA string to adVarWChar, unsupported by the CSV backend (Office 2002, 32bit)
     On Error GoTo TestFail
     
-    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("csv"))
+    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("csv"), , , , False)
     Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetCSVTableName)
     
     On Error Resume Next
@@ -354,7 +362,7 @@ Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetScalarCSV()
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("csv"))
+    Dim dbm As IDbManager: Set dbm = DbManager.FromConnectionParameters(zfxGetConnectionString("csv"), , , , False)
     Dim SQLSelect As String: SQLSelect = zfxGetSQLSelect0P(zfxGetCSVTableName)
 Act:
     Dim result As Variant

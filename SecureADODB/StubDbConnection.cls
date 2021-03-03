@@ -61,6 +61,10 @@ Private Property Get IDbConnection_Self() As IDbConnection
     Set IDbConnection_Self = Me
 End Property
 
+Private Property Get IDbConnection_Class() As DbConnection
+    Set IDbConnection_Class = DbConnection
+End Property
+
 Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
     IDbConnection_State = State
 End Property

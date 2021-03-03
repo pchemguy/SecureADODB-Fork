@@ -22,14 +22,14 @@ Private mappings As Scripting.Dictionary
 '@Description("Creates a default mapping for intrinsic data types.")
 Public Function Default() As ITypeMap
 Attribute Default.VB_Description = "Creates a default mapping for intrinsic data types."
-    Errors.GuardNonDefaultInstance Me, AdoTypeMappings
+    Guard.NonDefaultInstance Me
     Set Default = New AdoTypeMappings
 End Function
 
 '@Description("Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name.")
 Public Property Get Mapping(ByVal Name As String) As ADODB.DataTypeEnum
 Attribute Mapping.VB_Description = "Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name."
-    Errors.GuardExpression Not IsMapped(Name), message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
+    Guard.Expression IsMapped(Name), source:="AdoTypeMappings", message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
     Mapping = mappings.Item(Name)
 End Property
 
@@ -37,7 +37,7 @@ End Property
 '@Description("Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name.")
 Public Property Let Mapping(ByVal Name As String, ByVal value As ADODB.DataTypeEnum)
 Attribute Mapping.VB_Description = "Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name."
-    Errors.GuardExpression Not IsMapped(Name), message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
+    Guard.Expression IsMapped(Name), source:="AdoTypeMappings", message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
     mappings.Item(Name) = value
 End Property
 
@@ -70,6 +70,30 @@ Private Sub Class_Initialize()
         .Add "Empty", AdoTypeMappings.DefaultNullMapping
     End With
 End Sub
+
+
+'@Ignore ProcedureNotUsed
+Public Property Get Self() As ITypeMap
+    Set Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+'@Ignore ProcedureNotUsed
+Public Property Get Class() As AdoTypeMappings
+    Set Class = AdoTypeMappings
+End Property
+
+
+Private Property Get ITypeMap_Self() As ITypeMap
+    Set ITypeMap_Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+Private Property Get ITypeMap_Class() As Object
+    Set ITypeMap_Class = AdoTypeMappings
+End Property
 
 
 Private Property Get ITypeMap_IsMapped(ByVal Name As String) As Boolean

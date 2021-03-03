@@ -117,7 +117,7 @@ Private Sub ztcCommit_ThrowsIfAlreadyCommitted()
     
     sut.Commit
     sut.Commit
-    AssertExpectedError Assert, ErrNo.AdoNotInTransactionErr
+    AssertExpectedError Assert, ErrNo.AdoInvalidTransactionErr
 End Sub
 
 
@@ -133,7 +133,7 @@ Private Sub ztcCommit_ThrowsIfAlreadyRolledBack()
     
     sut.Rollback
     sut.Commit
-    AssertExpectedError Assert, ErrNo.AdoNotInTransactionErr
+    AssertExpectedError Assert, ErrNo.AdoInvalidTransactionErr
 End Sub
 
 
@@ -149,7 +149,7 @@ Private Sub ztcRollback_ThrowsIfAlreadyCommitted()
     
     sut.Commit
     sut.Rollback
-    AssertExpectedError Assert, ErrNo.AdoNotInTransactionErr
+    AssertExpectedError Assert, ErrNo.AdoInvalidTransactionErr
 End Sub
 
 
@@ -263,3 +263,4 @@ CleanExit:
 TestFail:
     Assert.Fail "Error: " & Err.number & " - " & Err.description
 End Sub
+

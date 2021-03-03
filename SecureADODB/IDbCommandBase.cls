@@ -19,3 +19,10 @@ Option Explicit
 Public Function CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
 Attribute CreateCommand.VB_Description = "Creates and returns an ADODB.Command, without executing it."
 End Function
+
+Public Property Get Self() As IDbCommandBase
+End Property
+
+'@Description("Returns class reference.")
+Public Property Get Class() As Object
+End Property

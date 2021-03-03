@@ -19,6 +19,9 @@ Option Explicit
 Public Property Get Self() As IDbRecordset
 End Property
 
+Public Property Get Class() As DbRecordset
+End Property
+
 '@Description("Gets the wrapped ADODB recordset.")
 Public Function AdoRecordset(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
 Attribute AdoRecordset.VB_Description = "Gets the wrapped ADODB recordset."

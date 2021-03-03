@@ -34,7 +34,7 @@ Private this As TDbConnection
 
 '@Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing) As IDbConnection
-    Errors.GuardNonDefaultInstance Me, DbConnection
+    Guard.NonDefaultInstance Me
     
     Dim result As DbConnection
     Set result = New DbConnection
@@ -54,6 +54,7 @@ Attribute CreInit.VB_Description = "Default constructor"
     AdoConnection.Open connString
     On Error GoTo TransactionCheckError
     Dim TransactionDDL As Long
+    '@Ignore ImplicitDefaultMemberAccess, IndexedDefaultMemberAccess
     TransactionDDL = AdoConnection.Properties("Transaction DDL")
     this.TransactionsDisabled = IIf(TransactionDDL = 0, True, False)
     On Error GoTo 0
@@ -61,7 +62,7 @@ Attribute CreInit.VB_Description = "Default constructor"
     
 TransactionCheckError:
     this.TransactionsDisabled = True
-    Exit Sub
+    Resume
     
 ConnectionError:
     If Err.number = &H80004005 Then
@@ -70,6 +71,20 @@ ConnectionError:
         Err.Raise Err.number, Err.source, Err.description, Err.HelpFile, Err.HelpContext
     End If
 End Sub
+
+
+'@Ignore ProcedureNotUsed
+Public Property Get Self() As IDbConnection
+    Set Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+'@Ignore ProcedureNotUsed
+Public Property Get Class() As DbConnection
+Attribute Class.VB_Description = "Returns class reference."
+    Set Class = DbConnection
+End Property
 
 
 Private Sub Class_Initialize()
@@ -133,6 +148,13 @@ Private Property Get IDbConnection_Self() As IDbConnection
 End Property
 
 
+'@Description("Returns class reference.")
+Private Property Get IDbConnection_Class() As DbConnection
+Attribute IDbConnection_Class.VB_Description = "Returns class reference."
+    Set IDbConnection_Class = DbConnection
+End Property
+
+
 Private Property Get IDbConnection_AdoConnection() As ADODB.Connection
     Set IDbConnection_AdoConnection = AdoConnection
 End Property
@@ -141,7 +163,6 @@ End Property
 Private Property Get IDbConnection_State() As ADODB.ObjectStateEnum
     IDbConnection_State = AdoConnection.State
 End Property
-
 
 
 Private Property Get IDbConnection_ExecuteStatus() As ADODB.EventStatusEnum
@@ -156,7 +177,8 @@ End Property
 
 Private Sub IDbConnection_BeginTransaction()
     Guard.InTransaction this.HasActiveTransaction
-    
+    Guard.InvalidTransaction this.TransactionsDisabled
+
     On Error GoTo ErrorHandler
     '@Ignore VariableNotUsed
     Dim result As Long

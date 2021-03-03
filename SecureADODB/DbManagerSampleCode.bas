@@ -14,7 +14,8 @@ Private Sub DbManagerCSVTest()
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, fileName, vbNullString, False, LoggerTypeEnum.logPrivate)
 
-    Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL")
+    '@Ignore IndexedDefaultMemberAccess
+    Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL").value
     
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
@@ -73,6 +74,7 @@ Private Sub DbManagerSQLiteTest()
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
     
+    '@Ignore ImplicitDefaultMemberAccess, IndexedDefaultMemberAccess
     Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL")
     
     Dim result As ADODB.Recordset

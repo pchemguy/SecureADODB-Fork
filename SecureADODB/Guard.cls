@@ -8,10 +8,10 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "Class for common guards."
-'@IgnoreModule ProcedureNotUsed
 '@Folder "Common.Guard"
-'@PredeclaredId
 '@ModuleDescription("Class for common guards.")
+'@PredeclaredId
+'@IgnoreModule ProcedureNotUsed
 Option Explicit
 Option Compare Text
 
@@ -251,6 +251,25 @@ Attribute FileNotExist.VB_Description = "Raises a run-time error if the specifie
 End Sub
 
 
+'@Description("Raises a run-time error if transaction is requested but not supported. (Trapped on True)")
+Public Sub InvalidTransaction(ByVal TransactoinsDisabled As Boolean)
+    Debug.Assert VarType(TransactoinsDisabled) = vbBoolean
+    
+    Dim errorDetails As TError
+    With errorDetails
+        .trapped = TransactoinsDisabled
+        If .trapped Then
+            .Name = "NotInTransaction"
+            .number = ErrNo.AdoInvalidTransactionErr
+            .source = vbNullString
+            .message = "Current database does not support transaction"
+            .description = "Attempted operation not permmited when transactions are not supported."
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
+
+
 '@Description("Raises a run-time error if the specified connection has active transaction. (Trapped on True)")
 Public Sub InTransaction(ByVal HasActiveTransaction As Boolean)
 Attribute InTransaction.VB_Description = "Raises a run-time error if the specified connection has active transaction. (Trapped on True)"
@@ -273,7 +292,6 @@ End Sub
 
 '@Description("Raises a run-time error if the specified connection has no active transaction. (Trapped on False)")
 Public Sub NotInTransaction(ByVal HasActiveTransaction As Boolean)
-Attribute NotInTransaction.VB_Description = "Raises a run-time error if the specified connection has no active transaction. (Trapped on False)"
     Debug.Assert VarType(HasActiveTransaction) = vbBoolean
     
     Dim errorDetails As TError
@@ -281,10 +299,10 @@ Attribute NotInTransaction.VB_Description = "Raises a run-time error if the spec
         .trapped = Not HasActiveTransaction
         If .trapped Then
             .Name = "NotInTransaction"
-            .number = ErrNo.AdoNotInTransactionErr
+            .number = ErrNo.AdoInvalidTransactionErr
             .source = vbNullString
             .message = "Current database connection is not in transaction"
-            .description = "Attempted operation not permmited when no  active transaction in progress (e.g. commit or rollback)."
+            .description = "Attempted operation not permmited when no active transaction in progress (e.g. commit or rollback)."
             RaiseError errorDetails
         End If
     End With
@@ -307,14 +325,3 @@ Attribute ConnectionStringError.VB_Description = "Raises a run-time error if the
         End If
     End With
 End Sub
-
-'            Dim errorDetails As TError
-'            With errorDetails
-'                .number = ErrNo.NoObject
-'                .Name = "NoObject"
-'                .source = "DbCommandFactory"
-'                .message = "Unknown DbCommand class: " & commandClassName
-'                .description = .message
-'            End With
-'            RaiseError errorDetails
-'

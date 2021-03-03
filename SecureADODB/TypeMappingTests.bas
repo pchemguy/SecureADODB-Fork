@@ -43,7 +43,7 @@ Private Sub Default_ThrowsIfNotInvokedFromDefaultInstance()
         On Error GoTo 0
     End With
 CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
+    If Err.number = ErrNo.NonDefaultInstanceErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -66,7 +66,7 @@ Private Sub Mapping_ThrowsIfUndefined()
         On Error GoTo 0
     End With
 CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
+    If Err.number = ErrNo.CustomErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub

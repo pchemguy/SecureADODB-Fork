@@ -24,7 +24,7 @@ Private mappings As ITypeMap
 '@Description("Creates a new parameter provider using the specified type mappings.")
 Public Function Create(ByVal typeMap As ITypeMap) As IParameterProvider
 Attribute Create.VB_Description = "Creates a new parameter provider using the specified type mappings."
-    Errors.GuardNonDefaultInstance Me, AdoParameterProvider
+    Guard.NonDefaultInstance Me
     
     Dim result As AdoParameterProvider
     Set result = New AdoParameterProvider
@@ -36,9 +36,33 @@ End Function
 '@Description("Default constructor")
 Friend Sub CreInit(ByVal typeMap As ITypeMap)
 Attribute CreInit.VB_Description = "Default constructor"
-    Errors.GuardNullReference typeMap
+    Guard.NullReference typeMap
     Set mappings = typeMap
 End Sub
+
+
+'@Ignore ProcedureNotUsed
+Public Property Get Self() As IParameterProvider
+    Set Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+'@Ignore ProcedureNotUsed
+Public Property Get Class() As AdoParameterProvider
+    Set Class = AdoParameterProvider
+End Property
+
+
+Private Property Get IParameterProvider_Self() As IParameterProvider
+    Set IParameterProvider_Self = Me
+End Property
+
+
+'@Description("Returns class reference.")
+Private Property Get IParameterProvider_Class() As Object
+    Set IParameterProvider_Class = AdoParameterProvider
+End Property
 
 
 Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA.Collection
@@ -62,7 +86,7 @@ Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional B
     Dim localDataTypeName As String
     localDataTypeName = dataTypeName
     If localDataTypeName = vbNullString Then localDataTypeName = TypeName(value)
-    Errors.GuardExpression Not mappings.IsMapped(localDataTypeName), message:="The data type '" & localDataTypeName & "' has no ADODB.DataTypeEnum mapping."
+    Guard.Expression mappings.IsMapped(localDataTypeName), source:="AdoParaeterProvider", message:="The data type '" & localDataTypeName & "' has no ADODB.DataTypeEnum mapping."
     
     Dim result As ADODB.Parameter
     Set result = New ADODB.Parameter

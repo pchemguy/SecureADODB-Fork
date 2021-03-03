@@ -181,7 +181,7 @@ Attribute CreInit.VB_Description = "Default constructor"
               
     Guard.NullReference factory
     Guard.NullReference db
-    Errors.GuardExpression db.State <> adStateOpen, message:="Connection should be open."
+    Guard.Expression db.State = adStateOpen, source:="DbManager", message:="Connection should be open."
 
     Set this.LogController = LogController
     Set this.Connection = db
@@ -228,12 +228,12 @@ End Function
 
 
 Private Sub IDbManager_Commit()
-    Errors.GuardExpression (Not this.UseTransactions), message:="Transactions are disabled by the caller."
+    Guard.Expression this.UseTransactions, source:="DbManager", message:="Transactions are disabled by the caller."
     this.Connection.CommitTransaction
 End Sub
 
 
 Private Sub IDbManager_Rollback()
-    Errors.GuardExpression (Not this.UseTransactions), message:="Transactions are disabled by the caller."
+    Guard.Expression this.UseTransactions, source:="DbManager", message:="Transactions are disabled by the caller."
     this.Connection.RollbackTransaction
 End Sub

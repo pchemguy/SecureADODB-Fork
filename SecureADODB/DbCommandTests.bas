@@ -86,7 +86,7 @@ Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
     End With
     
 CleanFail:
-    If Err.number = ExpectedError Then Exit Sub
+    If Err.number = ErrNo.NonDefaultInstanceErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub

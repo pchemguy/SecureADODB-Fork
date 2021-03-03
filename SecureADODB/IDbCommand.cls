@@ -24,3 +24,11 @@ End Function
 Public Sub ExecuteNonQuery(ByVal sql As String, ParamArray args())
 Attribute ExecuteNonQuery.VB_Description = "Executes the specified parameterized SQL statement/command."
 End Sub
+
+Public Property Get Self() As IDbCommand
+End Property
+
+'@Description("Returns class reference.")
+Public Property Get Class() As Object
+Attribute Class.VB_Description = "Returns class reference."
+End Property

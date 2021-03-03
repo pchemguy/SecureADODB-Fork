@@ -42,7 +42,7 @@ Public Function Create(ByVal cmd As IDbCommand, _
               Optional ByVal AsyncMode As Boolean = False, _
               Optional ByVal AsyncOption As ADODB.ExecuteOptionEnum = 0) As IDbRecordset
               
-    Errors.GuardNonDefaultInstance Me, DbRecordset
+    Guard.NonDefaultInstance Me
 
     Dim result As DbRecordset
     Set result = New DbRecordset
@@ -86,6 +86,13 @@ End Sub
 
 Private Property Get IDbRecordset_Self() As IDbRecordset
     Set IDbRecordset_Self = Me
+End Property
+
+
+'@Description("Returns class reference")
+Private Property Get IDbRecordset_Class() As DbRecordset
+Attribute IDbRecordset_Class.VB_Description = "Returns class reference"
+    Set IDbRecordset_Class = DbRecordset
 End Property
 
 
@@ -144,7 +151,7 @@ End Function
 ' https://docs.microsoft.com/en-us/sql/ado/guide/data/ado-event-handler-summary
 ' https://docs.microsoft.com/en-us/sql/ado/reference/ado-api/fetchprogress-event-ado
 '
-'@Ignore ParameterNotUsed, ParameterCanBeByVal
+'@Ignore ProcedureNotUsed, ParameterNotUsed, ParameterCanBeByVal
 Private Sub AdoRecordset_FetchProgress(ByVal Progress As Long, ByVal MaxProgress As Long, ByRef adStatus As ADODB.EventStatusEnum, ByVal pRecordset As ADODB.Recordset)
     Debug.Print "ADODB.Recordset fetch in progress. " & CStr(Progress) & " records of " & CStr(MaxProgress) & "have been retrived..."
 End Sub
@@ -152,7 +159,7 @@ End Sub
 
 ' https://docs.microsoft.com/en-us/sql/ado/reference/ado-api/fetchcomplete-event-ado
 '
-'@Ignore ParameterNotUsed, ParameterCanBeByVal
+'@Ignore ProcedureNotUsed, ParameterNotUsed, ParameterCanBeByVal
 Private Sub AdoRecordset_FetchComplete(ByVal pError As ADODB.Error, ByRef adStatus As ADODB.EventStatusEnum, ByVal pRecordset As ADODB.Recordset)
     Debug.Print "ADODB.Recordset fetch completed. "
     If adStatus = ADODB.EventStatusEnum.adStatusErrorsOccurred And pError Is Nothing Then
