@@ -10,7 +10,7 @@ So, this project is largely a learning exercise for me, but I also plan to use i
 
 The class diagram below shows the core `SecureADODB` classes (this fork, blue) and the mapping to the core `ADODB` classes (green).
 
-![SecureADODB-ADODB](https://github.com/pchemguy/RDVBA-examples/blob/develop/UML%20Class%20Diagrams/SecureADODB%20-%20ADODB%20Class%20Mapping.svg)
+![SecureADODB-ADODB](https://raw.githubusercontent.com/pchemguy/RDVBA-examples/develop/UML%20Class%20Diagrams/SecureADODB%20-%20ADODB%20Class%20Mapping.svg)
 
 `DbRecordset` class has been added in this fork, while the `DbManager` class shown at the bottom is functionally similar to the `UnitOfWork` class from the base project.
 `DbManager` implements typical workflow and is, thus, responsible for streamlining the interaction process with the database. Since the `SecureADODB` library has been designed in such a way to ensure maximal decoupling of classes responsible for different functions, an additional class UoF/DbManager is useful to put it all together. It takes connection parameters or connection string and then instantiates other classes and taking care of injecting dependencies as necessary.
