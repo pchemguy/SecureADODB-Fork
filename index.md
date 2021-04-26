@@ -1,6 +1,6 @@
 ## Class Diagram and Mapping to ADODB
 
-The class diagram below shows the core `SecureADODB` classes (this fork, blue) and the mapping to the core ADODB classes (green).
+The class diagram below shows the core SecureADODB classes (this fork, blue) and the mapping to the core ADODB classes (green).
 
 ![SecureADODB-ADODB](https://github.com/pchemguy/RDVBA-examples/blob/develop/UML%20Class%20Diagrams/SecureADODB%20-%20ADODB%20Class%20Mapping.svg)
 
