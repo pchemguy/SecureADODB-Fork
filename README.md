@@ -2,7 +2,7 @@ This project proposes several modifications to the SecureADODB library, as well 
 
 ## Class Diagram and Mapping to ADODB
 
-The class diagram [below][#FigClassDiagram] shows the core SecureADODB classes (this fork, blue) and the mapping to the core ADODB classes (green).
+The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (this fork, blue) and the mapping to the core ADODB classes (green).
 
 <a name="FigClassDiagram"></a>
 
