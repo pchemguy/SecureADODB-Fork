@@ -10,11 +10,11 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
 <p align="center"><b>SecureADODB Fork class diagram.</b></p>
 
-DbRecordset class has been added in this fork, while the DbManager class shown at the bottom is functionally similar to the UnitOfWork class from the base project.
+*DbRecordset* class has been added in this fork, while the DbManager class shown at the bottom is functionally similar to the UnitOfWork class from the base project.
 
-DbManager class streamlines the interaction with the database by facilitating typical workflows. This class glues together individual base classes. It takes connection parameters or connection string and then instantiates other classes and injects dependencies as necessary.
+*DbManager* class streamlines the interaction with the database by facilitating typical workflows. This class glues together individual base classes. It takes connection parameters or connection string and then instantiates other classes and injects dependencies as necessary.
 
-DbConnection and DbRecordset classes receive and handle events raised by the corresponding ADODB classes (which was part of the motivation for creating the DbRecordset class). The core events (associated with connection, execution, and transaction) are accessible via the “Connection” class. Accessing asynchronous fetching events, however, requires the “Recordset” class.
+*DbConnection* and DbRecordset classes receive and handle events raised by the corresponding ADODB classes (which was part of the motivation for creating the *DbRecordset* class). The core events (associated with connection, execution, and transaction) are accessible via the “Connection” class. Accessing asynchronous fetching events, however, requires the “Recordset” class.
 
 ## Core Differences from RDVBA SecureADODB
 
@@ -26,8 +26,8 @@ DbConnection and DbRecordset classes receive and handle events raised by the cor
     - *Factory-Constructor pattern*. Following the convention of the base project, the default concrete factory is the "Create" method defined on default class instances. Initialization, on the other hand, is not performed by a set of public setters, but rather via a corresponding constructor ([Factory-Constructor pattern] issue).  
     - *Abstract Factory and CreateInstance convention*. Аbstract factory's Create method generates factory instances. Factory instance's CreateInstance method, in turn, generates instances of the target class ([CreateInstance convention] issue).  
     - *Duplicate Guard clauses*. Factories hold only the non-default instance guard, which might be redundant when the factory produces non-default interface objects lacking the factory method. The factory passes all initial values to the new instance constructor responsible for validation guards/checks.  
-7. DbRecordset class handles queries returning disconnected or online Recordsets, as well as scalars. A fully initialized “ADODB.Command” sets most of the DbRecordset’s properties (via injected DbCommand). Several options (such as return type and cursor type/location) are supplied to the DbRecordset factory directly.  
-8. A new module, DbManagerITests, runs a set of tests against mock CSV and SQLite databases. This way, actual SecureADODB classes (as opposed to stubs) are tested. DbManagerITests tests also serve as use templates.  
+6. DbRecordset class handles queries returning disconnected or online Recordsets, as well as scalars. A fully initialized “ADODB.Command” sets most of the DbRecordset’s properties (via injected DbCommand). Several options (such as return type and cursor type/location) are supplied to the DbRecordset factory directly.  
+7. A new module, DbManagerITests, runs a set of tests against mock CSV and SQLite databases. This way, actual SecureADODB classes (as opposed to stubs) are tested. DbManagerITests tests also serve as use templates.  
 
 [SecureADODB]: https://github.com/rubberduck-vba/examples/tree/master/SecureADODB
 [Class Diagram]: https://raw.githubusercontent.com/pchemguy/SecureADODB-Fork/master/UML%20Class%20Diagrams/SecureADODB%20-%20ADODB%20Class%20Mapping.svg
