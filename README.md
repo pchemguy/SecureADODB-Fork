@@ -1,6 +1,6 @@
 This project proposes several modifications to the SecureADODB library, as well as explores several alternative design options.
 
-## Class Diagram and Mapping to ADODB
+### Class Diagram and Mapping to ADODB
 
 The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (this fork, blue) and the mapping to the core ADODB classes (green).
 
@@ -16,7 +16,7 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
 *DbConnection* and DbRecordset classes receive and handle events raised by the corresponding ADODB classes (which was part of the motivation for creating the *DbRecordset* class). The core events (associated with connection, execution, and transaction) are accessible via the “Connection” class. Accessing asynchronous fetching events, however, requires the “Recordset” class.
 
-## Core Differences from RDVBA SecureADODB
+### Core Differences from RDVBA SecureADODB
 
 1. A coupling loop between DbConnection and DbCommand has been removed (issue [IDbConnection_CreateCommand interface][Issue 14]).  
 2. AutoDbCommand and DefaultDbCommand have been replaced with DbCommand and DefaultDbCommandFactory replaced with DbCommandFactory. DbCommand always takes an existing DbConnection class as a dependency, and is only responsible for ExecuteNoQuery functionality ([NoQuery flag] commit), while queries returning a Recordset or a scalar are executed via the DbRecordset class.  
