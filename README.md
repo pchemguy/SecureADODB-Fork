@@ -1,4 +1,4 @@
-This project proposes several modifications to the SecureADODB library, as well as explores several alternative design options.
+This project proposes several modifications to the [SecureADODB] library, as well as explores several alternative design options.
 
 ### Class Diagram and Mapping to ADODB
 
