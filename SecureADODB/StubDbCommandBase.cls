@@ -36,6 +36,7 @@ End Property
 
 '@Description("Returns class reference.")
 Private Property Get IDbCommandBase_Class() As Object
+Attribute IDbCommandBase_Class.VB_Description = "Returns class reference."
     Set IDbCommandBase_Class = DbCommandBase
 End Property
 
@@ -47,4 +48,3 @@ Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, ByVal C
     result.CommandText = sql
     Set IDbCommandBase_CreateCommand = result
 End Function
-

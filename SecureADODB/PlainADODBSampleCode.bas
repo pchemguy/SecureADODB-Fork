@@ -16,7 +16,7 @@ Public Sub TestADODBSourceSQL()
     
     sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
     sDriver = "SQLite3 ODBC Driver"
-    sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
+    sOptions = "SyncPragma=NORMAL;FKSupport=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
                  "Database=" + sDatabase + ";" + _
                  sOptions
@@ -35,7 +35,7 @@ Public Sub TestADODBSourceSQL()
     Dim AdoRecordset As ADODB.Recordset
     Set AdoRecordset = New ADODB.Recordset
     AdoRecordset.CursorLocation = adUseClient
-    AdoRecordset.Open source:=sSQL, ActiveConnection:=adoConnStr, CursorType:=adOpenKeyset, LockType:=adLockReadOnly, Options:=(adCmdText Or adAsyncFetch)
+    AdoRecordset.Open Source:=sSQL, ActiveConnection:=adoConnStr, CursorType:=adOpenKeyset, LockType:=adLockReadOnly, Options:=(adCmdText Or adAsyncFetch)
     Set AdoRecordset.ActiveConnection = Nothing
 End Sub
 
@@ -52,7 +52,7 @@ Public Sub TestADODBSourceCMD()
     
     sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
     sDriver = "SQLite3 ODBC Driver"
-    sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
+    sOptions = "SyncPragma=NORMAL;FKSupport=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
                  "Database=" + sDatabase + ";" + _
                  sOptions
@@ -74,7 +74,7 @@ Public Sub TestADODBSourceCMD()
     End With
     
     With AdoRecordset
-        Set .source = AdoCommand
+        Set .Source = AdoCommand
         .CursorLocation = adUseClient
         .CursorType = adOpenKeyset
         .LockType = adLockReadOnly
@@ -98,7 +98,7 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     
     sDatabase = ThisWorkbook.Path + "\" + "SecureADODB.db"
     sDriver = "SQLite3 ODBC Driver"
-    sOptions = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
+    sOptions = "SyncPragma=NORMAL;FKSupport=True;"
     adoConnStr = "Driver=" + sDriver + ";" + _
                  "Database=" + sDatabase + ";" + _
                  sOptions
@@ -135,7 +135,7 @@ Public Sub TestADODBSourceCMDwithParametersPositional()
     End With
         
     With AdoRecordset
-        Set .source = AdoCommand
+        Set .Source = AdoCommand
         .CursorLocation = adUseClient
         .CursorType = adOpenKeyset
         .LockType = adLockReadOnly
@@ -169,7 +169,7 @@ Public Sub TestADODBSourceSQLite()
     Set AdoRecordset = New ADODB.Recordset
     AdoRecordset.CursorLocation = adUseClient
     AdoRecordset.Open _
-            source:=sSQL, _
+            Source:=sSQL, _
             ActiveConnection:=adoConnStr, _
             CursorType:=adOpenKeyset, _
             LockType:=adLockReadOnly, _
@@ -205,7 +205,7 @@ Public Sub TestADODBSourceCSV()
     Set AdoRecordset = New ADODB.Recordset
     AdoRecordset.CursorLocation = adUseClient
     AdoRecordset.Open _
-            source:=sSQL, _
+            Source:=sSQL, _
             ActiveConnection:=adoConnStr, _
             CursorType:=adOpenKeyset, _
             LockType:=adLockReadOnly, _
@@ -252,7 +252,7 @@ Public Sub TestADODBConnectCSV()
     Set AdoRecordset = New ADODB.Recordset
     AdoRecordset.CursorLocation = adUseClient
     AdoRecordset.Open _
-            source:=sSQL, _
+            Source:=sSQL, _
             ActiveConnection:=adoConnStr, _
             CursorType:=adOpenKeyset, _
             LockType:=adLockReadOnly, _
@@ -283,7 +283,7 @@ Public Sub TestADODBConnectSQLite()
     Set AdoRecordset = New ADODB.Recordset
     AdoRecordset.CursorLocation = adUseServer
     AdoRecordset.Open _
-            source:=sSQL, _
+            Source:=sSQL, _
             ActiveConnection:=adoConnStr, _
             CursorType:=adOpenKeyset, _
             LockType:=adLockReadOnly, _

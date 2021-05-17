@@ -32,5 +32,5 @@ End Property
 
 '@Description("Returns class reference.")
 Public Property Get Class() As Object
+Attribute Class.VB_Description = "Returns class reference."
 End Property
-

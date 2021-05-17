@@ -50,6 +50,7 @@ End Property
 '@Description("Returns class reference.")
 '@Ignore ProcedureNotUsed
 Public Property Get Class() As AdoParameterProvider
+Attribute Class.VB_Description = "Returns class reference."
     Set Class = AdoParameterProvider
 End Property
 
@@ -61,6 +62,7 @@ End Property
 
 '@Description("Returns class reference.")
 Private Property Get IParameterProvider_Class() As Object
+Attribute IParameterProvider_Class.VB_Description = "Returns class reference."
     Set IParameterProvider_Class = AdoParameterProvider
 End Property
 
@@ -86,7 +88,7 @@ Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional B
     Dim localDataTypeName As String
     localDataTypeName = dataTypeName
     If localDataTypeName = vbNullString Then localDataTypeName = TypeName(value)
-    Guard.Expression mappings.IsMapped(localDataTypeName), source:="AdoParaeterProvider", message:="The data type '" & localDataTypeName & "' has no ADODB.DataTypeEnum mapping."
+    Guard.Expression mappings.IsMapped(localDataTypeName), Source:="AdoParaeterProvider", Message:="The data type '" & localDataTypeName & "' has no ADODB.DataTypeEnum mapping."
     
     Dim result As ADODB.Parameter
     Set result = New ADODB.Parameter

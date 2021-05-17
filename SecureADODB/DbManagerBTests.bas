@@ -5,8 +5,6 @@ Attribute VB_Name = "DbManagerBTests"
 Option Explicit
 Option Private Module
 
-Private Const ExpectedError As Long = SecureADODBCustomError
-
 #Const LateBind = LateBindTests
 
 #If LateBind Then
@@ -198,7 +196,7 @@ Private Sub ztcBuildConnectionString_ValidatesDeafultCSVConnectionString()
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -217,7 +215,7 @@ Private Sub ztcBuildConnectionString_ValidatesCSVConnectionString()
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -227,13 +225,13 @@ Private Sub ztcBuildConnectionString_ValidatesDeafultSQLiteConnectionString()
     
     Dim connString As String
     connString = "Driver=SQLite3 ODBC Driver;Database=" + ThisWorkbook.Path + Application.PathSeparator + "SecureADODB.db;" + _
-                 "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
+                 "SyncPragma=NORMAL;FKSupport=True;"
     Assert.AreEqual connString, DbManager.BuildConnectionString("sqlite"), "Default SQLite connection string mismatch"
 
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -247,7 +245,7 @@ Private Sub ztcBuildConnectionString_ValidatesSQLiteConnectionString()
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -261,6 +259,6 @@ Private Sub ztcBuildConnectionString_ValidatesRawConnectionString()
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 

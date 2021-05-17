@@ -107,7 +107,7 @@ Private Function IDbRecordset_AdoRecordset(ByVal sql As String, ParamArray args(
         
         Dim AdoCommand As ADODB.Command
         Set AdoCommand = this.cmd.AdoCommand(sql, localArgs)
-        Set AdoRecordset.source = AdoCommand
+        Set AdoRecordset.Source = AdoCommand
     End If
     Set IDbRecordset_AdoRecordset = AdoRecordset
 End Function
@@ -127,7 +127,7 @@ Private Function IDbRecordset_OpenRecordset(ByVal sql As String, ParamArray args
     Exit Function
     
 RecordsetOpenError:
-    Err.Raise Err.number, Err.source, "DbRecordset->IDbRecordset_OpenRecordset->AdoRecordset.Open: " & Err.description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.Source, "DbRecordset->IDbRecordset_OpenRecordset->AdoRecordset.Open: " & Err.Description, Err.HelpFile, Err.HelpContext
 End Function
 
 
@@ -143,7 +143,7 @@ Private Function IDbRecordset_OpenScalar(ByVal sql As String, ParamArray args() 
     Exit Function
 
 RecordsetOpenError:
-    Err.Raise Err.number, Err.source, "DbRecordset->IDbRecordset_OpenScalar->AdoRecordset.Open: " & Err.description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.Source, "DbRecordset->IDbRecordset_OpenScalar->AdoRecordset.Open: " & Err.Description, Err.HelpFile, Err.HelpContext
 End Function
 
 
@@ -163,6 +163,6 @@ End Sub
 Private Sub AdoRecordset_FetchComplete(ByVal pError As ADODB.Error, ByRef adStatus As ADODB.EventStatusEnum, ByVal pRecordset As ADODB.Recordset)
     Debug.Print "ADODB.Recordset fetch completed. "
     If adStatus = ADODB.EventStatusEnum.adStatusErrorsOccurred And pError Is Nothing Then
-        Debug.Print "Error: " & pError.number, pError.description, pError.source, pError.source
+        Debug.Print "Error: " & pError.Number, pError.Description, pError.Source, pError.Source
     End If
 End Sub

@@ -6,7 +6,6 @@ Option Explicit
 Option Private Module
 
 Private Const ERR_INVALID_WITHOUT_LIVE_CONNECTION = 3709
-Private Const ExpectedError As Long = SecureADODBCustomError
 
 #Const LateBind = LateBindTests
 
@@ -49,7 +48,7 @@ Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
         On Error GoTo 0
     End With
 CleanFail:
-    If Err.number = ErrNo.NonDefaultInstanceErr Then Exit Sub
+    If Err.Number = ErrNo.NonDefaultInstanceErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -66,7 +65,7 @@ Private Sub Create_ThrowsWithEmptyConnectionString()
         On Error GoTo 0
     End With
 CleanFail:
-    If Err.number = ErrNo.NonDefaultInstanceErr Then Exit Sub
+    If Err.Number = ErrNo.NonDefaultInstanceErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub

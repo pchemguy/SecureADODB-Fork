@@ -44,11 +44,11 @@ Attribute CreInit.VB_Description = "Default constructor"
         Case Else
             Dim errorDetails As TError
             With errorDetails
-                .number = ErrNo.NoObject
+                .Number = ErrNo.NoObject
                 .Name = "NoObject"
-                .source = "DbCommandFactory"
-                .message = "Unknown DbCommand class: " & commandClassName
-                .description = .message
+                .Source = "DbCommandFactory"
+                .Message = "Unknown DbCommand class: " & commandClassName
+                .Description = .Message
             End With
             RaiseError errorDetails
     End Select

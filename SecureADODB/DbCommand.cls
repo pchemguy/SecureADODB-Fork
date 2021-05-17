@@ -56,6 +56,7 @@ End Property
 '@Description("Returns class reference.")
 '@Ignore ProcedureNotUsed
 Public Property Get Class() As DbCommand
+Attribute Class.VB_Description = "Returns class reference."
     Set Class = DbCommand
 End Property
 
@@ -67,6 +68,7 @@ End Property
 
 '@Description("Returns class reference.")
 Private Property Get IDbCommand_Class() As Object
+Attribute IDbCommand_Class.VB_Description = "Returns class reference."
     Set IDbCommand_Class = DbCommand
 End Property
 

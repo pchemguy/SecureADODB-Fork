@@ -38,19 +38,19 @@ End Sub
 Private Function zfxGetConnectionString(ByVal TypeOrConnString As String) As String
     Dim fileExt As String: fileExt = IIf(TypeOrConnString = "csv", "csv", "db")
     Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
-    Dim fileName As String: fileName = fso.GetBaseName(ThisWorkbook.Name) & "." & fileExt
+    Dim FileName As String: FileName = fso.GetBaseName(ThisWorkbook.Name) & "." & fileExt
     
-    zfxGetConnectionString = DbManager.BuildConnectionString(TypeOrConnString, ThisWorkbook.Path, fileName, vbNullString)
+    zfxGetConnectionString = DbManager.BuildConnectionString(TypeOrConnString, ThisWorkbook.Path, FileName, vbNullString)
 End Function
 
 
 Private Function zfxGetDbManagerFromConnectionParameters(ByVal TypeOrConnString As String) As IDbManager
     Dim fileExt As String: fileExt = IIf(TypeOrConnString = "csv", "csv", "db")
     Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
-    Dim fileName As String: fileName = fso.GetBaseName(ThisWorkbook.Name) & "." & fileExt
+    Dim FileName As String: FileName = fso.GetBaseName(ThisWorkbook.Name) & "." & fileExt
 
     Dim dbm As IDbManager
-    Set dbm = DbManager.FromConnectionParameters(TypeOrConnString, ThisWorkbook.Path, fileName, vbNullString, True, LoggerTypeEnum.logPrivate)
+    Set dbm = DbManager.FromConnectionParameters(TypeOrConnString, ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
     Set zfxGetDbManagerFromConnectionParameters = dbm
 End Function
 
@@ -129,7 +129,7 @@ Arrange:
     #End If
     Dim SQLiteString As String
     SQLiteString = "Driver=SQLite3 ODBC Driver;Database=" + ThisWorkbook.Path + Application.PathSeparator + "SecureADODB.db;" + _
-                   "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
+                   "SyncPragma=NORMAL;FKSupport=True;"
 Act:
 Assert:
     Assert.AreEqual CSVString, DbManager.BuildConnectionString("csv"), "CSV string mismatch"
@@ -138,7 +138,7 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -180,7 +180,7 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -197,7 +197,7 @@ Act:
 Assert:
     Assert.IsNotNothing rstAdo.ActiveConnection, "ActiveConnection of the Recordset object is not set."
     Assert.IsNotNothing rstAdo.ActiveCommand, "ActiveCommand of the Recordset object is not set."
-    Assert.IsFalse IsFalsy(rstAdo.source), "The Source property of the Recordset object is not set."
+    Assert.IsFalse IsFalsy(rstAdo.Source), "The Source property of the Recordset object is not set."
     Assert.AreEqual ADODB.CursorTypeEnum.adOpenStatic, rstAdo.CursorType, "The CursorType of the Recordset object should be adOpenStatic."
     Assert.AreEqual ADODB.CursorLocationEnum.adUseClient, rstAdo.CursorLocation, "The CursorLocation of the Recordset object should be adUseClient."
     Assert.AreNotEqual 1, rstAdo.MaxRecords, "The MaxRecords of the Recordset object should not be set to 1 for a regular Recordset."
@@ -205,7 +205,7 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -228,7 +228,7 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -249,7 +249,7 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -271,7 +271,7 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -293,7 +293,7 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -326,7 +326,7 @@ Private Sub ztiDbManagerOpenRecordset_ThrowsGivenUnsupportedParameterTypeCSV()
     Exit Sub
 
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -353,7 +353,7 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -373,7 +373,7 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -403,5 +403,5 @@ Assert:
 CleanExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Error: " & Err.number & " - " & Err.description
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub

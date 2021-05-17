@@ -5,7 +5,6 @@ Attribute VB_Name = "DbCommandTests"
 Option Explicit
 Option Private Module
 
-Private Const ExpectedError As Long = SecureADODBCustomError
 Private Const ERR_INVALID_WITHOUT_LIVE_CONNECTION = 3709
 
 #Const LateBind = LateBindTests
@@ -86,7 +85,7 @@ Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
     End With
     
 CleanFail:
-    If Err.number = ErrNo.NonDefaultInstanceErr Then Exit Sub
+    If Err.Number = ErrNo.NonDefaultInstanceErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub

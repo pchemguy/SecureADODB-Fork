@@ -5,7 +5,6 @@ Attribute VB_Name = "ParameterProviderTests"
 Option Explicit
 Option Private Module
 
-Private Const ExpectedError As Long = SecureADODBCustomError
 #Const LateBind = LateBindTests
 
 #If LateBind Then
@@ -53,7 +52,7 @@ Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
     End With
     
 CleanFail:
-    If Err.number = ErrNo.NonDefaultInstanceErr Then Exit Sub
+    If Err.Number = ErrNo.NonDefaultInstanceErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -68,7 +67,7 @@ Private Sub Create_ThrowsGivenNullMappings()
     On Error GoTo 0
 
 CleanFail:
-    If Err.number = ErrNo.ObjectNotSetErr Then Exit Sub
+    If Err.Number = ErrNo.ObjectNotSetErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub
@@ -83,7 +82,7 @@ Private Sub TypeMappings_ThrowsGivenNullMappings()
     On Error GoTo 0
     
 CleanFail:
-    If Err.number = ErrNo.ObjectNotSetErr Then Exit Sub
+    If Err.Number = ErrNo.ObjectNotSetErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub

@@ -65,10 +65,10 @@ TransactionCheckError:
     Resume
     
 ConnectionError:
-    If Err.number = &H80004005 Then
+    If Err.Number = &H80004005 Then
         Guard.ConnectionStringError Nothing
     Else
-        Err.Raise Err.number, Err.source, Err.description, Err.HelpFile, Err.HelpContext
+        Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
     End If
 End Sub
 
@@ -113,28 +113,28 @@ Private Sub LogAdoErrors()
     If this.LogController Is Nothing Then Exit Sub
     
     Dim AdoError As ADODB.Error
-    Dim message As String
-    message = "ADODB.Connection State: " + CStr(this.StateMap(AdoConnection.State))
-    this.LogController.Log message
+    Dim Message As String
+    Message = "ADODB.Connection State: " + CStr(this.StateMap(AdoConnection.State))
+    this.LogController.Log Message
     For Each AdoError In AdoConnection.Errors
         With AdoError
-            message = "ADODB.Error #" + CStr(.number) + ", " + _
+            Message = "ADODB.Error #" + CStr(.Number) + ", " + _
                       "SQLState: " + CStr(.SqlState) + ", " + _
-                      "Source: " + CStr(.source) + ", " + _
-                      "Description: " + CStr(.description)
+                      "Source: " + CStr(.Source) + ", " + _
+                      "Description: " + CStr(.Description)
         End With
-        this.LogController.Log message
+        this.LogController.Log Message
     Next AdoError
     AdoConnection.Errors.Clear
         
     With VBA.Err
-        If .number > 0 And Left$(.source, 6) = "ADODB." Then
-            message = "VBA.Err #" + CStr(.number) + ", " + _
-                      "Source: " + CStr(.source) + ", " + _
-                      "Description: " + CStr(.description)
+        If .Number > 0 And Left$(.Source, 6) = "ADODB." Then
+            Message = "VBA.Err #" + CStr(.Number) + ", " + _
+                      "Source: " + CStr(.Source) + ", " + _
+                      "Description: " + CStr(.Description)
         End If
     End With
-    this.LogController.Log message
+    this.LogController.Log Message
     VBA.Err.Clear
 End Sub
 
@@ -190,11 +190,11 @@ Private Sub IDbConnection_BeginTransaction()
     Exit Sub
 
 ErrorHandler:
-    If VBA.Err.number = 3251 Then
+    If VBA.Err.Number = 3251 Then
         this.TransactionsDisabled = True
         Resume Next
     Else
-        Err.Raise Err.number, Err.source, Err.description, Err.HelpFile, Err.HelpContext
+        Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
     End If
 End Sub
 
@@ -225,17 +225,17 @@ End Sub
 
 Private Sub AdoConnection_BeginTransComplete(ByVal TransactionLevel As Long, ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin transaction completed. "
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
 End Sub
 
 Private Sub AdoConnection_CommitTransComplete(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Commit transaction completed. "
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
 End Sub
 
 Private Sub AdoConnection_RollbackTransComplete(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Rollback transaction completed."
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
 End Sub
 
 Private Sub AdoConnection_WillConnect(ConnectionString As String, UserID As String, Password As String, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
@@ -244,14 +244,14 @@ End Sub
 
 Private Sub AdoConnection_ConnectComplete(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Connect completed. Status: " & adStatus
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
 End Sub
 
 Private Sub AdoConnection_Disconnect(adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
     Debug.Print "Disconnect completed. Status: " & adStatus
 End Sub
 
-Private Sub AdoConnection_WillExecute(source As String, CursorType As ADODB.CursorTypeEnum, LockType As ADODB.LockTypeEnum, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
+Private Sub AdoConnection_WillExecute(Source As String, CursorType As ADODB.CursorTypeEnum, LockType As ADODB.LockTypeEnum, Options As Long, adStatus As ADODB.EventStatusEnum, ByVal pCommand As ADODB.Command, ByVal pRecordset As ADODB.Recordset, ByVal pConnection As ADODB.Connection)
     Debug.Print "Begin execute..."
 End Sub
 
@@ -259,13 +259,13 @@ Private Sub AdoConnection_ExecuteComplete(ByVal RecordsAffected As Long, ByVal p
     this.ExecuteStatus = adStatus
     this.RecordsAffected = RecordsAffected
     Debug.Print "Execute completed, " & RecordsAffected & " record(s) affected."
-    If Not pError Is Nothing Then Debug.Print "Error: " & pError.number, pError.description
+    If Not pError Is Nothing Then Debug.Print "Error: " & pError.Number, pError.Description
 End Sub
 
 Private Sub AdoConnection_InfoMessage(ByVal pError As ADODB.Error, adStatus As ADODB.EventStatusEnum, ByVal pConnection As ADODB.Connection)
-    If pError.number = 0 Then
-        Debug.Print "Info: " & pError.description
+    If pError.Number = 0 Then
+        Debug.Print "Info: " & pError.Description
     Else
-        Debug.Print "Error: " & pError.number, pError.description
+        Debug.Print "Error: " & pError.Number, pError.Description
     End If
 End Sub

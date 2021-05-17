@@ -29,7 +29,7 @@ End Function
 '@Description("Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name.")
 Public Property Get Mapping(ByVal Name As String) As ADODB.DataTypeEnum
 Attribute Mapping.VB_Description = "Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name."
-    Guard.Expression IsMapped(Name), source:="AdoTypeMappings", message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
+    Guard.Expression IsMapped(Name), Source:="AdoTypeMappings", Message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
     Mapping = mappings.Item(Name)
 End Property
 
@@ -37,7 +37,7 @@ End Property
 '@Description("Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name.")
 Public Property Let Mapping(ByVal Name As String, ByVal value As ADODB.DataTypeEnum)
 Attribute Mapping.VB_Description = "Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name."
-    Guard.Expression IsMapped(Name), source:="AdoTypeMappings", message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
+    Guard.Expression IsMapped(Name), Source:="AdoTypeMappings", Message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
     mappings.Item(Name) = value
 End Property
 
@@ -81,6 +81,7 @@ End Property
 '@Description("Returns class reference.")
 '@Ignore ProcedureNotUsed
 Public Property Get Class() As AdoTypeMappings
+Attribute Class.VB_Description = "Returns class reference."
     Set Class = AdoTypeMappings
 End Property
 
@@ -92,6 +93,7 @@ End Property
 
 '@Description("Returns class reference.")
 Private Property Get ITypeMap_Class() As Object
+Attribute ITypeMap_Class.VB_Description = "Returns class reference."
     Set ITypeMap_Class = AdoTypeMappings
 End Property
 

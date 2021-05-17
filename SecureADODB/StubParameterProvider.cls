@@ -33,6 +33,6 @@ End Property
 
 '@Description("Returns class reference.")
 Private Property Get IParameterProvider_Class() As Object
+Attribute IParameterProvider_Class.VB_Description = "Returns class reference."
     Set IParameterProvider_Class = AdoParameterProvider
 End Property
-

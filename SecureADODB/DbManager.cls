@@ -80,7 +80,7 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                     .Name = Name
                 End If
                 If Options = vbNullString Then
-                    .Options = "SyncPragma=NORMAL;LongNames=True;NoCreat=True;FKSupport=True;OEMCP=True;"
+                    .Options = "SyncPragma=NORMAL;FKSupport=True;"
                 Else
                     .Options = Options
                 End If
@@ -181,7 +181,7 @@ Attribute CreInit.VB_Description = "Default constructor"
               
     Guard.NullReference factory
     Guard.NullReference db
-    Guard.Expression db.State = adStateOpen, source:="DbManager", message:="Connection should be open."
+    Guard.Expression db.State = adStateOpen, Source:="DbManager", Message:="Connection should be open."
 
     Set this.LogController = LogController
     Set this.Connection = db
@@ -228,12 +228,12 @@ End Function
 
 
 Private Sub IDbManager_Commit()
-    Guard.Expression this.UseTransactions, source:="DbManager", message:="Transactions are disabled by the caller."
+    Guard.Expression this.UseTransactions, Source:="DbManager", Message:="Transactions are disabled by the caller."
     this.Connection.CommitTransaction
 End Sub
 
 
 Private Sub IDbManager_Rollback()
-    Guard.Expression this.UseTransactions, source:="DbManager", message:="Transactions are disabled by the caller."
+    Guard.Expression this.UseTransactions, Source:="DbManager", Message:="Transactions are disabled by the caller."
     this.Connection.RollbackTransaction
 End Sub
