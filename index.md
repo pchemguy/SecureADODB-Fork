@@ -23,7 +23,7 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 3. *DbManager* takes a flag, turning transactions on/off. Additionally, the BeginTransaction method now has a transaction error handler. If this handler traps an error, it sets a flag on the DbConnection object disabling further transaction handling.  
 4. A new Guard class replaces the Errors module with some refactoring and additional functionality. A  "Scripting.Dictionary" backed logger prototype has also been implemented.  
 5. Design patterns:  
-    - *Factory-Constructor pattern*. Following the convention of the base project, the default concrete factory is the "Create" method defined on default class instances. Initialization, on the other hand, is not performed by a set of public setters, but rather via a corresponding constructor ([Factory-Constructor pattern] issue).  
+    - *Factory-Constructor pattern*. Following the convention of the base project, the default concrete factory is the "Create" method defined on default class instances. Initialization, on the other hand, is not performed by a set of public setters but rather via a corresponding constructor ([Factory-Constructor pattern][] issue). Please see [Contact Editor tutorial][Factory-Constructor - Contact Editor] for additional discussion about the returned value.
     - *Abstract Factory and CreateInstance convention*. Аbstract factory's Create method generates factory instances. Factory instance's *CreateInstance* method, in turn, generates instances of the target class ([CreateInstance convention] issue).  
     - *Duplicate Guard clauses*. Factories hold only the non-default instance guard, which might be redundant when the factory produces non-default interface objects lacking the factory method. The factory passes all initial values to the new instance constructor responsible for validation guards/checks.  
 6. *DbRecordset* class handles queries returning disconnected or online Recordsets, as well as scalars. A fully initialized “ADODB.Command” sets most of the *DbRecordset*’s properties (via injected *DbCommand*). Several options (such as return type and cursor type/location) are supplied to the *DbRecordset* factory directly.  
@@ -34,4 +34,5 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 [Issue 14]: https://github.com/pchemguy/RDVBA-examples/issues/14
 [NoQuery flag]: https://github.com/pchemguy/RDVBA-examples/commit/ffc12ffb361ecc5a2338a321d84e8a756b48e109
 [Factory-Constructor pattern]: https://github.com/pchemguy/RDVBA-examples/issues/11
+[Factory-Constructor - Contact Editor]: https://pchemguy.github.io/ContactEditor/class-design
 [CreateInstance convention]: https://github.com/pchemguy/RDVBA-examples/issues/10
