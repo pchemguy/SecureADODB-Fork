@@ -96,8 +96,8 @@ Attribute IDbRecordset_Class.VB_Description = "Returns class reference"
 End Property
 
 
-Private Function IDbRecordset_AdoRecordset(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
-    If sql <> vbNullString And AdoRecordset.ActiveCommand Is Nothing Then
+Private Function IDbRecordset_AdoRecordset(ByVal SQL As String, ParamArray args() As Variant) As ADODB.Recordset
+    If SQL <> vbNullString And AdoRecordset.ActiveCommand Is Nothing Then
         Dim localArgs() As Variant
         If IsArray(args(0)) Then
             localArgs = args(0)
@@ -106,7 +106,7 @@ Private Function IDbRecordset_AdoRecordset(ByVal sql As String, ParamArray args(
         End If
         
         Dim AdoCommand As ADODB.Command
-        Set AdoCommand = this.cmd.AdoCommand(sql, localArgs)
+        Set AdoCommand = this.cmd.AdoCommand(SQL, localArgs)
         Set AdoRecordset.Source = AdoCommand
     End If
     Set IDbRecordset_AdoRecordset = AdoRecordset
@@ -115,9 +115,9 @@ End Function
 
 ' Execute and ExecuteScalar can be combined into one method returning Variant, where distinction
 ' is made based on the AdoRecordset.MaxRecords value (1 - Scalar, regular otherwise)
-Private Function IDbRecordset_OpenRecordset(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
+Private Function IDbRecordset_OpenRecordset(ByVal SQL As String, ParamArray args() As Variant) As ADODB.Recordset
     '@Ignore FunctionReturnValueDiscarded
-    IDbRecordset_AdoRecordset sql, args
+    IDbRecordset_AdoRecordset SQL, args
     
     On Error GoTo RecordsetOpenError
     AdoRecordset.Open Options:=this.OpenOptions
@@ -131,9 +131,9 @@ RecordsetOpenError:
 End Function
 
 
-Private Function IDbRecordset_OpenScalar(ByVal sql As String, ParamArray args() As Variant) As Variant
+Private Function IDbRecordset_OpenScalar(ByVal SQL As String, ParamArray args() As Variant) As Variant
     '@Ignore FunctionReturnValueDiscarded
-    IDbRecordset_AdoRecordset sql, args
+    IDbRecordset_AdoRecordset SQL, args
     
     On Error GoTo RecordsetOpenError
     AdoRecordset.Open Options:=this.OpenOptions

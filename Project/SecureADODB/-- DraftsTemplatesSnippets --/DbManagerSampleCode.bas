@@ -8,8 +8,8 @@ Private Sub DbManagerCSVTest()
     Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
     Dim FileName As String: FileName = fso.GetBaseName(ThisWorkbook.Name) & ".csv"
 
-    Dim tableName As String: tableName = FileName
-    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea'"
+    Dim TableName As String: TableName = FileName
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = 'South Korea'"
     
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, FileName, vbNullString, False, LoggerTypeEnum.logPrivate)
@@ -29,8 +29,8 @@ Private Sub DbManagerInvalidTypeTest()
     Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
     Dim FileName As String: FileName = fso.GetBaseName(ThisWorkbook.Name) & ".csv"
 
-    Dim tableName As String: tableName = FileName
-    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea'"
+    Dim TableName As String: TableName = FileName
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = 'South Korea'"
     
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("Driver=", ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
@@ -47,8 +47,8 @@ Private Sub DbManagerScalarCSVTest()
     Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
     Dim FileName As String: FileName = fso.GetBaseName(ThisWorkbook.Name) & ".csv"
 
-    Dim tableName As String: tableName = FileName
-    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea' ORDER BY id DESC"
+    Dim TableName As String: TableName = FileName
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = 'South Korea' ORDER BY id DESC"
     
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
@@ -65,8 +65,8 @@ Private Sub DbManagerSQLiteTest()
     Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
     Dim FileName As String: FileName = fso.GetBaseName(ThisWorkbook.Name) & ".db"
 
-    Dim tableName As String: tableName = "people"
-    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea'"
+    Dim TableName As String: TableName = "people"
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = 'South Korea'"
     
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("sqlite", ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
@@ -86,9 +86,9 @@ Private Sub DbManagerSQLiteInsertTest()
     Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
     Dim FileName As String: FileName = fso.GetBaseName(ThisWorkbook.Name) & ".db"
 
-    Dim tableName As String: tableName = "people_insert"
+    Dim TableName As String: TableName = "people_insert"
     Dim SQLQuery As String
-    SQLQuery = "INSERT INTO " & tableName & " (id, first_name, last_name, age, gender, email, country, domain)" & _
+    SQLQuery = "INSERT INTO " & TableName & " (id, first_name, last_name, age, gender, email, country, domain)" & _
                "VALUES (" & GenerateSerialID & ", 'first_name', 'last_name', 32, 'male', 'first_name.last_name@domain.com', 'Country', 'domain.com')"
                
     Dim dbm As IDbManager
@@ -115,8 +115,8 @@ Private Sub DbManagerExTest()
     Dim connString As String
     connString = DbManager.BuildConnectionString("csv", ThisWorkbook.Path, FileName)
 
-    Dim tableName As String: tableName = FileName
-    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = ?"
+    Dim TableName As String: TableName = FileName
+    Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = ?"
     
     Dim dbm As IDbManager
     Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)

@@ -23,12 +23,12 @@ Public Property Get Class() As DbRecordset
 End Property
 
 '@Description("Gets the wrapped ADODB recordset.")
-Public Function AdoRecordset(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
+Public Function AdoRecordset(ByVal SQL As String, ParamArray args() As Variant) As ADODB.Recordset
 Attribute AdoRecordset.VB_Description = "Gets the wrapped ADODB recordset."
 End Function
 
-Public Function OpenRecordset(ByVal sql As String, ParamArray args() As Variant) As ADODB.Recordset
+Public Function OpenRecordset(ByVal SQL As String, ParamArray args() As Variant) As ADODB.Recordset
 End Function
 
-Public Function OpenScalar(ByVal sql As String, ParamArray args() As Variant) As Variant
+Public Function OpenScalar(ByVal SQL As String, ParamArray args() As Variant) As Variant
 End Function

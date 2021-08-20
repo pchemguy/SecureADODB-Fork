@@ -22,7 +22,7 @@ Private Type TProjectUtils
     Paths As Scripting.Dictionary
     Files As Scripting.Dictionary
     fso As Scripting.FileSystemObject
-    wsh As IWshRuntimeLibrary.wshShell
+    wsh As IWshRuntimeLibrary.WshShell
     EnvVarNames As Variant
 End Type
 Private this As TProjectUtils
@@ -45,7 +45,7 @@ Private Sub Class_Initialize()
         Set .Files = New Scripting.Dictionary
         .Files.CompareMode = TextCompare
         Set .fso = New Scripting.FileSystemObject
-        Set .wsh = New IWshRuntimeLibrary.wshShell
+        Set .wsh = New IWshRuntimeLibrary.WshShell
         .ProjectPath = .fso.GetParentFolderName(.Project.FileName) & Application.PathSeparator & PROJECT_FOLDER
         If Dir$(.ProjectPath, vbDirectory) = vbNullString Then MkDir .ProjectPath
         .EnvVarNames = Array("CommonProgramFiles(x86)", "CommonProgramFiles", "ProgramFiles (x86)", "ProgramFiles", "SystemRoot")

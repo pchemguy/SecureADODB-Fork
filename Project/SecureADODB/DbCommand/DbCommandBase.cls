@@ -42,17 +42,17 @@ Attribute CreInit.VB_Description = "Default constructor"
 End Sub
 
 
-Private Function CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
+Private Function CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal SQL As String, ByRef args() As Variant) As ADODB.Command
     Guard.NullReference db
     Guard.Expression db.State = adStateOpen, Source:="DbCommandBase", Message:="Connection is not open."
-    Guard.EmptyString sql
-    Guard.Expression ValidateOrdinalArguments(sql, args), Source:="DbCommandBase", Message:="Arguments supplied are inconsistent with the provided command string parameters."
+    Guard.EmptyString SQL
+    Guard.Expression ValidateOrdinalArguments(SQL, args), Source:="DbCommandBase", Message:="Arguments supplied are inconsistent with the provided command string parameters."
     
     Dim cmd As ADODB.Command
     Set cmd = New ADODB.Command
     Set cmd.ActiveConnection = db.AdoConnection
     cmd.CommandType = CommandType
-    cmd.CommandText = sql
+    cmd.CommandText = SQL
     cmd.Prepared = True
     
     Dim arg As ADODB.Parameter
@@ -64,14 +64,14 @@ Private Function CreateCommand(ByVal db As IDbConnection, ByVal CommandType As A
 End Function
 
 
-Public Function ValidateOrdinalArguments(ByVal sql As String, ByRef args() As Variant) As Boolean
-    Dim expected As Long
-    expected = Len(sql) - Len(Replace(sql, "?", vbNullString))
+Public Function ValidateOrdinalArguments(ByVal SQL As String, ByRef args() As Variant) As Boolean
+    Dim Expected As Long
+    Expected = Len(SQL) - Len(Replace(SQL, "?", vbNullString))
     
-    Dim actual As Long
-    actual = UBound(args) + (1 - LBound(args))
+    Dim Actual As Long
+    Actual = UBound(args) + (1 - LBound(args))
     
-    ValidateOrdinalArguments = (expected = actual)
+    ValidateOrdinalArguments = (Expected = Actual)
 End Function
 
 
@@ -101,6 +101,6 @@ Attribute IDbCommandBase_Class.VB_Description = "Returns class reference."
 End Property
 
 
-Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal sql As String, ByRef args() As Variant) As ADODB.Command
-    Set IDbCommandBase_CreateCommand = CreateCommand(db, CommandType, sql, args)
+Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal SQL As String, ByRef args() As Variant) As ADODB.Command
+    Set IDbCommandBase_CreateCommand = CreateCommand(db, CommandType, SQL, args)
 End Function

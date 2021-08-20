@@ -17,22 +17,19 @@ Option Explicit
 
 Implements IDbManager
 
-Private Type TConnectionConfig
+Private Type TDbManager
     Path As String
     Name As String
     Database As String
     Driver As String
     Options As String
-    connString As String
-End Type
-
-Private Type TManager
+    ConnectionString As String
     Connection As IDbConnection
     CommandFactory As IDbCommandFactory
     UseTransactions As Boolean
     LogController As ILogger
 End Type
-Private this As TManager
+Private this As TDbManager
 
 
 '@Description("Returns class reference")
@@ -61,7 +58,7 @@ Public Function BuildConnectionString( _
 Attribute BuildConnectionString.VB_Description = "Build connection config"
         
     Guard.ConnectionString TypeOrConnString
-    Dim connConfig As TConnectionConfig
+    Dim connConfig As TDbManager
         
     If Path = vbNullString Then
         connConfig.Path = ThisWorkbook.Path
@@ -85,7 +82,7 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                     .Options = Options
                 End If
                 .Database = .Path & Application.PathSeparator & .Name
-                .connString = "Driver=" + .Driver + ";" + _
+                .ConnectionString = "Driver=" + .Driver + ";" + _
                               "Database=" + .Database + ";" + _
                               .Options
             End With
@@ -100,19 +97,19 @@ Attribute BuildConnectionString.VB_Description = "Build connection config"
                 If Options <> vbNullString Then
                     .Options = Options
                 End If
-                .connString = "Driver=" + .Driver + ";" + _
+                .ConnectionString = "Driver=" + .Driver + ";" + _
                               "DefaultDir=" + .Database + ";" + _
                               .Options
             End With
         Case Else
             If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Or _
                InStr(1, TypeOrConnString, "DSN=", vbTextCompare) > 0 Then    ' ============ Raw Connection String ============ '
-                connConfig.connString = TypeOrConnString
+                connConfig.ConnectionString = TypeOrConnString
             Else
                 Guard.ConnectionString vbNullString
             End If
     End Select
-    BuildConnectionString = connConfig.connString
+    BuildConnectionString = connConfig.ConnectionString
 End Function
 
 
@@ -167,17 +164,16 @@ Public Function Create(ByVal db As IDbConnection, _
     
     Dim Result As DbManager
     Set Result = New DbManager
-    Result.CreInit db, factory, UseTransactions, LogController
+    Result.Init db, factory, UseTransactions, LogController
     Set Create = Result
 End Function
 
 
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal db As IDbConnection, _
-                   ByVal factory As IDbCommandFactory, _
-          Optional ByVal UseTransactions As Boolean = True, _
-          Optional ByVal LogController As ILogger = Nothing)
-Attribute CreInit.VB_Description = "Default constructor"
+Friend Sub Init(ByVal db As IDbConnection, _
+                ByVal factory As IDbCommandFactory, _
+       Optional ByVal UseTransactions As Boolean = True, _
+       Optional ByVal LogController As ILogger = Nothing)
               
     Guard.NullReference factory
     Guard.NullReference db

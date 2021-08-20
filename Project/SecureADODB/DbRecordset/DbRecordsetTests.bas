@@ -100,13 +100,13 @@ Private Sub ztcGetSingleParameterSelectSql_ValidatesStubQuery()
     On Error GoTo TestFail
     
 Arrange:
-    Dim expected As String
-    expected = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
+    Dim Expected As String
+    Expected = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
 Act:
-    Dim actual As String
-    actual = zfxGetSingleParameterSelectSql
+    Dim Actual As String
+    Actual = zfxGetSingleParameterSelectSql
 Assert:
-    Assert.AreEqual expected, actual, "Stub query mismatch: " & expected & " vs. " & actual
+    Assert.AreEqual Expected, Actual, "Stub query mismatch: " & Expected & " vs. " & Actual
     
 CleanExit:
     Exit Sub
@@ -120,8 +120,8 @@ Private Sub zfxGetStubDbCommand_ValidatesStubDbCommand()
     On Error GoTo TestFail
     
 Arrange:
-    Dim expected As String
-    expected = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
+    Dim Expected As String
+    Expected = "SELECT * FROM [dbo].[Table1] WHERE [Field1] = ?;"
 Act:
     Dim stubCommand As IDbCommand
     Set stubCommand = zfxGetStubDbCommand
@@ -133,7 +133,7 @@ Assert:
     Assert.IsNotNothing stubAdoCommand, "GetStubDbCommand: AdoCommand was not set"
     Assert.IsTrue TypeOf stubAdoCommand Is ADODB.Command, "GetStubDbCommand: AdoCommand type mismatch"
     Assert.AreEqual ADODB.CommandTypeEnum.adCmdText, stubAdoCommand.CommandType, "GetStubDbCommand: command type mismatch"
-    Assert.AreEqual expected, stubAdoCommand.CommandText, "GetStubDbCommand: command text mismatch"
+    Assert.AreEqual Expected, stubAdoCommand.CommandText, "GetStubDbCommand: command text mismatch"
     
 CleanExit:
     Exit Sub

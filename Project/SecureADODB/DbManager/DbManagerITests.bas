@@ -62,24 +62,24 @@ Private Function zfxGetDbManagerFromConnectionString(ByVal TypeOrConnString As S
 End Function
 
 
-Private Function zfxGetSQLSelect0P(tableName As String) As String
-    zfxGetSQLSelect0P = "SELECT * FROM " & tableName & " WHERE age >= 45 AND country = 'South Korea' ORDER BY id DESC"
+Private Function zfxGetSQLSelect0P(TableName As String) As String
+    zfxGetSQLSelect0P = "SELECT * FROM " & TableName & " WHERE age >= 45 AND country = 'South Korea' ORDER BY id DESC"
 End Function
 
 
-Private Function zfxGetSQLSelect1P(tableName As String) As String
-    zfxGetSQLSelect1P = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = 'South Korea' ORDER BY id DESC"
+Private Function zfxGetSQLSelect1P(TableName As String) As String
+    zfxGetSQLSelect1P = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = 'South Korea' ORDER BY id DESC"
 End Function
 
 
-Private Function zfxGetSQLSelect2P(tableName As String) As String
-    zfxGetSQLSelect2P = "SELECT * FROM " & tableName & " WHERE age >= ? AND country = ? ORDER BY id DESC"
+Private Function zfxGetSQLSelect2P(TableName As String) As String
+    zfxGetSQLSelect2P = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = ? ORDER BY id DESC"
 End Function
 
 
-Private Function zfxGetSQLInsert0P(tableName As String) As String
+Private Function zfxGetSQLInsert0P(TableName As String) As String
     zfxGetSQLInsert0P = _
-        "INSERT INTO " & tableName & " (id, first_name, last_name, age, gender, email, country, domain) " & _
+        "INSERT INTO " & TableName & " (id, first_name, last_name, age, gender, email, country, domain) " & _
         "VALUES " & _
             "(" & CStr(GenerateSerialID) & ", 'first_name1', 'last_name1', 32, 'male', 'first_name1.last_name1@domain.com', 'Country', 'domain.com'), " & _
             "(" & CStr(GenerateSerialID + 1) & ", 'first_name2', 'last_name2', 32, 'male', 'first_name2.last_name2@domain.com', 'Country', 'domain.com')"
