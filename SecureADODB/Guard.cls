@@ -16,7 +16,6 @@ Option Explicit
 Option Compare Text
 
 
-'@Ignore ProcedureNotUsed
 '@Description("Returns instance reference")
 Public Property Get Self() As Guard
 Attribute Self.VB_Description = "Returns instance reference"
@@ -24,7 +23,6 @@ Attribute Self.VB_Description = "Returns instance reference"
 End Property
 
 
-'@Ignore ProcedureNotUsed
 '@Description("Returns class reference")
 Public Property Get Class() As Guard
 Attribute Class.VB_Description = "Returns class reference"
@@ -35,9 +33,9 @@ End Property
 '@Description("Default class factory")
 Public Function Create() As Guard
 Attribute Create.VB_Description = "Default class factory"
-    Dim result As Guard
-    Set result = Guard 'For singleton, return the predeclared class object
-    Set Create = result
+    Dim Result As Guard
+    Set Result = Guard 'For singleton, return the predeclared class object
+    Set Create = Result
 End Function
 
 
@@ -189,14 +187,68 @@ End Sub
 
 
 '@Description("Raises a run-time error if the specified expression is false.")
-Public Sub Expression(ByVal AssertionResult As Boolean, ByVal Source As String, ByVal Message As String)
+Public Sub Expression(ByVal AssertIsTrue As Boolean, ByVal Source As String, ByVal Message As String)
 Attribute Expression.VB_Description = "Raises a run-time error if the specified expression is false."
     Dim errorDetails As TError
     With errorDetails
-        .Trapped = Not AssertionResult
+        .Trapped = Not AssertIsTrue
         If .Trapped Then
             .Name = "CustomErr"
             .Number = ErrNo.CustomErr
+            .Source = Source
+            .Message = Message
+            .Description = vbNullString
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
+
+
+'@Description("Raises a run-time InvalidCharcterErr if the specified expression is false.")
+Public Sub InvalidCharacter(ByVal AssertIsTrue As Boolean, ByVal Source As String, ByVal Message As String)
+Attribute InvalidCharacter.VB_Description = "Raises a run-time InvalidCharcterErr if the specified expression is false."
+    Dim errorDetails As TError
+    With errorDetails
+        .Trapped = Not AssertIsTrue
+        If .Trapped Then
+            .Name = "InvalidCharacterErr"
+            .Number = ErrNo.InvalidCharacterErr
+            .Source = Source
+            .Message = Message
+            .Description = vbNullString
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
+
+
+'@Description("Raises a run-time ActionNotSupportedErr if the specified expression is false.")
+Public Sub ActionNotSupported(ByVal AssertIsTrue As Boolean, ByVal Source As String, ByVal Message As String)
+Attribute ActionNotSupported.VB_Description = "Raises a run-time ActionNotSupportedErr if the specified expression is false."
+    Dim errorDetails As TError
+    With errorDetails
+        .Trapped = Not AssertIsTrue
+        If .Trapped Then
+            .Name = "ActionNotSupportedErr"
+            .Number = ErrNo.ActionNotSupportedErr
+            .Source = Source
+            .Message = Message
+            .Description = vbNullString
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
+
+
+'@Description("Raises a run-time TypeMismatchErr if the specified expression is false.")
+Public Sub TypeMismatch(ByVal AssertIsTrue As Boolean, ByVal Source As String, ByVal Message As String)
+Attribute TypeMismatch.VB_Description = "Raises a run-time TypeMismatchErr if the specified expression is false."
+    Dim errorDetails As TError
+    With errorDetails
+        .Trapped = Not AssertIsTrue
+        If .Trapped Then
+            .Name = "TypeMismatchErr"
+            .Number = ErrNo.TypeMismatchErr
             .Source = Source
             .Message = Message
             .Description = vbNullString
@@ -229,7 +281,6 @@ Attribute DefaultInstance.VB_Description = "Raises a run-time error if the speci
 End Sub
 
 
-'@Ignore ProcedureNotUsed
 '@Description("Raises a run-time error if the specified file does not exist.")
 Public Sub FileNotExist(ByVal FilePathName As String)
 Attribute FileNotExist.VB_Description = "Raises a run-time error if the specified file does not exist."
@@ -301,10 +352,10 @@ Attribute NotInTransaction.VB_Description = "Raises a run-time error if the spec
         .Trapped = Not HasActiveTransaction
         If .Trapped Then
             .Name = "NotInTransaction"
-            .Number = ErrNo.AdoInvalidTransactionErr
+            .Number = ErrNo.AdoNotInTransactionErr
             .Source = vbNullString
             .Message = "Current database connection is not in transaction"
-            .Description = "Attempted operation not permmited when no active transaction in progress (e.g. commit or rollback)."
+            .Description = "Attempted operation not permmited when no  active transaction in progress (e.g. commit or rollback)."
             RaiseError errorDetails
         End If
     End With
@@ -312,8 +363,8 @@ End Sub
 
 
 '@Description("Raises a run-time error if the specified connection string is not valid or provider cannot be found. (Trapped on Nothing or vbNullString)")
-Public Sub ConnectionStringError(ByVal dboOrConnStr As Variant)
-Attribute ConnectionStringError.VB_Description = "Raises a run-time error if the specified connection string is not valid or provider cannot be found. (Trapped on Nothing or vbNullString)"
+Public Sub ConnectionString(ByVal dboOrConnStr As Variant)
+Attribute ConnectionString.VB_Description = "Raises a run-time error if the specified connection string is not valid or provider cannot be found. (Trapped on Nothing or vbNullString)"
     Dim errorDetails As TError
     With errorDetails
         .Trapped = IsFalsy(dboOrConnStr)
@@ -322,6 +373,66 @@ Attribute ConnectionStringError.VB_Description = "Raises a run-time error if the
             .Number = ErrNo.AdoConnectionStringErr
             .Source = "Argument is Nothing"
             .Message = "Either the connection string is invalid or provider not found"
+            .Description = .Message
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
+
+
+'@Description("Raises a run-time error if the specified references are not both arrays having same base and size")
+Public Sub IncompatibleArrays(ByVal ArrayA As Variant, ByVal ArrayB As Variant)
+Attribute IncompatibleArrays.VB_Description = "Raises a run-time error if the specified references are not both arrays having same base and size"
+    Dim errorDetails As TError
+    With errorDetails
+        .Trapped = Not (IsArray(ArrayA) And IsArray(ArrayB))
+        If .Trapped Then
+            .Name = "Expected array"
+            .Number = ErrNo.ExpectedArrayErr
+            .Source = "Bad arrays"
+            .Message = "Expected two arrays"
+            .Description = .Message
+            RaiseError errorDetails
+        End If
+    End With
+    
+    With errorDetails
+        .Trapped = (LBound(ArrayA) <> LBound(ArrayB))
+        If .Trapped Then
+            .Name = "Incompatible arrays"
+            .Number = ErrNo.IncompatibleArraysErr
+            .Source = "Bad arrays"
+            .Message = "Provided arrays have different bases"
+            .Description = .Message
+            RaiseError errorDetails
+        End If
+    End With
+    
+    With errorDetails
+        .Trapped = (UBound(ArrayA) <> UBound(ArrayB))
+        If .Trapped Then
+            .Name = "Incompatible arrays"
+            .Number = ErrNo.IncompatibleArraysErr
+            .Source = "Bad arrays"
+            .Message = "Provided arrays have different sizes"
+            .Description = .Message
+            RaiseError errorDetails
+        End If
+    End With
+End Sub
+
+
+'@Description("Raises a run-time error if the specified references are not both arrays having same base and size")
+Public Sub NotArray(ByVal ArrayArg As Variant)
+Attribute NotArray.VB_Description = "Raises a run-time error if the specified references are not both arrays having same base and size"
+    Dim errorDetails As TError
+    With errorDetails
+        .Trapped = Not IsArray(ArrayArg)
+        If .Trapped Then
+            .Name = "Expected array"
+            .Number = ErrNo.ExpectedArrayErr
+            .Source = "Scalar or object argument"
+            .Message = "Expected array"
             .Description = .Message
             RaiseError errorDetails
         End If
