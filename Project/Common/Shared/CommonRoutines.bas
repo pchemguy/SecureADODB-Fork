@@ -122,18 +122,15 @@ End Function
 '''' This helper routines attempts to interpret provided pathname as
 '''' a reference to an existing file:
 '''' 1) check if provided reference is a valid absolute file pathname, if not,
-'''' 2) check if provided reference is a valid name of file located in the same
-''''    folder as this workbook (prefix Thisworkbook.path), if not,
-'''' 3) throw FileNotFound Error if the second argument is empty
-'''' 4) check if the second argument is a string; if so, cast it as a 1D array
-''''    of size one and skip next
-'''' 5) check if the second argument is an array of strings, if not,
-''''    throw FileNotFound Error
-'''' 6) check if provided reference is a valid absolute path containing file
-''''    with name matching Thisworkbook.Name (both without extension) and
-''''    extension taken from the second argument, if not
-'''' 7) run the check above using Thisworkbook.Path as the target file location,
-''''    if resolution fails, throw FileNotFound Error.
+'''' 2) construct an array of possible file locations:
+''''      - ThisWorkbook.Path & Application.PathSeparator
+''''      - Environ("APPDATA") & Application.PathSeparator &
+''''          & ThisWorkbook.VBProject.Name & Application.PathSeparator
+''''    construct an array of possible file names:
+''''      - FilePathName
+''''      - ThisWorkbook.VBProject.Name & Ext (Ext comes from the second argument
+'''' 3) loop through all possible path/filename combinations until a valid
+''''    pathname is found or all options are exhausted
 ''''
 '''' Args:
 ''''   FilePathName (string):
@@ -151,117 +148,97 @@ End Function
 ''''     If provided pathname cannot be resolved to a valid file pathname.
 ''''
 '''' Examples:
-''''   >>> ?DbConnectionString.CreateFileDB("sqlite").ConnectionString
-''''   "Driver=SQLite3 ODBC Driver;Database=<Thisworkbook.Path>\SecureADODB.db;SyncPragma=NORMAL;FKSupport=True;"
-''''
-''''   >>> ?DbConnectionString.CreateFileDB("sqlite").QTConnectionString
-''''   "OLEDB;Driver=SQLite3 ODBC Driver;Database=<Thisworkbook.Path>\SecureADODB.db;SyncPragma=NORMAL;FKSupport=True;"
-''''
-''''   >>> ?DbConnectionString.CreateFileDB("csv").ConnectionString
-''''   "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=<Thisworkbook.Path>\SecureADODB.csv;"
-''''
-''''   >>> ?DbConnectionString.CreateFileDB("xls").ConnectionString
-''''   NotImplementedErr
+''''   >>> ?VerifyOrGetDefaultPath(Environ$("ComSpec"), "")
+''''   "C:\Windows\system32\cmd.exe"
 ''''
 '@Description "Resolves file pathname"
 Public Function VerifyOrGetDefaultPath(ByVal FilePathName As String, ByVal DefaultExts As Variant) As String
 Attribute VerifyOrGetDefaultPath.VB_Description = "Resolves file pathname"
-    '''' Match any file with Dir$ igonring attributes
-    Const vbAnyAttr As Long = vbNormal + vbReadOnly + vbHidden + vbSystem + vbArchive
+    Dim PATHuSEP As String: PATHuSEP = Application.PathSeparator
+    Dim PROJuNAME As String: PROJuNAME = ThisWorkbook.VBProject.Name
     
     Dim FileExist As Variant
     Dim PathNameCandidate As String
-    
+        
+    '''' === (1) === Check if FilePathName is a valid path to an existing file.
     If Len(FilePathName) > 0 Then
         '''' If matched, Dir returns Len(String) > 0;
         '''' otherwise, returns vbNullString or raises an error
-        
-        '''' === (1) === Check if FilePathName is a valid path to an existing file.
         PathNameCandidate = FilePathName
         On Error Resume Next
-        FileExist = Dir$(PathNameCandidate, vbAnyAttr)
+        FileExist = FileLen(PathNameCandidate)
         On Error GoTo 0
-        If Len(FileExist) > 0 Then
-            VerifyOrGetDefaultPath = PathNameCandidate
-            Exit Function
-        End If
-        
-        '''' === (2) === Check if FilePathName is a valid name of file located in
-        ''''             the same folder as this workbook
-        PathNameCandidate = ThisWorkbook.Path & Application.PathSeparator & FilePathName
-        On Error Resume Next
-        FileExist = Dir$(PathNameCandidate, vbAnyAttr)
-        On Error GoTo 0
-        If Len(FileExist) > 0 Then
-            '''' Return resolved absolute file pathname
+        If FileExist > 0 Then
             VerifyOrGetDefaultPath = PathNameCandidate
             Exit Function
         End If
     End If
     
-    '''' === (3) === Check if the second argument is valid
-    Dim ValidExt As Variant
-    On Error Resume Next
-    If VarType(DefaultExts) >= vbArray Then
-        ValidExt = (VarType(DefaultExts(0)) = vbString)
-    Else
-        ValidExt = (VarType(DefaultExts) = vbString)
-    End If
-    On Error GoTo 0
+    '''' === (2a) === Array of prefixes
+    Dim Prefixes As Variant
+    Prefixes = Array( _
+        ThisWorkbook.Path & PATHuSEP, _
+        Environ$("APPDATA") & PATHuSEP & PROJuNAME & PATHuSEP _
+    )
     
-    If Not ValidExt Then
+    '''' === (2b) === Array of filenames
+    Dim NameCount As Long
+    NameCount = 0
+    If Len(FilePathName) > 1 And InStr(FilePathName, PATHuSEP) = 0 Then
+        NameCount = NameCount + 1
+    End If
+    If VarType(DefaultExts) = vbString Then
+        If Len(DefaultExts) > 0 Then NameCount = NameCount + 1
+    ElseIf VarType(DefaultExts) >= vbArray Then
+        NameCount = NameCount + UBound(DefaultExts, 1) - LBound(DefaultExts, 1) + 1
+        Debug.Assert VarType(DefaultExts(0)) = vbString
+    End If
+    If NameCount = 0 Then
         VBA.Err.Raise _
             Number:=ErrNo.FileNotFoundErr, _
-            Source:="DataTableADODB", _
+            Source:="CommonRoutines", _
             Description:="File <" & FilePathName & "> not found!"
     End If
-        
-    Dim Extensions As Variant
-    If VarType(DefaultExts) = vbString Then
-        Extensions = Array(DefaultExts)
-    Else
-        Extensions = DefaultExts
-    End If
     
-    Dim NameRoot As String
-    NameRoot = ThisWorkbook.Name
-    Dim DotPos As Long
-    DotPos = InStr(Len(NameRoot) - 5, NameRoot, ".xl", vbTextCompare)
-    NameRoot = Left$(NameRoot, DotPos)
-    
-    Dim Prefix As String
+    Dim FileNames() As String
+    ReDim FileNames(0 To NameCount - 1)
     Dim ExtIndex As Long
-    
-    '''' === (6) === FilePathName is a valid path
-    On Error Resume Next
-    Prefix = Dir$(FilePathName, vbAnyAttr)
-    On Error GoTo 0
-    
-    If Len(Prefix) > 0 Then
-        Prefix = FilePathName & Application.PathSeparator
-        For ExtIndex = LBound(Extensions) To UBound(Extensions)
-            PathNameCandidate = Prefix & NameRoot & Extensions(ExtIndex)
-            FileExist = Dir$(PathNameCandidate)
-            If Len(FileExist) > 0 Then
-                VerifyOrGetDefaultPath = PathNameCandidate
-                Exit Function
-            End If
+    Dim FileNameIndex As Long
+    FileNameIndex = 0
+    If Len(FilePathName) > 1 And InStr(FilePathName, PATHuSEP) = 0 Then
+        FileNames(FileNameIndex) = FilePathName
+        FileNameIndex = FileNameIndex + 1
+    End If
+    If VarType(DefaultExts) = vbString Then
+        If Len(DefaultExts) > 0 Then
+            FileNames(FileNameIndex) = PROJuNAME & "." & DefaultExts
+        End If
+    ElseIf VarType(DefaultExts) >= vbArray Then
+        For ExtIndex = LBound(DefaultExts, 1) To UBound(DefaultExts, 1)
+            FileNames(FileNameIndex) = PROJuNAME & "." & DefaultExts(ExtIndex)
+            FileNameIndex = FileNameIndex + 1
         Next ExtIndex
     End If
     
-    '''' === (7) === Use extensions only
-    Prefix = ThisWorkbook.Path & Application.PathSeparator
-    For ExtIndex = LBound(Extensions) To UBound(Extensions)
-        PathNameCandidate = Prefix & NameRoot & Extensions(ExtIndex)
-        FileExist = Dir$(PathNameCandidate)
-        If Len(FileExist) > 0 Then
-            VerifyOrGetDefaultPath = PathNameCandidate
-            Exit Function
-        End If
-    Next ExtIndex
+    '''' === (3) === Loop through pathnames
+    Dim PrefixIndex As Long
+    
+    On Error Resume Next
+    For PrefixIndex = 0 To UBound(Prefixes)
+        For FileNameIndex = 0 To UBound(FileNames)
+            PathNameCandidate = Prefixes(PrefixIndex) & FileNames(FileNameIndex)
+            FileExist = FileLen(PathNameCandidate)
+            If FileExist > 0 Then
+                VerifyOrGetDefaultPath = Replace$(PathNameCandidate, _
+                                                  PATHuSEP & PATHuSEP, PATHuSEP)
+                Exit Function
+            End If
+        Next FileNameIndex
+    Next PrefixIndex
+    On Error GoTo 0
     
     VBA.Err.Raise _
         Number:=ErrNo.FileNotFoundErr, _
-        Source:="DataTableADODB", _
+        Source:="CommonRoutines", _
         Description:="File <" & FilePathName & "> not found!"
 End Function

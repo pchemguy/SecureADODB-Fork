@@ -4,6 +4,7 @@ Attribute VB_Name = "CommonRoutinesTests"
 '@IgnoreModule LineLabelNotUsed
 '@IgnoreModule UnhandledOnErrorResumeNext: Test routines validating expected errors do not need to resume error handling
 '@IgnoreModule FunctionReturnValueDiscarded: Test routines validating expected errors may not need the returned value
+'@IgnoreModule AssignmentNotUsed, VariableNotUsed: Ignore dummy assignments in tests
 Option Explicit
 Option Private Module
 
@@ -239,6 +240,26 @@ End Sub
 
 
 '@TestMethod("PathCheck")
+Private Sub ztcVerifyOrGetDefaultPath_ValidatesFullPathName()
+    On Error GoTo TestFail
+
+Arrange:
+    Dim Expected As String
+    Expected = Environ$("ComSpec")
+Act:
+    Dim Actual As String
+    Actual = VerifyOrGetDefaultPath(Environ$("ComSpec"), vbNullString)
+Assert:
+    Assert.AreEqual Expected, Actual, "CheckPath failed with full valid path"
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("PathCheck")
 Private Sub ztcVerifyOrGetDefaultPath_ValidatesValidPath()
     On Error GoTo TestFail
 
@@ -258,21 +279,60 @@ End Sub
 
 
 '@TestMethod("PathCheck")
-Private Sub ztcVerifyOrGetDefaultPath_ValidatesDefaultPath()
+Private Sub ztcVerifyOrGetDefaultPath_ValidatesEmptyFilePathName()
     On Error GoTo TestFail
 
 Arrange:
     Dim Expected As String
-    Expected = ThisWorkbook.Path & Application.PathSeparator & ThisWorkbook.Name
-    Expected = Left$(Expected, InStr(Len(Expected) - 5, Expected, ".")) & "db"
+    Expected = ThisWorkbook.Path & Application.PathSeparator & _
+               ThisWorkbook.VBProject.Name & "." & "db"
 Act:
     Dim Actual As String
     Actual = VerifyOrGetDefaultPath(vbNullString, Array("db", "sqlite"))
 Assert:
-    Assert.AreEqual Expected, Actual, "CheckPath failed with default path"
+    Assert.AreEqual Expected, Actual, "CheckPath failed with empty file pathname"
 
 CleanExit:
     Exit Sub
 TestFail:
     Assert.Fail "Error: " & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("PathCheck")
+Private Sub ztcVerifyOrGetDefaultPath_ValidatesFileName()
+    On Error GoTo TestFail
+
+Arrange:
+    Dim Expected As String
+    Expected = ThisWorkbook.Path & Application.PathSeparator & _
+               ThisWorkbook.VBProject.Name & "." & "db"
+Act:
+    Dim Actual As String
+    Actual = VerifyOrGetDefaultPath(ThisWorkbook.VBProject.Name & "." & "db", vbNullString)
+Assert:
+    Assert.AreEqual Expected, Actual, "CheckPath failed filename"
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("PathCheck")
+Private Sub ztcVerifyOrGetDefaultPath_ThrowsIfFileNotFound()
+    On Error Resume Next
+    Dim FilePathName As String
+    FilePathName = VerifyOrGetDefaultPath(vbNullString, vbNullString)
+    AssertExpectedError Assert, ErrNo.FileNotFoundErr
+End Sub
+
+
+'@TestMethod("PathCheck")
+Private Sub ztcVerifyOrGetDefaultPath_ThrowsIfDirectorySupplied()
+    On Error Resume Next
+    Dim FilePathName As String
+    FilePathName = VerifyOrGetDefaultPath(Environ$("SystemRoot"), vbNullString)
+    AssertExpectedError Assert, ErrNo.FileNotFoundErr
 End Sub
