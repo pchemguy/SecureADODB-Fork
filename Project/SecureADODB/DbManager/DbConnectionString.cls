@@ -6,11 +6,12 @@ Attribute VB_Name = "DbConnectionString"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 Attribute VB_Description = "Helper routines for building connection strings"
 '@Folder "SecureADODB.DbManager"
 '@ModuleDescription "Helper routines for building connection strings"
 '@PredeclaredId
+'@Exposed
 ''''
 '''' The module incorporates routines, which facilitate construction of
 '''' connection strings for the ADODB library. Presently, a distinction is made
@@ -62,7 +63,7 @@ Private this As TDbConnectionString
 ''''   "OLEDB;Driver=SQLite3 ODBC Driver;Database=<Thisworkbook.Path>\SecureADODB.db;SyncPragma=NORMAL;FKSupport=True;"
 ''''
 ''''   >>> ?DbConnectionString.CreateFileDB("csv").ConnectionString
-''''   "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=<Thisworkbook.Path>\SecureADODB.csv;"
+''''   "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=<Thisworkbook.Path>;"
 ''''
 ''''   >>> ?DbConnectionString.CreateFileDB("xls").ConnectionString
 ''''   NotImplementedErr
@@ -84,7 +85,7 @@ End Function
 '@Description "Constructor for file-based databases"
 Friend Sub InitFileDB(Optional ByVal FileType As String = "sqlite", _
                       Optional ByVal FileName As String = vbNullString, _
-                      Optional ByVal Driver As String = Empty, _
+                      Optional ByVal Driver As String = vbNullString, _
                       Optional ByVal Options As Variant = Empty)
 Attribute InitFileDB.VB_Description = "Constructor for file-based databases"
     With this
@@ -93,7 +94,7 @@ Attribute InitFileDB.VB_Description = "Constructor for file-based databases"
         .Options = Options
         Select Case .DbType
             Case "sqlite"
-                If IsEmpty(Options) Then
+                If Len(Driver) = 0 Then
                     .Driver = "SQLite3 ODBC Driver"
                 End If
                 If IsEmpty(Options) Then
@@ -108,6 +109,9 @@ Attribute InitFileDB.VB_Description = "Constructor for file-based databases"
                 .ConnectionString = .DbPath
             Case "csv"
                 .DbPath = VerifyOrGetDefaultPath(FileName, Array("xsv", "csv"))
+                Dim dbFileName As String
+                dbFileName = Dir$(.DbPath, vbArchive + vbNormal + vbHidden + vbReadOnly + vbSystem)
+                .DbPath = Left$(.DbPath, Len(.DbPath) - Len(dbFileName) - 1)
                 #If Win64 Then
                     .Driver = "Microsoft Access Text Driver (*.txt, *.csv)"
                 #Else

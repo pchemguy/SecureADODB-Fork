@@ -45,6 +45,11 @@ Public Function Recordset(Optional ByVal Scalar As Boolean = False, _
 Attribute Recordset.VB_Description = "Creates a new recordset to execute."
 End Function
 
+'@Description("Begins the transaction.")
+Public Sub Begin()
+Attribute Begin.VB_Description = "Begins the transaction."
+End Sub
+
 '@Description("Commits the transaction.")
 Public Sub Commit()
 Attribute Commit.VB_Description = "Commits the transaction."

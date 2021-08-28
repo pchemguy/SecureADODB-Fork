@@ -41,24 +41,6 @@ End Function
 
 
 '@TestMethod("Factory Guard")
-Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
-    On Error GoTo TestFail
-    
-    With New AdoParameterProvider
-        On Error GoTo CleanFail
-        Dim sut As AdoParameterProvider
-        Set sut = .Create(GetDefaultMappings)
-        On Error GoTo 0
-    End With
-    
-CleanFail:
-    If Err.Number = ErrNo.NonDefaultInstanceErr Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
-'@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenNullMappings()
     
     On Error GoTo CleanFail

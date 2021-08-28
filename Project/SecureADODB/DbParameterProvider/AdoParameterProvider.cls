@@ -24,18 +24,16 @@ Private mappings As ITypeMap
 '@Description("Creates a new parameter provider using the specified type mappings.")
 Public Function Create(ByVal typeMap As ITypeMap) As IParameterProvider
 Attribute Create.VB_Description = "Creates a new parameter provider using the specified type mappings."
-    Guard.NonDefaultInstance Me
-    
-    Dim Result As AdoParameterProvider
-    Set Result = New AdoParameterProvider
-    Result.CreInit typeMap
-    Set Create = Result
+    Dim Instance As AdoParameterProvider
+    Set Instance = New AdoParameterProvider
+    Instance.Init typeMap
+    Set Create = Instance
 End Function
 
 
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal typeMap As ITypeMap)
-Attribute CreInit.VB_Description = "Default constructor"
+Friend Sub Init(ByVal typeMap As ITypeMap)
+Attribute Init.VB_Description = "Default constructor"
     Guard.NullReference typeMap
     Set mappings = typeMap
 End Sub

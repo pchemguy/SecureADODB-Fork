@@ -71,22 +71,3 @@ Private Function GetStubParameter() As ADODB.Parameter
     stubParameter.Direction = adParamInput
     Set GetStubParameter = stubParameter
 End Function
-
-
-'@TestMethod("Factory Guard")
-Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
-    On Error GoTo TestFail
-    
-    With New DbCommand
-        On Error GoTo CleanFail
-        Dim sut As IDbCommand
-        Set sut = .Create(New StubDbConnection, New StubDbCommandBase)
-        On Error GoTo 0
-    End With
-    
-CleanFail:
-    If Err.Number = ErrNo.NonDefaultInstanceErr Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-

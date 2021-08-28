@@ -25,18 +25,16 @@ Private this As TCommand
 
 '''' @Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal provider As IParameterProvider) As IDbCommandBase
-    Guard.NonDefaultInstance Me
-    
-    Dim Result As DbCommandBase
-    Set Result = New DbCommandBase
-    Result.CreInit provider
-    Set Create = Result
+    Dim Instance As DbCommandBase
+    Set Instance = New DbCommandBase
+    Instance.Init provider
+    Set Create = Instance
 End Function
 
 
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal provider As IParameterProvider)
-Attribute CreInit.VB_Description = "Default constructor"
+Friend Sub Init(ByVal provider As IParameterProvider)
+Attribute Init.VB_Description = "Default constructor"
     Guard.NullReference provider
     Set this.ParameterProvider = provider
 End Sub

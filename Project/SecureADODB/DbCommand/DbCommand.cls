@@ -27,18 +27,16 @@ Private this As TCommand
 
 '''' @Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase) As IDbCommand
-    Guard.NonDefaultInstance Me
-    
-    Dim Result As DbCommand
-    Set Result = New DbCommand
-    Result.CreInit db, baseCommand
-    Set Create = Result
+    Dim Instance As DbCommand
+    Set Instance = New DbCommand
+    Instance.Init db, baseCommand
+    Set Create = Instance
 End Function
 
 
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase)
-Attribute CreInit.VB_Description = "Default constructor"
+Friend Sub Init(ByVal db As IDbConnection, ByVal baseCommand As IDbCommandBase)
+Attribute Init.VB_Description = "Default constructor"
     Guard.NullReference db
     Guard.NullReference baseCommand
 

@@ -35,23 +35,6 @@ Private Function GetParameterProvider() As IParameterProvider
 End Function
 
 
-'@TestMethod("Factory Guard")
-Private Sub Create_ThrowsIfNotInvokedFromDefaultInstance()
-    On Error GoTo TestFail
-    
-    With New DbCommandBase
-        On Error GoTo CleanFail
-        Dim sut As DbCommandBase
-        Set sut = .Create(GetParameterProvider)
-        On Error GoTo 0
-    End With
-    
-CleanFail:
-    If Err.Number = ErrNo.NonDefaultInstanceErr Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
 
 '@TestMethod("Factory Guard")
 Private Sub Create_ThrowsGivenNullParameterProvider()

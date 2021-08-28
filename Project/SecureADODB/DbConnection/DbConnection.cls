@@ -34,18 +34,16 @@ Private this As TDbConnection
 
 '''' @Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
 Public Function Create(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing) As IDbConnection
-    Guard.NonDefaultInstance Me
-    
-    Dim Result As DbConnection
-    Set Result = New DbConnection
-    Result.CreInit connString, LogController
-    Set Create = Result
+    Dim Instance As DbConnection
+    Set Instance = New DbConnection
+    Instance.Init connString, LogController
+    Set Create = Instance
 End Function
 
 
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing)
-Attribute CreInit.VB_Description = "Default constructor"
+Friend Sub Init(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing)
+Attribute Init.VB_Description = "Default constructor"
     Guard.ConnectionString connString
     
     Set this.LogController = LogController

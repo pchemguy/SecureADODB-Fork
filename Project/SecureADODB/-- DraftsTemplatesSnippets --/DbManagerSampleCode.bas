@@ -12,7 +12,7 @@ Private Sub DbManagerCSVTest()
     Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = 'South Korea'"
     
     Dim dbm As IDbManager
-    Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, FileName, vbNullString, False, LoggerTypeEnum.logPrivate)
+    Set dbm = DbManager.FromConnectionParameters("csv", FileName, vbNullString, False, LoggerTypeEnum.logPrivate)
 
     '@Ignore IndexedDefaultMemberAccess
     Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL").Value
@@ -33,7 +33,7 @@ Private Sub DbManagerInvalidTypeTest()
     Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = 'South Korea'"
     
     Dim dbm As IDbManager
-    Set dbm = DbManager.FromConnectionParameters("Driver=", ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
+    Set dbm = DbManager.FromConnectionParameters("Driver=", FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
 
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
@@ -51,7 +51,7 @@ Private Sub DbManagerScalarCSVTest()
     Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = 'South Korea' ORDER BY id DESC"
     
     Dim dbm As IDbManager
-    Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
+    Set dbm = DbManager.FromConnectionParameters("csv", FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
 
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=True, Disconnected:=True, CacheSize:=10)
@@ -69,7 +69,7 @@ Private Sub DbManagerSQLiteTest()
     Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = 'South Korea'"
     
     Dim dbm As IDbManager
-    Set dbm = DbManager.FromConnectionParameters("sqlite", ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
+    Set dbm = DbManager.FromConnectionParameters("sqlite", FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
 
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
@@ -92,7 +92,7 @@ Private Sub DbManagerSQLiteInsertTest()
                "VALUES (" & GenerateSerialID & ", 'first_name', 'last_name', 32, 'male', 'first_name.last_name@domain.com', 'Country', 'domain.com')"
                
     Dim dbm As IDbManager
-    Set dbm = DbManager.FromConnectionParameters("sqlite", ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
+    Set dbm = DbManager.FromConnectionParameters("sqlite", FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
     
     Dim cmd As IDbCommand
     Set cmd = dbm.Command
@@ -119,7 +119,7 @@ Private Sub DbManagerExTest()
     Dim SQLQuery As String: SQLQuery = "SELECT * FROM " & TableName & " WHERE age >= ? AND country = ?"
     
     Dim dbm As IDbManager
-    Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
+    Set dbm = DbManager.FromConnectionParameters("csv", FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
 
     Dim Log As ILogger
     Set Log = dbm.LogController
@@ -142,5 +142,3 @@ Private Sub DbManagerExTest()
     Dim Result As ADODB.Recordset
     Set Result = rst.OpenRecordset(SQLQuery, 45, "South Korea")
 End Sub
-
-

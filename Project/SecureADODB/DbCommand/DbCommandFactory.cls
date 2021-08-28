@@ -27,16 +27,16 @@ Private this As TFactory
 '@Ignore ProcedureNotUsed
 Public Function Create(ByVal baseCommand As IDbCommandBase, Optional ByVal commandClassName As String = "DbCommand") As IDbCommandFactory
 Attribute Create.VB_Description = "Default abstract factory"
-    Dim Result As DbCommandFactory
-    Set Result = New DbCommandFactory
-    Result.CreInit baseCommand, commandClassName
-    Set Create = Result
+    Dim Instance As DbCommandFactory
+    Set Instance = New DbCommandFactory
+    Instance.Init baseCommand, commandClassName
+    Set Create = Instance
 End Function
 
 
 '@Description("Default constructor")
-Public Sub CreInit(ByVal baseCommand As IDbCommandBase, Optional ByVal commandClassName As String = "DbCommand")
-Attribute CreInit.VB_Description = "Default constructor"
+Public Sub Init(ByVal baseCommand As IDbCommandBase, Optional ByVal commandClassName As String = "DbCommand")
+Attribute Init.VB_Description = "Default constructor"
     Set this.Base = baseCommand
     Select Case commandClassName
         Case "DbCommand"

@@ -60,6 +60,31 @@ End Sub
 
 
 '@TestMethod("ConnectionString")
+Private Sub ztcConnectionString_ValidatesDefaultSQLiteStringWithBlankDriver()
+    On Error GoTo TestFail
+
+Arrange:
+    Dim Expected As String
+    Expected = "Driver=SQLite3 ODBC Driver;Database=" & _
+                VerifyOrGetDefaultPath(vbNullString, Array("db", "sqlite")) & _
+               ";SyncPragma=NORMAL;FKSupport=True;"
+Act:
+    Dim ActualADO As String
+    ActualADO = DbConnectionString.CreateFileDB("sqlite", "").ConnectionString
+    Dim ActualQT As String
+    ActualQT = DbConnectionString.CreateFileDB("sqlite", "").QTConnectionString
+Assert:
+    Assert.AreEqual Expected, ActualADO, "Default SQLite ADO ConnectionString with blank driver mismatch"
+    Assert.AreEqual "OLEDB;" & Expected, ActualQT, "Default SQLite QT ConnectionString with blank driver mismatch"
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("ConnectionString")
 Private Sub ztcConnectionString_ValidatesDefaultCSVString()
     On Error GoTo TestFail
 
@@ -70,9 +95,11 @@ Arrange:
     #Else
         Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
     #End If
+    Dim CSVPath As String
+    CSVPath = VerifyOrGetDefaultPath(vbNullString, Array("xsv", "csv"))
+    CSVPath = Left$(CSVPath, Len(CSVPath) - Len(ThisWorkbook.VBProject.Name) - 5)
     Dim Expected As String
-    Expected = "Driver=" + Driver + ";" + "DefaultDir=" + _
-               VerifyOrGetDefaultPath(vbNullString, Array("xsv", "csv")) + ";"
+    Expected = "Driver=" + Driver + ";" + "DefaultDir=" + CSVPath + ";"
 Act:
     Dim ActualADO As String
     ActualADO = DbConnectionString.CreateFileDB("csv").ConnectionString
@@ -100,9 +127,11 @@ Arrange:
     #Else
         Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
     #End If
+    Dim CSVPath As String
+    CSVPath = VerifyOrGetDefaultPath("README.md", Array("xsv", "csv"))
+    CSVPath = Left$(CSVPath, Len(CSVPath) - Len("README.md") - 1)
     Dim Expected As String
-    Expected = "Driver=" + Driver + ";" + "DefaultDir=" + _
-               VerifyOrGetDefaultPath("README.md", Array("xsv", "csv")) + ";"
+    Expected = "Driver=" + Driver + ";" + "DefaultDir=" + CSVPath + ";"
 Act:
     Dim ActualADO As String
     ActualADO = DbConnectionString.CreateFileDB("csv", "README.md").ConnectionString
@@ -126,3 +155,4 @@ Private Sub ztcConnectionString_ThrowsForXLSBackend()
     ConnectionString = DbConnectionString.CreateFileDB("xls").ConnectionString
     AssertExpectedError Assert, ErrNo.NotImplementedErr
 End Sub
+

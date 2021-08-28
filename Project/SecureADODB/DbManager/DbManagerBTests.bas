@@ -36,17 +36,6 @@ End Sub
 
 
 '@TestMethod("Factory Guard")
-Private Sub ztcCreate_ThrowsIfNotInvokedFromDefaultInstance()
-    On Error Resume Next
-    Dim sutObject As DbManager
-    Set sutObject = New DbManager
-    Dim sutInterface As IDbManager
-    Set sutInterface = sutObject.Create(New StubDbConnection, New StubDbCommandFactory)
-    AssertExpectedError Assert, ErrNo.NonDefaultInstanceErr
-End Sub
-
-
-'@TestMethod("Factory Guard")
 Private Sub ztcCreate_ThrowsGivenNullConnection()
     On Error Resume Next
     Dim sut As IDbManager: Set sut = DbManager.Create(Nothing, New StubDbCommandFactory)
@@ -84,6 +73,7 @@ Private Sub ztcCreate_StartsTransaction()
     
     Dim sut As IDbManager
     Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
+    sut.Begin
     
     Assert.IsTrue stubConnection.DidBeginTransaction
 End Sub
@@ -97,6 +87,7 @@ Private Sub ztcCommit_CommitsTransaction()
     Dim sut As IDbManager
     Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
     
+    sut.Begin
     sut.Commit
     
     Assert.IsTrue stubConnection.DidCommitTransaction
@@ -159,6 +150,7 @@ Private Sub ztcRollback_RollbacksTransaction()
     Dim sut As IDbManager
     Set sut = DbManager.Create(stubConnection, New StubDbCommandFactory)
     
+    sut.Begin
     sut.Rollback
     
     Assert.IsTrue stubConnection.DidRollBackTransaction

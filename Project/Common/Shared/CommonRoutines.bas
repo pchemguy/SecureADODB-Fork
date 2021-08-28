@@ -228,6 +228,7 @@ Attribute VerifyOrGetDefaultPath.VB_Description = "Resolves file pathname"
         For FileNameIndex = 0 To UBound(FileNames)
             PathNameCandidate = Prefixes(PrefixIndex) & FileNames(FileNameIndex)
             FileExist = FileLen(PathNameCandidate)
+            Err.Clear
             If FileExist > 0 Then
                 VerifyOrGetDefaultPath = Replace$(PathNameCandidate, _
                                                   PATHuSEP & PATHuSEP, PATHuSEP)

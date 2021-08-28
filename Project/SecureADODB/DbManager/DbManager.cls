@@ -24,6 +24,7 @@ Private Type TDbManager
     Driver As String
     Options As String
     ConnectionString As String
+    DbConnStr As DbConnectionString
     Connection As IDbConnection
     CommandFactory As IDbCommandFactory
     UseTransactions As Boolean
@@ -115,19 +116,15 @@ End Function
 
 '@Description("Creates a new manager using connection parameters.")
 Public Function FromConnectionParameters( _
-                 ByVal TypeOrConnString As String, _
-        Optional ByVal Path As String = vbNullString, _
+                 ByVal DbType As String, _
         Optional ByVal Name As String = vbNullString, _
         Optional ByVal Options As String = vbNullString, _
         Optional ByVal UseTransactions As Boolean = True, _
         Optional ByVal LoggerType As LoggerTypeEnum = LoggerTypeEnum.logGlobal _
         ) As IDbManager
 Attribute FromConnectionParameters.VB_Description = "Creates a new manager using connection parameters."
-
-    Guard.NonDefaultInstance Me
-    
-    Dim connString As String
-    connString = BuildConnectionString(TypeOrConnString, Path, Name, Options)
+    Dim DbConnStr As DbConnectionString
+    Set DbConnStr = DbConnectionString.CreateFileDB(DbType, Name, , Options)
     
     Dim LogController As ILogger
     Select Case LoggerType
@@ -149,9 +146,12 @@ Attribute FromConnectionParameters.VB_Description = "Creates a new manager using
     Set factory = DbCommandFactory.Create(baseCommand)
     
     Dim db As IDbConnection
-    Set db = DbConnection.Create(connString, LogController)
+    Set db = DbConnection.Create(DbConnStr.ConnectionString, LogController)
     
-    Set FromConnectionParameters = DbManager.Create(db, factory, UseTransactions, LogController)
+    Dim Instance As DbManager
+    Set Instance = DbManager.Create(db, factory, UseTransactions, LogController)
+    Set Instance.DbConnStr = DbConnStr
+    Set FromConnectionParameters = Instance
 End Function
 
 
@@ -159,13 +159,10 @@ Public Function Create(ByVal db As IDbConnection, _
                        ByVal factory As IDbCommandFactory, _
               Optional ByVal UseTransactions As Boolean = True, _
               Optional ByVal LogController As ILogger = Nothing) As IDbManager
-              
-    Guard.NonDefaultInstance Me
-    
-    Dim Result As DbManager
-    Set Result = New DbManager
-    Result.Init db, factory, UseTransactions, LogController
-    Set Create = Result
+    Dim Instance As DbManager
+    Set Instance = New DbManager
+    Instance.Init db, factory, UseTransactions, LogController
+    Set Create = Instance
 End Function
 
 
@@ -184,8 +181,17 @@ Attribute Init.VB_Description = "Default constructor"
     Set this.Connection = db
     Set this.CommandFactory = factory
     this.UseTransactions = UseTransactions
-    If this.UseTransactions Then this.Connection.BeginTransaction
 End Sub
+
+
+Public Property Get DbConnStr() As DbConnectionString
+    Set DbConnStr = this.DbConnStr
+End Property
+
+
+Public Property Set DbConnStr(ByVal Instance As DbConnectionString)
+    Set this.DbConnStr = Instance
+End Property
 
 
 '@Description("Returns class reference")
@@ -222,6 +228,12 @@ Private Function IDbManager_Recordset(Optional ByVal Scalar As Boolean = False, 
     Set IDbManager_Recordset = DbRecordset.Create( _
         cmd, Scalar, Disconnected, CacheSize, CursorType, AsyncMode, AsyncOption)
 End Function
+
+
+Private Sub IDbManager_Begin()
+    Guard.Expression this.UseTransactions, Source:="DbManager", Message:="Transactions are disabled by the caller."
+    this.Connection.BeginTransaction
+End Sub
 
 
 Private Sub IDbManager_Commit()

@@ -41,25 +41,22 @@ Public Function Create(ByVal cmd As IDbCommand, _
               Optional ByVal CursorType As ADODB.CursorTypeEnum = -1, _
               Optional ByVal AsyncMode As Boolean = False, _
               Optional ByVal AsyncOption As ADODB.ExecuteOptionEnum = 0) As IDbRecordset
-              
-    Guard.NonDefaultInstance Me
-
-    Dim Result As DbRecordset
-    Set Result = New DbRecordset
-    Result.CreInit cmd, Scalar, Disconnected, CacheSize, CursorType, AsyncMode, AsyncOption
-    Set Create = Result
+    Dim Instance As DbRecordset
+    Set Instance = New DbRecordset
+    Instance.Init cmd, Scalar, Disconnected, CacheSize, CursorType, AsyncMode, AsyncOption
+    Set Create = Instance
 End Function
 
 
 '@Description("Default constructor")
-Friend Sub CreInit(ByVal cmd As IDbCommand, _
+Friend Sub Init(ByVal cmd As IDbCommand, _
           Optional ByVal Scalar As Boolean = False, _
           Optional ByVal Disconnected As Boolean = True, _
           Optional ByVal CacheSize As Long = 10, _
           Optional ByVal CursorType As ADODB.CursorTypeEnum = -1, _
           Optional ByVal AsyncMode As Boolean = False, _
           Optional ByVal AsyncOption As ADODB.ExecuteOptionEnum = 0)
-Attribute CreInit.VB_Description = "Default constructor"
+Attribute Init.VB_Description = "Default constructor"
     
     Set this.cmd = cmd
     If Scalar Then AdoRecordset.MaxRecords = 1
