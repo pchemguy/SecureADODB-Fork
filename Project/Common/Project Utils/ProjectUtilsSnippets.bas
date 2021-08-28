@@ -10,20 +10,17 @@ Private Sub ReferencesSaveToFile()
     Project.ReferencesSaveToFile
 End Sub
 
-
 Private Sub ReferencesAddFromFile()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
     Project.ReferencesAddFromFile
 End Sub
 
-
 Private Sub ProjectStructureParse()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
     Project.ProjectStructureParse
 End Sub
-
 
 Private Sub ProjectStructureExport()
     Dim Project As ProjectUtils
@@ -33,7 +30,6 @@ Private Sub ProjectStructureExport()
     Project.ProjectStructureExport ExportFolder
 End Sub
 
-
 Private Sub ProjectFilesExport()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
@@ -41,7 +37,6 @@ Private Sub ProjectFilesExport()
     ExportFolder = ""                            '"Storage\Record"
     Project.ProjectFilesExport ExportFolder
 End Sub
-
 
 Private Sub WalkTree()
     Dim Project As ProjectUtils
@@ -51,7 +46,6 @@ Private Sub WalkTree()
     Project.WalkTree ImportFolder
 End Sub
 
-
 Private Sub CollectFiles()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
@@ -59,7 +53,6 @@ Private Sub CollectFiles()
     ImportFolder = ""                            '"Storage\Record"
     Project.CollectFiles ImportFolder
 End Sub
-
 
 Private Sub ProjectFilesImport()
     Dim Project As ProjectUtils
