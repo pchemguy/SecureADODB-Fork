@@ -66,7 +66,7 @@ End Function
 Private Function GetStubParameter() As ADODB.Parameter
     Dim stubParameter As ADODB.Parameter
     Set stubParameter = New ADODB.Parameter
-    stubParameter.value = 42
+    stubParameter.Value = 42
     stubParameter.Type = adInteger
     stubParameter.Direction = adParamInput
     Set GetStubParameter = stubParameter

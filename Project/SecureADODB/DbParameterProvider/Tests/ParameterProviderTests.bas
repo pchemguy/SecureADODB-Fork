@@ -93,30 +93,30 @@ Private Sub FromValue_MapsParameterSizeToStringLength()
     Dim sut As IParameterProvider
     Set sut = GetSUT
     
-    Const value = "ABC XYZ"
+    Const Value = "ABC XYZ"
     
     Dim p As ADODB.Parameter
-    Set p = sut.FromValue(value)
+    Set p = sut.FromValue(Value)
     
-    Assert.AreEqual Len(value), p.Size
+    Assert.AreEqual Len(Value), p.Size
 End Sub
 
 
 '@TestMethod("ParameterProvider")
 Private Sub FromValue_MapsParameterTypeAsPerMapping()
     Const Expected = DataTypeEnum.adNumeric
-    Const value = 42
+    Const Value = 42
 
     Dim typeMap As ITypeMap
     Set typeMap = AdoTypeMappings.Default()
-    If typeMap.Mapping(TypeName(value)) = Expected Then Assert.Inconclusive "'expected' data type should not be the default mapping for the specified 'value'."
-    typeMap.Mapping(TypeName(value)) = Expected
+    If typeMap.Mapping(TypeName(Value)) = Expected Then Assert.Inconclusive "'expected' data type should not be the default mapping for the specified 'value'."
+    typeMap.Mapping(TypeName(Value)) = Expected
 
     Dim sut As IParameterProvider
     Set sut = AdoParameterProvider.Create(typeMap)
     
     Dim p As ADODB.Parameter
-    Set p = sut.FromValue(value)
+    Set p = sut.FromValue(Value)
     
     Assert.AreEqual Expected, p.Type
 End Sub
@@ -125,13 +125,13 @@ End Sub
 '@TestMethod("ParameterProvider")
 Private Sub FromValue_CreatesInputParameters()
     Const Expected = ADODB.adParamInput
-    Const value = 42
+    Const Value = 42
     
     Dim sut As IParameterProvider
     Set sut = GetSUT
     
     Dim p As ADODB.Parameter
-    Set p = sut.FromValue(value)
+    Set p = sut.FromValue(Value)
     
     Assert.AreEqual Expected, p.Direction
 End Sub

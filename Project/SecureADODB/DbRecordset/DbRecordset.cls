@@ -139,7 +139,7 @@ Private Function IDbRecordset_OpenScalar(ByVal SQL As String, ParamArray args() 
     AdoRecordset.Open Options:=this.OpenOptions
     On Error GoTo 0
     If AdoRecordset.CursorLocation = adUseClient Then Set AdoRecordset.ActiveConnection = Nothing
-    IDbRecordset_OpenScalar = AdoRecordset.Fields.Item(0).value
+    IDbRecordset_OpenScalar = AdoRecordset.Fields.Item(0).Value
     Exit Function
 
 RecordsetOpenError:

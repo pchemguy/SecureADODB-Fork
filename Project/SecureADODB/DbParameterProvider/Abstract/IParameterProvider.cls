@@ -15,7 +15,7 @@ Attribute VB_Description = "Represents an object responsible for converting a va
 Option Explicit
 
 '@Description("Creates an ADODB.Parameter object from the specified value.")
-Public Function FromValue(ByVal value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
+Public Function FromValue(ByVal Value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
 Attribute FromValue.VB_Description = "Creates an ADODB.Parameter object from the specified value."
 End Function
 

@@ -26,8 +26,8 @@ Public Property Get State() As ADODB.ObjectStateEnum
     State = stubState
 End Property
 
-Public Property Let State(ByVal value As ADODB.ObjectStateEnum)
-    stubState = value
+Public Property Let State(ByVal Value As ADODB.ObjectStateEnum)
+    stubState = Value
 End Property
 
 Public Property Get DidBeginTransaction() As Boolean

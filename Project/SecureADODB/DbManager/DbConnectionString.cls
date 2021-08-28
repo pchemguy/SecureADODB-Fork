@@ -11,6 +11,14 @@ Attribute VB_Description = "Helper routines for building connection strings"
 '@Folder "SecureADODB.DbManager"
 '@ModuleDescription "Helper routines for building connection strings"
 '@PredeclaredId
+''''
+'''' The module incorporates routines, which facilitate construction of
+'''' connection strings for the ADODB library. Presently, a distinction is made
+'''' between file-based databases, such as sqlite, csv, xls, etc., and network
+'''' based databases. A file-based database is accessed based on its type and
+'''' file pathname.
+'''' CreateFileDB/InitFileDB pair is used for file based databases.
+''''
 Option Explicit
 Option Compare Text
 
@@ -24,12 +32,52 @@ End Type
 Private this As TDbConnectionString
 
 
+'''' Factory for file-based databases.
+''''
+'''' Args:
+''''   FileType (string, optional, "sqlite"):
+''''     Type of the database: "sqlite", "csv", "xls"
+''''
+''''   FilePath (string, optional, ""):
+''''     Database file location. If not provided, Thisworkbook.Path will be used.
+''''
+''''   FileName (string, optional, ""):
+''''     Database file name. If not provided, Thisworkbook.Name (without
+''''     extension) will be used. Extension is added based on the database type:
+''''       "sqlite" - "db" or "sqlite"
+''''       "csv"    - "xsv" or "csv"
+''''       "xls"    - "xls
+''''
+''''   Driver (variant, optional, Empty):
+''''     Database driver. If Empty, default values is selected based on
+''''     the database type (see constructor code for details).
+''''
+''''   Options (variant, optional, Empty):
+''''     Connection options. See above for details.
+''''
+''''  N.B.: "xls" backend support is not currently implemented
+''''
+'''' Examples:
+''''   >>> ?DbConnectionString.CreateFileDB("sqlite").ConnectionString
+''''   "Driver=SQLite3 ODBC Driver;Database=<Thisworkbook.Path>\SecureADODB.db;SyncPragma=NORMAL;FKSupport=True;"
+''''
+''''   >>> ?DbConnectionString.CreateFileDB("sqlite").QTConnectionString
+''''   "OLEDB;Driver=SQLite3 ODBC Driver;Database=<Thisworkbook.Path>\SecureADODB.db;SyncPragma=NORMAL;FKSupport=True;"
+''''
+''''   >>> ?DbConnectionString.CreateFileDB("csv").ConnectionString
+''''   "Driver={Microsoft Text Driver (*.txt; *.csv)};DefaultDir=<Thisworkbook.Path>\SecureADODB.csv;"
+''''
+''''   >>> ?DbConnectionString.CreateFileDB("xls").ConnectionString
+''''   NotImplementedErr
+''''
+'@Description "Factory for file-based databases"
 Public Function CreateFileDB(Optional ByVal FileType As String = "sqlite", _
                              Optional ByVal FilePath As String = vbNullString, _
                              Optional ByVal FileName As String = vbNullString, _
                              Optional ByVal Driver As Variant = Empty, _
                              Optional ByVal Options As Variant = Empty _
-                             ) As DbConnectionString
+                            ) As DbConnectionString
+Attribute CreateFileDB.VB_Description = "Factory for file-based databases"
     Dim Instance As DbConnectionString
     Set Instance = New DbConnectionString
     Instance.InitFileDB FileType, FilePath, FileName, Driver, Options
@@ -37,11 +85,13 @@ Public Function CreateFileDB(Optional ByVal FileType As String = "sqlite", _
 End Function
 
 
+'@Description "Constructor for file-based databases"
 Friend Sub InitFileDB(Optional ByVal FileType As String = "sqlite", _
                       Optional ByVal FilePath As String = vbNullString, _
                       Optional ByVal FileName As String = vbNullString, _
                       Optional ByVal Driver As String = Empty, _
                       Optional ByVal Options As Variant = Empty)
+Attribute InitFileDB.VB_Description = "Constructor for file-based databases"
     With this
         .DbPath = FilePath & Application.PathSeparator & FileName
         .DbType = LCase$(FileType)
@@ -70,8 +120,7 @@ Friend Sub InitFileDB(Optional ByVal FileType As String = "sqlite", _
                     .Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
                 #End If
                 .ConnectionString = "Driver=" + .Driver + ";" + _
-                                    "DefaultDir=" + .DbPath + ";" + _
-                                    .Options
+                                    "DefaultDir=" + .DbPath + ";"
             Case Else
                 .ConnectionString = vbNullString
         End Select

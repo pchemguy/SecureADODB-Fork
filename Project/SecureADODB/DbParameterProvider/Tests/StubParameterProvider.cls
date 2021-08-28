@@ -15,7 +15,7 @@ Option Explicit
 Implements IParameterProvider
 
 
-Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
+Private Function IParameterProvider_FromValue(ByVal Value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
     Set IParameterProvider_FromValue = New ADODB.Parameter
 End Function
 

@@ -15,7 +15,7 @@ Private Sub DbManagerCSVTest()
     Set dbm = DbManager.FromConnectionParameters("csv", ThisWorkbook.Path, FileName, vbNullString, False, LoggerTypeEnum.logPrivate)
 
     '@Ignore IndexedDefaultMemberAccess
-    Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL").value
+    Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL").Value
     
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)

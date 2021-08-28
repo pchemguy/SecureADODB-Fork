@@ -60,8 +60,8 @@ Private Sub Mapping_ThrowsIfUndefined()
     On Error GoTo TestFail
     With AdoTypeMappings.Default
         On Error GoTo CleanFail
-        Dim value As ADODB.DataTypeEnum
-        value = .Mapping(InvalidTypeName)
+        Dim Value As ADODB.DataTypeEnum
+        Value = .Mapping(InvalidTypeName)
         On Error GoTo 0
     End With
 CleanFail:
@@ -80,70 +80,70 @@ End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsBoolean()
-    Dim value As Boolean
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Boolean
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsByte()
-    Dim value As Byte
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Byte
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsCurrency()
-    Dim value As Currency
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Currency
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsDate()
-    Dim value As Date
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Date
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsDouble()
-    Dim value As Double
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Double
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsInteger()
-    Dim value As Integer
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Integer
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsLong()
-    Dim value As Long
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Long
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsSingle()
-    Dim value As Single
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Single
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsString()
-    Dim value As String
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As String
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsEmpty()
-    Dim value As Variant
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Variant
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMapping_MapsNull()
-    Dim value As Variant
-    value = Null
-    DefaultMapping_MapsType TypeName(value)
+    Dim Value As Variant
+    Value = Null
+    DefaultMapping_MapsType TypeName(Value)
 End Sub
 
 Private Function GetDefaultMappingFor(ByVal Name As String) As ADODB.DataTypeEnum
@@ -159,50 +159,50 @@ End Function
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMappingForBoolean_MapsTo_adBoolean()
     Const Expected = adBoolean
-    Dim value As Boolean
-    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(value))
+    Dim Value As Boolean
+    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(Value))
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMappingForByte_MapsTo_adInteger()
     Const Expected = adInteger
-    Dim value As Byte
-    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(value))
+    Dim Value As Byte
+    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(Value))
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMappingForCurrency_MapsTo_adCurrency()
     Const Expected = adCurrency
-    Dim value As Currency
-    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(value))
+    Dim Value As Currency
+    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(Value))
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMappingForDate_MapsTo_adDate()
     Const Expected = adDate
-    Dim value As Date
-    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(value))
+    Dim Value As Date
+    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(Value))
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMappingForDouble_MapsTo_adDouble()
     Const Expected = adDouble
-    Dim value As Double
-    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(value))
+    Dim Value As Double
+    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(Value))
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMappingForInteger_MapsTo_adInteger()
     Const Expected = adInteger
-    Dim value As Integer
-    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(value))
+    Dim Value As Integer
+    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(Value))
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMappingForLong_MapsTo_adInteger()
     Const Expected = adInteger
-    Dim value As Long
-    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(value))
+    Dim Value As Long
+    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(Value))
 End Sub
 
 '@TestMethod("Default Type Mappings")
@@ -222,14 +222,14 @@ End Sub
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMappingForSingle_MapsTo_adSingle()
     Const Expected = adSingle
-    Dim value As Single
-    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(value))
+    Dim Value As Single
+    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(Value))
 End Sub
 
 '@TestMethod("Default Type Mappings")
 Private Sub DefaultMappingForString_MapsTo_adVarWChar()
     Const Expected = adVarWChar
-    Dim value As String
-    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(value))
+    Dim Value As String
+    Assert.AreEqual Expected, GetDefaultMappingFor(TypeName(Value))
 End Sub
 

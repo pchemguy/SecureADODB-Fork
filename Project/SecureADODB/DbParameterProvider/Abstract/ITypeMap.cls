@@ -19,7 +19,7 @@ Public Property Get Mapping(ByVal Name As String) As ADODB.DataTypeEnum
 Attribute Mapping.VB_Description = "Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name."
 End Property
 
-Public Property Let Mapping(ByVal Name As String, ByVal value As ADODB.DataTypeEnum)
+Public Property Let Mapping(ByVal Name As String, ByVal Value As ADODB.DataTypeEnum)
 End Property
 
 '@Description("True if the specified data type name is mapped to an ADODB.DataTypeEnum value.")

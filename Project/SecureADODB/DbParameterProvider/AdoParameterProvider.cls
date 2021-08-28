@@ -79,15 +79,15 @@ Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA
 End Function
 
 
-Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
-    If TypeOf value Is ADODB.Parameter Then
-        Set IParameterProvider_FromValue = value
+Private Function IParameterProvider_FromValue(ByVal Value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
+    If TypeOf Value Is ADODB.Parameter Then
+        Set IParameterProvider_FromValue = Value
         Exit Function
     End If
 
     Dim localDataTypeName As String
     localDataTypeName = dataTypeName
-    If localDataTypeName = vbNullString Then localDataTypeName = TypeName(value)
+    If localDataTypeName = vbNullString Then localDataTypeName = TypeName(Value)
     Guard.Expression mappings.IsMapped(localDataTypeName), Source:="AdoParaeterProvider", Message:="The data type '" & localDataTypeName & "' has no ADODB.DataTypeEnum mapping."
     
     Dim Result As ADODB.Parameter
@@ -97,21 +97,21 @@ Private Function IParameterProvider_FromValue(ByVal value As Variant, Optional B
     
     If Result.Type = AdoTypeMappings.DefaultNullMapping Then
         Result.Attributes = ADODB.ParameterAttributesEnum.adParamNullable
-        Result.value = Null
+        Result.Value = Null
     Else
-        Result.value = value
+        Result.Value = Value
     End If
     
-    If IsCharMapping(Result.Type) And Len(value) > 0 Then Result.Size = Len(value)
+    If IsCharMapping(Result.Type) And Len(Value) > 0 Then Result.Size = Len(Value)
     If Name <> vbNullString Then Result.Name = Name
     
     Set IParameterProvider_FromValue = Result
 End Function
 
 
-Private Function IsCharMapping(ByVal value As ADODB.DataTypeEnum) As Boolean
-    IsCharMapping = ((value = adChar) _
-                  Or (value = adWChar) _
-                  Or (value = adVarChar) _
-                  Or (value = adVarWChar))
+Private Function IsCharMapping(ByVal Value As ADODB.DataTypeEnum) As Boolean
+    IsCharMapping = ((Value = adChar) _
+                  Or (Value = adWChar) _
+                  Or (Value = adVarChar) _
+                  Or (Value = adVarWChar))
 End Function

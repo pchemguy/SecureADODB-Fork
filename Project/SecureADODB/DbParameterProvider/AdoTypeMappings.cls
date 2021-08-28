@@ -36,10 +36,10 @@ End Property
 
 '@Ignore ProcedureNotUsed: false positive for indexed property accessors?
 '@Description("Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name.")
-Public Property Let Mapping(ByVal Name As String, ByVal value As ADODB.DataTypeEnum)
+Public Property Let Mapping(ByVal Name As String, ByVal Value As ADODB.DataTypeEnum)
 Attribute Mapping.VB_Description = "Gets/sets the ADODB.DataTypeEnum mapping for the specified data type name."
     Guard.Expression IsMapped(Name), Source:="AdoTypeMappings", Message:="Argument 'name' must be the name of an intrinsic data type; data type '" & Name & "' is not supported."
-    mappings.Item(Name) = value
+    mappings.Item(Name) = Value
 End Property
 
 '@Description("True if the specified data type name is mapped to an ADODB.DataTypeEnum value.")
@@ -107,6 +107,6 @@ Private Property Get ITypeMap_Mapping(ByVal Name As String) As ADODB.DataTypeEnu
     ITypeMap_Mapping = Me.Mapping(Name)
 End Property
 
-Private Property Let ITypeMap_Mapping(ByVal Name As String, ByVal value As ADODB.DataTypeEnum)
-    Me.Mapping(Name) = value
+Private Property Let ITypeMap_Mapping(ByVal Name As String, ByVal Value As ADODB.DataTypeEnum)
+    Me.Mapping(Name) = Value
 End Property

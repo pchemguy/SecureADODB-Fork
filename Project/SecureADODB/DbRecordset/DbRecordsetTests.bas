@@ -86,7 +86,7 @@ Assert:
     Assert.AreEqual "StubInteger", stubParameter.Name, "Stub ADODB.Parameter name mismatch: " & "StubInteger" & " vs. " & stubParameter.Name
     Assert.AreEqual adInteger, stubParameter.Type, "Stub ADODB.Parameter type mismatch: " & adInteger & " vs. " & stubParameter.Type
     Assert.AreEqual adParamInput, stubParameter.Direction, "Stub ADODB.Parameter direction mismatch: " & adParamInput & " vs. " & stubParameter.Direction
-    Assert.AreEqual 42, stubParameter.value, "Stub ADODB.Parameter value mismatch: " & 42 & " vs. " & stubParameter.value
+    Assert.AreEqual 42, stubParameter.Value, "Stub ADODB.Parameter value mismatch: " & 42 & " vs. " & stubParameter.Value
     
 CleanExit:
     Exit Sub

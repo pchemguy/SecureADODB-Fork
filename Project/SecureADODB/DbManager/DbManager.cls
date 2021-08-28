@@ -174,6 +174,7 @@ Friend Sub Init(ByVal db As IDbConnection, _
                 ByVal factory As IDbCommandFactory, _
        Optional ByVal UseTransactions As Boolean = True, _
        Optional ByVal LogController As ILogger = Nothing)
+Attribute Init.VB_Description = "Default constructor"
               
     Guard.NullReference factory
     Guard.NullReference db

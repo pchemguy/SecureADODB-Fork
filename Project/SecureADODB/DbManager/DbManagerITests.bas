@@ -172,9 +172,9 @@ Assert:
     Assert.IsTrue cmdAdo.Prepared, "Prepared property of the Command object not set."
     Assert.AreEqual 2, cmdAdo.Parameters.Count, "Command should have two parameters set."
     Assert.AreEqual ADODB.DataTypeEnum.adInteger, cmdAdo.Parameters.Item(0).Type, "Param #1 type should be adInteger."
-    Assert.AreEqual 45, cmdAdo.Parameters.Item(0).value, "Param #1 value should be 45."
+    Assert.AreEqual 45, cmdAdo.Parameters.Item(0).Value, "Param #1 value should be 45."
     Assert.AreEqual ADODB.DataTypeEnum.adVarWChar, cmdAdo.Parameters.Item(1).Type, "Param #2 type should be adVarWChar."
-    Assert.AreEqual "South Korea", cmdAdo.Parameters.Item(1).value, "Param #2 value should be South Korea."
+    Assert.AreEqual "South Korea", cmdAdo.Parameters.Item(1).Value, "Param #2 value should be South Korea."
     Assert.AreNotEqual vbNullString, cmdAdo.CommandText
     
 CleanExit:
