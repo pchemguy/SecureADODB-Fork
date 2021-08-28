@@ -90,10 +90,39 @@ End Sub
 
 
 '@TestMethod("ConnectionString")
+Private Sub ztcConnectionString_ValidatesCSVStringOnValidName()
+    On Error GoTo TestFail
+
+Arrange:
+    Dim Driver As String
+    #If Win64 Then
+        Driver = "Microsoft Access Text Driver (*.txt, *.csv)"
+    #Else
+        Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
+    #End If
+    Dim Expected As String
+    Expected = "Driver=" + Driver + ";" + "DefaultDir=" + _
+               VerifyOrGetDefaultPath("README.md", Array("xsv", "csv")) + ";"
+Act:
+    Dim ActualADO As String
+    ActualADO = DbConnectionString.CreateFileDB("csv", "README.md").ConnectionString
+    Dim ActualQT As String
+    ActualQT = DbConnectionString.CreateFileDB("csv", "README.md").QTConnectionString
+Assert:
+    Assert.AreEqual Expected, ActualADO, "CSV ADO ConnectionString (valid name) mismatch"
+    Assert.AreEqual "OLEDB;" & Expected, ActualQT, "CSV QT ConnectionString (valid name) mismatch"
+
+CleanExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("ConnectionString")
 Private Sub ztcConnectionString_ThrowsForXLSBackend()
     On Error Resume Next
     Dim ConnectionString As String
     ConnectionString = DbConnectionString.CreateFileDB("xls").ConnectionString
     AssertExpectedError Assert, ErrNo.NotImplementedErr
 End Sub
-

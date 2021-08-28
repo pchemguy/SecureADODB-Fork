@@ -38,9 +38,6 @@ Private this As TDbConnectionString
 ''''   FileType (string, optional, "sqlite"):
 ''''     Type of the database: "sqlite", "csv", "xls"
 ''''
-''''   FilePath (string, optional, ""):
-''''     Database file location. If not provided, Thisworkbook.Path will be used.
-''''
 ''''   FileName (string, optional, ""):
 ''''     Database file name. If not provided, Thisworkbook.Name (without
 ''''     extension) will be used. Extension is added based on the database type:
@@ -72,7 +69,6 @@ Private this As TDbConnectionString
 ''''
 '@Description "Factory for file-based databases"
 Public Function CreateFileDB(Optional ByVal FileType As String = "sqlite", _
-                             Optional ByVal FilePath As String = vbNullString, _
                              Optional ByVal FileName As String = vbNullString, _
                              Optional ByVal Driver As Variant = Empty, _
                              Optional ByVal Options As Variant = Empty _
@@ -80,20 +76,18 @@ Public Function CreateFileDB(Optional ByVal FileType As String = "sqlite", _
 Attribute CreateFileDB.VB_Description = "Factory for file-based databases"
     Dim Instance As DbConnectionString
     Set Instance = New DbConnectionString
-    Instance.InitFileDB FileType, FilePath, FileName, Driver, Options
+    Instance.InitFileDB FileType, FileName, Driver, Options
     Set CreateFileDB = Instance
 End Function
 
 
 '@Description "Constructor for file-based databases"
 Friend Sub InitFileDB(Optional ByVal FileType As String = "sqlite", _
-                      Optional ByVal FilePath As String = vbNullString, _
                       Optional ByVal FileName As String = vbNullString, _
                       Optional ByVal Driver As String = Empty, _
                       Optional ByVal Options As Variant = Empty)
 Attribute InitFileDB.VB_Description = "Constructor for file-based databases"
     With this
-        .DbPath = FilePath & Application.PathSeparator & FileName
         .DbType = LCase$(FileType)
         .Driver = Driver
         .Options = Options
@@ -105,15 +99,15 @@ Attribute InitFileDB.VB_Description = "Constructor for file-based databases"
                 If IsEmpty(Options) Then
                     .Options = "SyncPragma=NORMAL;FKSupport=True;"
                 End If
-                .DbPath = VerifyOrGetDefaultPath(.DbPath, Array("db", "sqlite"))
+                .DbPath = VerifyOrGetDefaultPath(FileName, Array("db", "sqlite"))
                 .ConnectionString = "Driver=" + .Driver + ";" + _
                                     "Database=" + .DbPath + ";" + _
                                     .Options
             Case "worksheet", "wsheet"
-                .DbPath = VerifyOrGetDefaultPath(.DbPath, Array("xls"))
+                .DbPath = VerifyOrGetDefaultPath(FileName, Array("xls"))
                 .ConnectionString = .DbPath
             Case "csv"
-                .DbPath = VerifyOrGetDefaultPath(.DbPath, Array("xsv", "csv"))
+                .DbPath = VerifyOrGetDefaultPath(FileName, Array("xsv", "csv"))
                 #If Win64 Then
                     .Driver = "Microsoft Access Text Driver (*.txt, *.csv)"
                 #Else
