@@ -18,6 +18,7 @@ Option Explicit
 Implements IDbManager
 
 Private Type TDbManager
+    DbMeta As DbMetaData
     DbConnStr As DbConnectionString
     Connection As IDbConnection
     CommandFactory As IDbCommandFactory
@@ -34,6 +35,7 @@ Attribute Class.VB_Description = "Returns class reference"
 End Property
 
 
+'@Description("Default factory")
 Public Function Create(ByVal db As IDbConnection, _
                        ByVal factory As IDbCommandFactory, _
               Optional ByVal UseTransactions As Boolean = True, _
@@ -91,9 +93,6 @@ Public Function CreateFileDb( _
         Optional ByVal LoggerType As LoggerTypeEnum = LoggerTypeEnum.logGlobal _
         ) As IDbManager
 Attribute CreateFileDb.VB_Description = "Factory for file-based databases"
-    Dim DbConnStr As DbConnectionString
-    Set DbConnStr = DbConnectionString.CreateFileDb(DbType, DbFileName, , ConnectionOptions)
-    
     Dim LogController As ILogger
     Select Case LoggerType
         Case LoggerTypeEnum.logDisabled
@@ -113,12 +112,15 @@ Attribute CreateFileDb.VB_Description = "Factory for file-based databases"
     Dim factory As IDbCommandFactory
     Set factory = DbCommandFactory.Create(baseCommand)
     
+    Dim DbConnStr As DbConnectionString
+    Set DbConnStr = DbConnectionString.CreateFileDb(DbType, DbFileName, , ConnectionOptions)
     Dim db As IDbConnection
     Set db = DbConnection.Create(DbConnStr.ConnectionString, LogController)
     
     Dim Instance As DbManager
     Set Instance = DbManager.Create(db, factory, UseTransactions, LogController)
     Set Instance.DbConnStr = DbConnStr
+    Set Instance.DbMeta = DbMetaData.Create(DbConnStr)
     Set CreateFileDb = Instance
 End Function
 
@@ -130,6 +132,16 @@ End Property
 
 Public Property Set DbConnStr(ByVal Instance As DbConnectionString)
     Set this.DbConnStr = Instance
+End Property
+
+
+Public Property Get DbMeta() As DbMetaData
+    Set DbMeta = this.DbMeta
+End Property
+
+
+Public Property Set DbMeta(ByVal Instance As DbMetaData)
+    Set this.DbMeta = Instance
 End Property
 
 
@@ -145,6 +157,16 @@ Private Property Get IDbManager_LogController() As ILogger
 End Property
 
 
+Private Property Get IDbManager_DbConnStr() As DbConnectionString
+    Set IDbManager_DbConnStr = this.Connection
+End Property
+
+
+Private Property Get IDbManager_DbMeta() As DbMetaData
+    Set IDbManager_DbMeta = this.DbMeta
+End Property
+
+
 Private Property Get IDbManager_Connection() As IDbConnection
     Set IDbManager_Connection = this.Connection
 End Property
@@ -155,13 +177,13 @@ Private Function IDbManager_Command() As IDbCommand
 End Function
 
 
-Private Function IDbManager_Recordset(Optional ByVal Scalar As Boolean = False, _
-                                      Optional ByVal Disconnected As Boolean = True, _
-                                      Optional ByVal CacheSize As Long = 10, _
-                                      Optional ByVal CursorType As ADODB.CursorTypeEnum = -1, _
-                                      Optional ByVal AsyncMode As Boolean = False, _
-                                      Optional ByVal AsyncOption As ADODB.ExecuteOptionEnum = 0) As IDbRecordset
-              
+Private Function IDbManager_Recordset( _
+        Optional ByVal Scalar As Boolean = False, _
+        Optional ByVal Disconnected As Boolean = True, _
+        Optional ByVal CacheSize As Long = 10, _
+        Optional ByVal CursorType As ADODB.CursorTypeEnum = -1, _
+        Optional ByVal AsyncMode As Boolean = False, _
+        Optional ByVal AsyncOption As ADODB.ExecuteOptionEnum = 0) As IDbRecordset
     Dim cmd As IDbCommand
     Set cmd = this.CommandFactory.CreateInstance(this.Connection)
     Set IDbManager_Recordset = DbRecordset.Create( _

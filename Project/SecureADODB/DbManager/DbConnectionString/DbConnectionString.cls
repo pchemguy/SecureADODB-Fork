@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Attribute VB_Description = "Helper routines for building connection strings"
-'@Folder "SecureADODB.DbManager"
+'@Folder "SecureADODB.DbManager.DbConnectionString"
 '@ModuleDescription "Helper routines for building connection strings"
 '@PredeclaredId
 '@Exposed

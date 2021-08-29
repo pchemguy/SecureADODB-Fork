@@ -30,6 +30,14 @@ Public Property Get Connection() As IDbConnection
 Attribute Connection.VB_Description = "Returns connection reference"
 End Property
 
+'@Description("Returns DbConnectionString reference")
+Public Property Get DbConnStr() As DbConnectionString
+End Property
+
+'@Description("Returns DbMetaData reference")
+Public Property Get DbMeta() As DbMetaData
+End Property
+
 '@Description("Creates a new command to execute.")
 Public Function Command() As IDbCommand
 Attribute Command.VB_Description = "Creates a new command to execute."

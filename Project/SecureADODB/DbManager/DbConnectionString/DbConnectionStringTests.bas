@@ -1,5 +1,5 @@
 Attribute VB_Name = "DbConnectionStringTests"
-'@Folder "SecureADODB.DbManager"
+'@Folder "SecureADODB.DbManager.DbConnectionString"
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -155,4 +155,5 @@ Private Sub ztcConnectionString_ThrowsForXLSBackend()
     ConnectionString = DbConnectionString.CreateFileDb("xls").ConnectionString
     AssertExpectedError Assert, ErrNo.NotImplementedErr
 End Sub
+
 
