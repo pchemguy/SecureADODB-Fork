@@ -40,11 +40,16 @@ Attribute Init.VB_Description = "Default constructor"
 End Sub
 
 
-Private Function CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal SQL As String, ByRef args() As Variant) As ADODB.Command
+Private Function CreateCommand(ByVal db As IDbConnection, _
+                               ByVal CommandType As ADODB.CommandTypeEnum, _
+                               ByVal SQL As String, _
+                               ByRef args() As Variant) As ADODB.Command
     Guard.NullReference db
     Guard.Expression db.State = adStateOpen, Source:="DbCommandBase", Message:="Connection is not open."
     Guard.EmptyString SQL
-    Guard.Expression ValidateOrdinalArguments(SQL, args), Source:="DbCommandBase", Message:="Arguments supplied are inconsistent with the provided command string parameters."
+    Guard.Expression ValidateOrdinalArguments(SQL, args), _
+                     Source:="DbCommandBase", _
+                     Message:="Arguments supplied are inconsistent with the provided command string parameters."
     
     Dim cmd As ADODB.Command
     Set cmd = New ADODB.Command
@@ -99,6 +104,9 @@ Attribute IDbCommandBase_Class.VB_Description = "Returns class reference."
 End Property
 
 
-Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, ByVal CommandType As ADODB.CommandTypeEnum, ByVal SQL As String, ByRef args() As Variant) As ADODB.Command
+Private Function IDbCommandBase_CreateCommand(ByVal db As IDbConnection, _
+                                              ByVal CommandType As ADODB.CommandTypeEnum, _
+                                              ByVal SQL As String, _
+                                              ByRef args() As Variant) As ADODB.Command
     Set IDbCommandBase_CreateCommand = CreateCommand(db, CommandType, SQL, args)
 End Function

@@ -25,9 +25,12 @@ Private Sub DbManagerCSVTest()
     
     Dim Result As ADODB.Recordset
     Set Result = rst.OpenRecordset(SQLQuery, 45)
+    
+    rst.RecordsetToQT Buffer.Range("A1")
 End Sub
 
 
+'''' Throws "Unsupported backend" Error
 Private Sub DbManagerInvalidTypeTest()
     Dim FileName As String
     FileName = ThisWorkbook.VBProject.Name & ".csv"
@@ -66,6 +69,8 @@ Private Sub DbManagerScalarCSVTest()
     
     Dim Result As Variant
     Result = rst.OpenScalar(SQLQuery, 45)
+    
+    rst.RecordsetToQT Buffer.Range("A1")
 End Sub
 
 
@@ -88,6 +93,8 @@ Private Sub DbManagerSQLiteTest()
     
     Dim Result As ADODB.Recordset
     Set Result = rst.OpenRecordset(SQLQuery, 45)
+    
+    rst.RecordsetToQT Buffer.Range("A1")
 End Sub
 
 

@@ -23,7 +23,8 @@ Attribute AdoConnection.VB_VarHelpID = -1
 Private Type TDbConnection
     ExecuteStatus As ADODB.EventStatusEnum
     RecordsAffected As Long
-    '''' If  particular backend does not support transaction, "begin" method raises an error, and the corresponding handler sets this flag
+    '''' If a particular backend does not support transaction, "begin" raises
+    '''' an error, and the corresponding handler sets this flag
     TransactionsDisabled As Boolean
     HasActiveTransaction As Boolean
     StateMap As Variant    '''' Map for ADODB.ObjectStateEnum
@@ -33,7 +34,8 @@ Private this As TDbConnection
 
 
 '''' @Inject: just an idea.. see #https://github.com/rubberduck-vba/Rubberduck/issues/5463
-Public Function Create(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing) As IDbConnection
+Public Function Create(ByVal connString As String, _
+              Optional ByVal LogController As ILogger = Nothing) As IDbConnection
     Dim Instance As DbConnection
     Set Instance = New DbConnection
     Instance.Init connString, LogController

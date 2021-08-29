@@ -76,11 +76,7 @@ Public Function IDbCommand_AdoCommand(ByVal SQL As String, ParamArray args()) As
     '''' If the first item in args is also an array, assume ParamArray to ParamArray
     '''' delegation. Should unfold the outer array.
     Dim localArgs() As Variant
-    If IsArray(args(0)) Then
-        localArgs = args(0)
-    Else
-        localArgs = args
-    End If
+    localArgs = UnfoldParamArray(args)
     
     Set this.cmd = this.Base.CreateCommand(this.Connection, adCmdText, SQL, localArgs)
     Set IDbCommand_AdoCommand = this.cmd
@@ -90,7 +86,7 @@ End Function
 Private Sub IDbCommand_ExecuteNonQuery(ByVal SQL As String, ParamArray args() As Variant)
     'cannot pass ParamArray array directly to ByRef array argument
     Dim localArgs() As Variant
-    localArgs = args
+    localArgs = UnfoldParamArray(args)
     
     Set this.cmd = this.Base.CreateCommand(this.Connection, adCmdText, SQL, localArgs)
     '@Ignore FunctionReturnValueDiscarded

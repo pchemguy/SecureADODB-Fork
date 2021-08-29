@@ -15,6 +15,8 @@ Option Explicit
 
 Implements IDbConnectionFactory
 
-Private Function IDbConnectionFactory_CreateInstance(ByVal connString As String, Optional ByVal LogController As ILogger = Nothing) As IDbConnection
+Private Function IDbConnectionFactory_CreateInstance( _
+        ByVal connString As String, _
+        Optional ByVal LogController As ILogger = Nothing) As IDbConnection
     Set IDbConnectionFactory_CreateInstance = DbConnection.Create(connString, LogController)
 End Function

@@ -32,3 +32,6 @@ End Function
 
 Public Function OpenScalar(ByVal SQL As String, ParamArray args() As Variant) As Variant
 End Function
+
+Public Sub RecordsetToQT(ByVal OutputRange As Excel.Range)
+End Sub
