@@ -32,10 +32,12 @@ End Property
 
 '@Description("Returns DbConnectionString reference")
 Public Property Get DbConnStr() As DbConnectionString
+Attribute DbConnStr.VB_Description = "Returns DbConnectionString reference"
 End Property
 
 '@Description("Returns DbMetaData reference")
 Public Property Get DbMeta() As DbMetaData
+Attribute DbMeta.VB_Description = "Returns DbMetaData reference"
 End Property
 
 '@Description("Creates a new command to execute.")

@@ -4,6 +4,8 @@ Attribute VB_Name = "DbMetaDataTests"
 '@IgnoreModule UnhandledOnErrorResumeNext: Tests for expected errors do not reset error handling
 '@IgnoreModule VariableNotUsed: Tests for expected errors may use dummy assignments
 '@IgnoreModule AssignmentNotUsed: Tests for expected errors may use dummy assignments
+'@IgnoreModule LineLabelNotUsed: Using standard test template
+'@IgnoreModule IndexedDefaultMemberAccess
 Option Explicit
 Option Private Module
 
@@ -44,7 +46,6 @@ Public Function zfxGetMeta(Optional ByVal DbFileName As String = "ContactEditorT
     DbOK = VerifyOrGetDefaultPath(DbFileName, Empty)
     Status = Err.Number
     Select Case Status
-        Case 0
         Case ErrNo.FileNotFoundErr
             Debug.Print vbNewLine & _
                 "============================================================" & vbNewLine & _
@@ -54,7 +55,7 @@ Public Function zfxGetMeta(Optional ByVal DbFileName As String = "ContactEditorT
                 "inconclusive. You can copy original test database," & vbNewLine & _
                 "adjust tests, or disable them." & vbNewLine & _
                 "============================================================" & vbNewLine
-        Case Else
+        Case Is > 0
             Debug.Print vbNewLine & _
                 "============================================================" & vbNewLine & _
                 "<DbMetaTests.bas>: Unexpected error occured:" & vbNewLine & _

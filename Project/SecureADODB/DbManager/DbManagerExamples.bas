@@ -2,6 +2,7 @@ Attribute VB_Name = "DbManagerExamples"
 '@Folder "SecureADODB.DbManager"
 '@IgnoreModule AssignmentNotUsed, EmptyModule, VariableNotUsed, ProcedureNotUsed
 '@IgnoreModule FunctionReturnValueDiscarded, FunctionReturnValueAlwaysDiscarded
+'@IgnoreModule ImplicitDefaultMemberAccess, IndexedDefaultMemberAccess
 Option Explicit
 
 
@@ -17,7 +18,6 @@ Private Sub DbManagerCSVTest()
     Dim dbm As IDbManager
     Set dbm = DbManager.CreateFileDb("csv", FileName, vbNullString, False, LoggerTypeEnum.logPrivate)
 
-    '@Ignore IndexedDefaultMemberAccess
     Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL").Value
     
     Dim rst As IDbRecordset
@@ -84,7 +84,6 @@ Private Sub DbManagerSQLiteTest()
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
     
-    '@Ignore ImplicitDefaultMemberAccess, IndexedDefaultMemberAccess
     Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL")
     
     Dim Result As ADODB.Recordset
@@ -146,7 +145,6 @@ Private Sub DbManagerSQLiteMetaTest()
     Dim rst As IDbRecordset
     Set rst = dbm.Recordset(Scalar:=False, Disconnected:=True, CacheSize:=10)
     
-    '@Ignore ImplicitDefaultMemberAccess, IndexedDefaultMemberAccess
     Debug.Print dbm.Connection.AdoConnection.Properties("Transaction DDL")
     
     Dim Result As ADODB.Recordset
@@ -213,4 +211,3 @@ Private Sub DbManagerExTest()
     Dim Result As ADODB.Recordset
     Set Result = rst.OpenRecordset(SQLQuery, 45, "South Korea")
 End Sub
-

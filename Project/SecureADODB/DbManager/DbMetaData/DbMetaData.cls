@@ -39,6 +39,7 @@ Attribute Init.VB_Description = "Default constructor"
 End Sub
 
 
+'@Ignore ParameterCanBeByVal: False positive
 '@Description "Query table field metadata via the ADOX library"
 Public Sub QueryTableADOXMeta(ByVal TableName As String, _
                               ByRef FieldNames As Variant, _

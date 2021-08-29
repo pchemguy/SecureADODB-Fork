@@ -46,6 +46,7 @@ Attribute Class.VB_Description = "Returns class reference"
 End Property
 
 
+'@Ignore ProcedureNotUsed
 Public Property Get LogDatabase() As Scripting.Dictionary
     Set LogDatabase = this.Database
 End Property

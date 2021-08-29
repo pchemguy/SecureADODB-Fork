@@ -12,7 +12,6 @@ Attribute VB_Description = "An object that encapsulates a database transaction."
 '@ModuleDescription("An object that encapsulates a database transaction.")
 '@PredeclaredId
 '@Exposed
-'@IgnoreModule ProcedureNotUsed
 Option Explicit
 
 Implements IDbManager
@@ -28,6 +27,7 @@ End Type
 Private this As TDbManager
 
 
+'@Ignore ProcedureNotUsed
 '@Description("Returns class reference")
 Public Property Get Class() As DbManager
 Attribute Class.VB_Description = "Returns class reference"
@@ -40,6 +40,7 @@ Public Function Create(ByVal db As IDbConnection, _
                        ByVal factory As IDbCommandFactory, _
               Optional ByVal UseTransactions As Boolean = True, _
               Optional ByVal LogController As ILogger = Nothing) As IDbManager
+Attribute Create.VB_Description = "Default factory"
     Dim Instance As DbManager
     Set Instance = New DbManager
     Instance.Init db, factory, UseTransactions, LogController
@@ -125,6 +126,7 @@ Attribute CreateFileDb.VB_Description = "Factory for file-based databases"
 End Function
 
 
+'@Ignore ProcedureNotUsed
 Public Property Get DbConnStr() As DbConnectionString
     Set DbConnStr = this.DbConnStr
 End Property
@@ -135,6 +137,7 @@ Public Property Set DbConnStr(ByVal Instance As DbConnectionString)
 End Property
 
 
+'@Ignore ProcedureNotUsed
 Public Property Get DbMeta() As DbMetaData
     Set DbMeta = this.DbMeta
 End Property
@@ -158,7 +161,7 @@ End Property
 
 
 Private Property Get IDbManager_DbConnStr() As DbConnectionString
-    Set IDbManager_DbConnStr = this.Connection
+    Set IDbManager_DbConnStr = this.DbConnStr
 End Property
 
 
