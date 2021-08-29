@@ -18,12 +18,6 @@ Option Explicit
 Implements IDbManager
 
 Private Type TDbManager
-    Path As String
-    Name As String
-    Database As String
-    Driver As String
-    Options As String
-    ConnectionString As String
     DbConnStr As DbConnectionString
     Connection As IDbConnection
     CommandFactory As IDbCommandFactory
@@ -38,121 +32,6 @@ Public Property Get Class() As DbManager
 Attribute Class.VB_Description = "Returns class reference"
     Set Class = DbManager
 End Property
-
-
-' Basic connection string construction facility
-'
-' The first argument specifies either the type of the target database or, for reasons of
-' flexibility can take a completed connection string. Select Case implements the core
-' functionality. If the first argument matches any of the Case block, the corresponding
-' configuration will be applied and a connection string is built and returned. Otherwise,
-' if the first argument contains "Driver=" substring, it is assumed to be a completed
-' connection string, which is returned as is.
-'
-'@Description("Build connection config")
-Public Function BuildConnectionString( _
-                 ByVal TypeOrConnString As String, _
-        Optional ByVal Path As String = vbNullString, _
-        Optional ByVal Name As String = vbNullString, _
-        Optional ByVal Options As String = vbNullString _
-        ) As String
-Attribute BuildConnectionString.VB_Description = "Build connection config"
-        
-    Guard.ConnectionString TypeOrConnString
-    Dim connConfig As TDbManager
-        
-    If Path = vbNullString Then
-        connConfig.Path = ThisWorkbook.Path
-    Else
-        connConfig.Path = Path
-    End If
-    Select Case LCase$(TypeOrConnString)
-        Case "sqlite"                                                           ' ========== SQLite db ========== '
-            With connConfig
-                .Driver = "SQLite3 ODBC Driver"
-                If Name = vbNullString Then
-                    Dim fso As Scripting.FileSystemObject
-                    Set fso = New Scripting.FileSystemObject
-                    .Name = fso.GetBaseName(ThisWorkbook.Name) & ".db"
-                Else
-                    .Name = Name
-                End If
-                If Options = vbNullString Then
-                    .Options = "SyncPragma=NORMAL;FKSupport=True;"
-                Else
-                    .Options = Options
-                End If
-                .Database = .Path & Application.PathSeparator & .Name
-                .ConnectionString = "Driver=" + .Driver + ";" + _
-                              "Database=" + .Database + ";" + _
-                              .Options
-            End With
-        Case "csv"                                                              ' ============ CSV db ============ '
-            With connConfig
-                #If Win64 Then
-                    .Driver = "Microsoft Access Text Driver (*.txt, *.csv)"
-                #Else
-                    .Driver = "{Microsoft Text Driver (*.txt; *.csv)}"
-                #End If
-                .Database = .Path
-                If Options <> vbNullString Then
-                    .Options = Options
-                End If
-                .ConnectionString = "Driver=" + .Driver + ";" + _
-                              "DefaultDir=" + .Database + ";" + _
-                              .Options
-            End With
-        Case Else
-            If InStr(1, TypeOrConnString, "Driver=", vbTextCompare) > 0 Or _
-               InStr(1, TypeOrConnString, "DSN=", vbTextCompare) > 0 Then    ' ============ Raw Connection String ============ '
-                connConfig.ConnectionString = TypeOrConnString
-            Else
-                Guard.ConnectionString vbNullString
-            End If
-    End Select
-    BuildConnectionString = connConfig.ConnectionString
-End Function
-
-
-'@Description("Creates a new manager using connection parameters.")
-Public Function FromConnectionParameters( _
-                 ByVal DbType As String, _
-        Optional ByVal Name As String = vbNullString, _
-        Optional ByVal Options As String = vbNullString, _
-        Optional ByVal UseTransactions As Boolean = True, _
-        Optional ByVal LoggerType As LoggerTypeEnum = LoggerTypeEnum.logGlobal _
-        ) As IDbManager
-Attribute FromConnectionParameters.VB_Description = "Creates a new manager using connection parameters."
-    Dim DbConnStr As DbConnectionString
-    Set DbConnStr = DbConnectionString.CreateFileDB(DbType, Name, , Options)
-    
-    Dim LogController As ILogger
-    Select Case LoggerType
-        Case LoggerTypeEnum.logDisabled
-            Set LogController = Nothing
-        Case LoggerTypeEnum.logGlobal
-            Set LogController = Logger
-        Case LoggerTypeEnum.logPrivate
-            Set LogController = Logger.Create
-    End Select
-    
-    Dim provider As IParameterProvider
-    Set provider = AdoParameterProvider.Create(AdoTypeMappings.Default)
-    
-    Dim baseCommand As IDbCommandBase
-    Set baseCommand = DbCommandBase.Create(provider)
-    
-    Dim factory As IDbCommandFactory
-    Set factory = DbCommandFactory.Create(baseCommand)
-    
-    Dim db As IDbConnection
-    Set db = DbConnection.Create(DbConnStr.ConnectionString, LogController)
-    
-    Dim Instance As DbManager
-    Set Instance = DbManager.Create(db, factory, UseTransactions, LogController)
-    Set Instance.DbConnStr = DbConnStr
-    Set FromConnectionParameters = Instance
-End Function
 
 
 Public Function Create(ByVal db As IDbConnection, _
@@ -182,6 +61,66 @@ Attribute Init.VB_Description = "Default constructor"
     Set this.CommandFactory = factory
     this.UseTransactions = UseTransactions
 End Sub
+
+
+'''' Factory for file-based databases.
+''''
+'''' Args:
+''''   DbType (string):
+''''     Type of the database: "sqlite", "csv", "xls"
+''''
+''''   DbFileName (string, optional, ""):
+''''     Database file name. If not provided, ThisWorkbook.VBProject.Name
+''''     will be used. Extension is added based on the database type:
+''''       "sqlite" - "db" or "sqlite"
+''''       "csv"    - "xsv" or "csv"
+''''       "xls"    - "xls
+''''
+''''   ConnectionOptions (variant, optional, Empty):
+''''     Connection options. If Empty, default values is selected based on the
+''''     database type (see DbConnectionString constructor code for details).
+''''
+''''  N.B.: "xls" backend support is not currently implemented
+''''
+'@Description "Factory for file-based databases"
+Public Function CreateFileDb( _
+                 ByVal DbType As String, _
+        Optional ByVal DbFileName As String = vbNullString, _
+        Optional ByVal ConnectionOptions As String = vbNullString, _
+        Optional ByVal UseTransactions As Boolean = True, _
+        Optional ByVal LoggerType As LoggerTypeEnum = LoggerTypeEnum.logGlobal _
+        ) As IDbManager
+Attribute CreateFileDb.VB_Description = "Factory for file-based databases"
+    Dim DbConnStr As DbConnectionString
+    Set DbConnStr = DbConnectionString.CreateFileDb(DbType, DbFileName, , ConnectionOptions)
+    
+    Dim LogController As ILogger
+    Select Case LoggerType
+        Case LoggerTypeEnum.logDisabled
+            Set LogController = Nothing
+        Case LoggerTypeEnum.logGlobal
+            Set LogController = Logger
+        Case LoggerTypeEnum.logPrivate
+            Set LogController = Logger.Create
+    End Select
+    
+    Dim provider As IParameterProvider
+    Set provider = AdoParameterProvider.Create(AdoTypeMappings.Default)
+    
+    Dim baseCommand As IDbCommandBase
+    Set baseCommand = DbCommandBase.Create(provider)
+    
+    Dim factory As IDbCommandFactory
+    Set factory = DbCommandFactory.Create(baseCommand)
+    
+    Dim db As IDbConnection
+    Set db = DbConnection.Create(DbConnStr.ConnectionString, LogController)
+    
+    Dim Instance As DbManager
+    Set Instance = DbManager.Create(db, factory, UseTransactions, LogController)
+    Set Instance.DbConnStr = DbConnStr
+    Set CreateFileDb = Instance
+End Function
 
 
 Public Property Get DbConnStr() As DbConnectionString

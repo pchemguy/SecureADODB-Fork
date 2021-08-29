@@ -45,9 +45,9 @@ Arrange:
                ";SyncPragma=NORMAL;FKSupport=True;"
 Act:
     Dim ActualADO As String
-    ActualADO = DbConnectionString.CreateFileDB("sqlite").ConnectionString
+    ActualADO = DbConnectionString.CreateFileDb("sqlite").ConnectionString
     Dim ActualQT As String
-    ActualQT = DbConnectionString.CreateFileDB("sqlite").QTConnectionString
+    ActualQT = DbConnectionString.CreateFileDb("sqlite").QTConnectionString
 Assert:
     Assert.AreEqual Expected, ActualADO, "Default SQLite ADO ConnectionString mismatch"
     Assert.AreEqual "OLEDB;" & Expected, ActualQT, "Default SQLite QT ConnectionString mismatch"
@@ -70,9 +70,9 @@ Arrange:
                ";SyncPragma=NORMAL;FKSupport=True;"
 Act:
     Dim ActualADO As String
-    ActualADO = DbConnectionString.CreateFileDB("sqlite", "").ConnectionString
+    ActualADO = DbConnectionString.CreateFileDb("sqlite", "").ConnectionString
     Dim ActualQT As String
-    ActualQT = DbConnectionString.CreateFileDB("sqlite", "").QTConnectionString
+    ActualQT = DbConnectionString.CreateFileDb("sqlite", "").QTConnectionString
 Assert:
     Assert.AreEqual Expected, ActualADO, "Default SQLite ADO ConnectionString with blank driver mismatch"
     Assert.AreEqual "OLEDB;" & Expected, ActualQT, "Default SQLite QT ConnectionString with blank driver mismatch"
@@ -102,9 +102,9 @@ Arrange:
     Expected = "Driver=" + Driver + ";" + "DefaultDir=" + CSVPath + ";"
 Act:
     Dim ActualADO As String
-    ActualADO = DbConnectionString.CreateFileDB("csv").ConnectionString
+    ActualADO = DbConnectionString.CreateFileDb("csv").ConnectionString
     Dim ActualQT As String
-    ActualQT = DbConnectionString.CreateFileDB("csv").QTConnectionString
+    ActualQT = DbConnectionString.CreateFileDb("csv").QTConnectionString
 Assert:
     Assert.AreEqual Expected, ActualADO, "Default CSV ADO ConnectionString mismatch"
     Assert.AreEqual "OLEDB;" & Expected, ActualQT, "Default CSV QT ConnectionString mismatch"
@@ -134,9 +134,9 @@ Arrange:
     Expected = "Driver=" + Driver + ";" + "DefaultDir=" + CSVPath + ";"
 Act:
     Dim ActualADO As String
-    ActualADO = DbConnectionString.CreateFileDB("csv", "README.md").ConnectionString
+    ActualADO = DbConnectionString.CreateFileDb("csv", "README.md").ConnectionString
     Dim ActualQT As String
-    ActualQT = DbConnectionString.CreateFileDB("csv", "README.md").QTConnectionString
+    ActualQT = DbConnectionString.CreateFileDb("csv", "README.md").QTConnectionString
 Assert:
     Assert.AreEqual Expected, ActualADO, "CSV ADO ConnectionString (valid name) mismatch"
     Assert.AreEqual "OLEDB;" & Expected, ActualQT, "CSV QT ConnectionString (valid name) mismatch"
@@ -152,7 +152,7 @@ End Sub
 Private Sub ztcConnectionString_ThrowsForXLSBackend()
     On Error Resume Next
     Dim ConnectionString As String
-    ConnectionString = DbConnectionString.CreateFileDB("xls").ConnectionString
+    ConnectionString = DbConnectionString.CreateFileDb("xls").ConnectionString
     AssertExpectedError Assert, ErrNo.NotImplementedErr
 End Sub
 
