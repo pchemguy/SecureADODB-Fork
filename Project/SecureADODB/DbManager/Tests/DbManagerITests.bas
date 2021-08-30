@@ -1,5 +1,5 @@
 Attribute VB_Name = "DbManagerITests"
-'@Folder "SecureADODB.DbManager"
+'@Folder "SecureADODB.DbManager.Tests"
 '@TestModule
 '@IgnoreModule
 Option Explicit
@@ -367,4 +367,5 @@ CleanExit:
 TestFail:
     Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
+
 

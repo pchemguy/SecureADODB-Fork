@@ -77,7 +77,9 @@ Private Function IParameterProvider_FromValues(ByRef values() As Variant) As VBA
 End Function
 
 
-Private Function IParameterProvider_FromValue(ByVal Value As Variant, Optional ByVal Name As String, Optional ByVal dataTypeName As String) As ADODB.Parameter
+Private Function IParameterProvider_FromValue(ByVal Value As Variant, _
+                                     Optional ByVal Name As String, _
+                                     Optional ByVal dataTypeName As String) As ADODB.Parameter
     If TypeOf Value Is ADODB.Parameter Then
         Set IParameterProvider_FromValue = Value
         Exit Function
@@ -86,7 +88,9 @@ Private Function IParameterProvider_FromValue(ByVal Value As Variant, Optional B
     Dim localDataTypeName As String
     localDataTypeName = dataTypeName
     If localDataTypeName = vbNullString Then localDataTypeName = TypeName(Value)
-    Guard.Expression mappings.IsMapped(localDataTypeName), Source:="AdoParaeterProvider", Message:="The data type '" & localDataTypeName & "' has no ADODB.DataTypeEnum mapping."
+    Guard.Expression mappings.IsMapped(localDataTypeName), _
+                     Source:="AdoParaeterProvider", _
+                     Message:="The data type '" & localDataTypeName & "' has no ADODB.DataTypeEnum mapping."
     
     Dim Result As ADODB.Parameter
     Set Result = New ADODB.Parameter
