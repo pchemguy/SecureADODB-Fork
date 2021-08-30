@@ -8,7 +8,7 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
 <img src="https://raw.githubusercontent.com/pchemguy/SecureADODB-Fork/master/UML%20Class%20Diagrams/SecureADODB%20-%20ADODB%20Class%20Mapping.svg" alt="Overview" width="100%" />
 
-<p align="center"><b>SecureADODB Fork class diagram</b></p>
+<p align="center"><b>SecureADODB Fork class diagram (interfaces not shown)</b></p>
 
 *DbRecordset* class has been added in this fork, while the DbManager class shown at the bottom is functionally similar to the UnitOfWork class from the base project.
 
@@ -28,7 +28,7 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
 2). *AutoDbCommand* and *DefaultDbCommand* have been replaced with *DbCommand* and *DefaultDbCommandFactory* replaced with *DbCommandFactory*. *DbCommand* always takes an existing *DbConnection* class as a dependency, and is only responsible for ExecuteNoQuery functionality ([NoQuery flag] commit), while queries returning a Recordset or a scalar are executed via the *DbRecordset* class.  
 3). *DbManager* takes a flag, turning transactions on/off. Additionally, the BeginTransaction method now has a transaction error handler. If this handler traps an error, it sets a flag on the DbConnection object disabling further transaction handling.  
-4). A new Guard class replaces the Errors module with some refactoring and additional functionality. A "Scripting.Dictionary" backed logger prototype has also been implemented.  
+4). A new Guard class replaces the Errors module with some refactoring and additional functionality. A  "Scripting.Dictionary" backed logger prototype has also been implemented.  
 5). Design patterns:  
 
   - *Factory-Constructor pattern*. Following the convention of the base project, the default concrete factory is the "Create" method defined on default class instances. Initialization, on the other hand, is not performed by a set of public setters but rather via a corresponding constructor ([Factory-Constructor pattern][] issue). Please see [Contact Editor tutorial][Factory-Constructor - Contact Editor] for additional discussion about the returned value.
