@@ -20,11 +20,11 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
 1. A coupling loop between *DbConnection* and *DbCommand* has been removed (issue [IDbConnection_CreateCommand interface][Issue 14]).  
 
-<a name="FigSecureADODBloop"></a>
+  <a name="FigSecureADODBloop"></a>
 
-<img src="https://raw.githubusercontent.com/pchemguy/SecureADODB-Fork/master/UML%20Class%20Diagrams/SecureADODB_CreateCommand%20Loop.svg" alt="SecureADODB loop" width="100%" />
+  <img src="https://raw.githubusercontent.com/pchemguy/SecureADODB-Fork/master/UML%20Class%20Diagrams/SecureADODB_CreateCommand%20Loop.svg" alt="SecureADODB loop" width="100%" />
 
-<p align="center"><b>SecureADODB dependency loop</b></p>
+  <p align="center"><b>SecureADODB dependency loop</b></p>
 
 2. *AutoDbCommand* and *DefaultDbCommand* have been replaced with *DbCommand* and *DefaultDbCommandFactory* replaced with *DbCommandFactory*. *DbCommand* always takes an existing *DbConnection* class as a dependency, and is only responsible for ExecuteNoQuery functionality ([NoQuery flag] commit), while queries returning a Recordset or a scalar are executed via the *DbRecordset* class.  
 3. *DbManager* takes a flag, turning transactions on/off. Additionally, the BeginTransaction method now has a transaction error handler. If this handler traps an error, it sets a flag on the DbConnection object disabling further transaction handling.  
