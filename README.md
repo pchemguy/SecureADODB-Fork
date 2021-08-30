@@ -8,7 +8,7 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
 <img src="https://raw.githubusercontent.com/pchemguy/SecureADODB-Fork/master/UML%20Class%20Diagrams/SecureADODB%20-%20ADODB%20Class%20Mapping.svg" alt="Overview" width="100%" />
 
-<p align="center"><b>SecureADODB Fork class diagram</b></p>
+<p align="center"><b>SecureADODB Fork class diagram (interfaces not shown)</b></p>
 
 *DbRecordset* class has been added in this fork, while the DbManager class shown at the bottom is functionally similar to the UnitOfWork class from the base project.
 
