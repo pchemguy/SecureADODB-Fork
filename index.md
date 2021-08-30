@@ -18,7 +18,7 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
 ### Core Differences from RDVBA SecureADODB
 
-1. A coupling loop between *DbConnection* and *DbCommand* has been removed (issue [IDbConnection_CreateCommand interface][Issue 14]).  
+1). A coupling loop between *DbConnection* and *DbCommand* has been removed (issue [IDbConnection_CreateCommand interface][Issue 14]).  
 
   <a name="FigSecureADODBloop"></a>
 
@@ -26,16 +26,15 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
   <p align="center"><b>SecureADODB dependency loop</b></p>
 
-{:start="2"}
-2. *AutoDbCommand* and *DefaultDbCommand* have been replaced with *DbCommand* and *DefaultDbCommandFactory* replaced with *DbCommandFactory*. *DbCommand* always takes an existing *DbConnection* class as a dependency, and is only responsible for ExecuteNoQuery functionality ([NoQuery flag] commit), while queries returning a Recordset or a scalar are executed via the *DbRecordset* class.  
-3. *DbManager* takes a flag, turning transactions on/off. Additionally, the BeginTransaction method now has a transaction error handler. If this handler traps an error, it sets a flag on the DbConnection object disabling further transaction handling.  
-4. A new Guard class replaces the Errors module with some refactoring and additional functionality. A  "Scripting.Dictionary" backed logger prototype has also been implemented.  
-5. Design patterns:  
+2). *AutoDbCommand* and *DefaultDbCommand* have been replaced with *DbCommand* and *DefaultDbCommandFactory* replaced with *DbCommandFactory*. *DbCommand* always takes an existing *DbConnection* class as a dependency, and is only responsible for ExecuteNoQuery functionality ([NoQuery flag] commit), while queries returning a Recordset or a scalar are executed via the *DbRecordset* class.  
+3). *DbManager* takes a flag, turning transactions on/off. Additionally, the BeginTransaction method now has a transaction error handler. If this handler traps an error, it sets a flag on the DbConnection object disabling further transaction handling.  
+4). A new Guard class replaces the Errors module with some refactoring and additional functionality. A  "Scripting.Dictionary" backed logger prototype has also been implemented.  
+5). Design patterns:  
     - *Factory-Constructor pattern*. Following the convention of the base project, the default concrete factory is the "Create" method defined on default class instances. Initialization, on the other hand, is not performed by a set of public setters but rather via a corresponding constructor ([Factory-Constructor pattern][] issue). Please see [Contact Editor tutorial][Factory-Constructor - Contact Editor] for additional discussion about the returned value.
     - *Abstract Factory and CreateInstance convention*. Аbstract factory's Create method generates factory instances. Factory instance's *CreateInstance* method, in turn, generates instances of the target class ([CreateInstance convention] issue).  
     - *Duplicate Guard clauses*. Factories hold only the non-default instance guard, which might be redundant when the factory produces non-default interface objects lacking the factory method. The factory passes all initial values to the new instance constructor responsible for validation guards/checks.  
-6. *DbRecordset* class handles queries returning disconnected or online Recordsets, as well as scalars. A fully initialized “ADODB.Command” sets most of the *DbRecordset*’s properties (via injected *DbCommand*). Several options (such as return type and cursor type/location) are supplied to the *DbRecordset* factory directly.  
-7. A new module, DbManagerITests, runs a set of tests against mock CSV and SQLite databases. This way, actual SecureADODB classes (as opposed to stubs) are tested. DbManagerITests tests also serve as use templates.  
+6). *DbRecordset* class handles queries returning disconnected or online Recordsets, as well as scalars. A fully initialized “ADODB.Command” sets most of the *DbRecordset*’s properties (via injected *DbCommand*). Several options (such as return type and cursor type/location) are supplied to the *DbRecordset* factory directly.  
+7). A new module, DbManagerITests, runs a set of tests against mock CSV and SQLite databases. This way, actual SecureADODB classes (as opposed to stubs) are tested. DbManagerITests tests also serve as use templates.  
 
 [SecureADODB]: https://github.com/rubberduck-vba/examples/tree/master/SecureADODB
 [Class Diagram]: https://raw.githubusercontent.com/pchemguy/SecureADODB-Fork/master/UML%20Class%20Diagrams/SecureADODB%20-%20ADODB%20Class%20Mapping.svg
