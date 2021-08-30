@@ -1,6 +1,6 @@
 This project proposes several modifications to the [SecureADODB] library, as well as explores several alternative design options.
 
-### Class Diagram and Mapping to ADODB
+### Class diagram and connections to ADODB
 
 The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (this fork, blue) and the mapping to the core ADODB classes (green).
 
@@ -16,7 +16,11 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
 *DbConnection* and *DbRecordset* classes receive and handle events raised by the corresponding ADODB classes (which was part of the motivation for creating the *DbRecordset* class). The core events (associated with connection, execution, and transaction) are accessible via the “Connection” class. Accessing asynchronous fetching events, however, requires the “Recordset” class.
 
-### Core Differences from RDVBA SecureADODB
+### Usage examples
+
+Please see *ExamplesDbManager.bas* (examples using this fork of the SecureADODB library) and *ExamplesPlainADODB.bas* (plain ADODB examples) in "VBAProject\SecureADODB\DbManager" for usage examples. SecureADODB examples produce output via Debug.Print and via the QueryTable feature. Plain ADODB module produces very little output, and its results can be examined via the debugger or by modifying the code.
+
+### Core differences from RDVBA SecureADODB
 
 1). A coupling loop between *DbConnection* and *DbCommand* has been removed (issue [IDbConnection_CreateCommand interface][Issue 14]).  
 
