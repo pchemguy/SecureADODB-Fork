@@ -26,7 +26,7 @@ Private Sub ProjectStructureExport()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
     Dim ExportFolder As String
-    ExportFolder = ""                            '"Storage\Record"
+    ExportFolder = "" '"Storage\Record"
     Project.ProjectStructureExport ExportFolder
 End Sub
 
@@ -34,7 +34,7 @@ Private Sub ProjectFilesExport()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
     Dim ExportFolder As String
-    ExportFolder = ""                            '"Storage\Record"
+    ExportFolder = "" '"Storage\Record"
     Project.ProjectFilesExport ExportFolder
 End Sub
 
@@ -42,7 +42,7 @@ Private Sub WalkTree()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
     Dim ImportFolder As String
-    ImportFolder = ""                            '"Storage\Record"
+    ImportFolder = "" '"Storage\Record"
     Project.WalkTree ImportFolder
 End Sub
 
@@ -50,7 +50,7 @@ Private Sub CollectFiles()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
     Dim ImportFolder As String
-    ImportFolder = ""                            '"Storage\Record"
+    ImportFolder = "" '"Storage\Record"
     Project.CollectFiles ImportFolder
 End Sub
 
@@ -58,6 +58,14 @@ Private Sub ProjectFilesImport()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
     Dim ImportFolder As String
-    ImportFolder = ""                            '"Storage\Record"
+    ImportFolder = "" '"Storage\Record"
     Project.ProjectFilesImport ImportFolder
+End Sub
+
+Private Sub ProjectNodeSubtreeDelete()
+    Dim Project As ProjectUtils
+    Set Project = New ProjectUtils
+    Dim SubtreePath As String
+    SubtreePath = "" '"Storage\Record"
+    Project.ProjectNodeSubtreeDelete SubtreePath
 End Sub
