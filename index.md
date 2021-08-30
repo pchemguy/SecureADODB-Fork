@@ -26,6 +26,7 @@ The class diagram [below](#FigClassDiagram) shows the core SecureADODB classes (
 
   <p align="center"><b>SecureADODB dependency loop</b></p>
 
+{:start="2"}
 2. *AutoDbCommand* and *DefaultDbCommand* have been replaced with *DbCommand* and *DefaultDbCommandFactory* replaced with *DbCommandFactory*. *DbCommand* always takes an existing *DbConnection* class as a dependency, and is only responsible for ExecuteNoQuery functionality ([NoQuery flag] commit), while queries returning a Recordset or a scalar are executed via the *DbRecordset* class.  
 3. *DbManager* takes a flag, turning transactions on/off. Additionally, the BeginTransaction method now has a transaction error handler. If this handler traps an error, it sets a flag on the DbConnection object disabling further transaction handling.  
 4. A new Guard class replaces the Errors module with some refactoring and additional functionality. A  "Scripting.Dictionary" backed logger prototype has also been implemented.  
