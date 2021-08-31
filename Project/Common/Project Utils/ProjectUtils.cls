@@ -378,6 +378,7 @@ End Sub
 'Document modules are skipped
 '@Description "Deletes all modules from the project node subtree identified by the prefix"
 Public Sub ProjectNodeSubtreeDelete(ByVal Prefix As String)
+Attribute ProjectNodeSubtreeDelete.VB_Description = "Deletes all modules from the project node subtree identified by the prefix"
     If Prefix = vbNullString Then
         Err.Raise 17, "RDVBAProjectUtils", "Empty prefix is not allowed"
     End If

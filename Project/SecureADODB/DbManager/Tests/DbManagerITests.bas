@@ -35,7 +35,7 @@ End Sub
 '===================================================='
 
 
-Public Function zfxGetConnectionString(ByVal DbType As String) As String
+Private Function zfxGetConnectionString(ByVal DbType As String) As String
     zfxGetConnectionString = DbConnectionString.CreateFileDb(DbType).ConnectionString
 End Function
 
