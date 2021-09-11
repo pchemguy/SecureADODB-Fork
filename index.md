@@ -1,3 +1,10 @@
+---
+layout: default
+title: SecureADODB Fork
+nav_order: 1
+permalink: /
+---
+
 This project proposes several modifications to the [SecureADODB] library, as well as explores several alternative design options.
 
 ### Class diagram and connections to ADODB
