@@ -29,19 +29,26 @@ Public Property Get ExecuteStatus() As ADODB.EventStatusEnum
 Attribute ExecuteStatus.VB_Description = "Gets the execute completed status of the wrapped ADODB connection."
 End Property
 
-'@Description("Gets the number of affected records.")
+'@Description("Gets the number of affected records [recieved from ADODB]")
 Public Property Get RecordsAffected() As Long
-Attribute RecordsAffected.VB_Description = "Gets the number of affected records."
+Attribute RecordsAffected.VB_Description = "Gets the number of affected records [recieved from ADODB]"
 End Property
 
-'@Description("Returns class reference.")
-Public Property Get Class() As DbConnection
-Attribute Class.VB_Description = "Returns class reference."
+'@Description("Gets the number of affected records [via a query]")
+Public Property Get TransRecordsAffected() As Long
+Attribute TransRecordsAffected.VB_Description = "Gets the number of affected records [via a query]"
 End Property
 
-'@Description("Returns the object itself. Useful to retrieve the With object variable in a With block.")
-Public Property Get Self() As IDbConnection
-Attribute Self.VB_Description = "Returns the object itself. Useful to retrieve the With object variable in a With block."
+Public Property Get ExpectedRecordsAffected() As Long
+End Property
+
+Public Property Let ExpectedRecordsAffected(ByVal Value As Long)
+End Property
+
+Public Property Get Engine() As String
+End Property
+
+Public Property Let Engine(ByVal EngineName As String)
 End Property
 
 Public Sub BeginTransaction()

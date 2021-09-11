@@ -8,30 +8,34 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "Represents an object that wraps an ADODB recordset."
-'@IgnoreModule FunctionReturnValueDiscarded
 '@Folder "SecureADODB.DbRecordset"
-'@ModuleDescription("Represents an object that wraps an ADODB recordset.")
+'@ModuleDescription "Represents an object that wraps an ADODB recordset."
 '@Interface
 '@Exposed
+'@IgnoreModule FunctionReturnValueDiscarded
 Option Explicit
 
 
-Public Property Get Self() As IDbRecordset
+Public Property Get cmd() As IDbCommand
 End Property
 
-Public Property Get Class() As DbRecordset
+Public Property Get AdoRecordset() As ADODB.Recordset
 End Property
 
-'@Description("Gets the wrapped ADODB recordset.")
-Public Function AdoRecordset(ByVal SQL As String, ParamArray args() As Variant) As ADODB.Recordset
-Attribute AdoRecordset.VB_Description = "Gets the wrapped ADODB recordset."
+Public Function GetAdoRecordset(ByVal SQL As String, ParamArray ADODBParamsValues() As Variant) As ADODB.Recordset
 End Function
 
-Public Function OpenRecordset(ByVal SQL As String, ParamArray args() As Variant) As ADODB.Recordset
+Public Function RecordsetToQT(ByVal OutputRange As Excel.Range) As Excel.QueryTable
 End Function
 
-Public Function OpenScalar(ByVal SQL As String, ParamArray args() As Variant) As Variant
+Public Function OpenRecordset(ByVal SQL As String, ParamArray ADODBParamsValues() As Variant) As ADODB.Recordset
 End Function
 
-Public Sub RecordsetToQT(ByVal OutputRange As Excel.Range)
+Public Function OpenScalar(ByVal SQL As String, ParamArray ADODBParamsValues() As Variant) As Variant
+End Function
+
+Public Sub UpdateRecord(ByVal AbsolutePosition As Long, ByVal ValuesDict As Scripting.Dictionary)
+End Sub
+
+Public Sub UpdateRecordset(ByRef AbsolutePositions() As Long, ByRef RecordsetData() As Variant)
 End Sub

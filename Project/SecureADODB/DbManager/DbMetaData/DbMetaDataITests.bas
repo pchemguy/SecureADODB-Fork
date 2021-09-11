@@ -39,7 +39,22 @@ End Sub
 '===================================================='
 
 
-Public Function zfxGetMeta(Optional ByVal DbFileName As String = "ContactEditorTest.db") As DbMetaData
+Private Function zfxGetLibPrefix(ByVal LibName As String) As String
+    Dim PathNameComponents As Variant
+    PathNameComponents = Array( _
+        ThisWorkbook.Path, _
+        "Library", _
+        LibName _
+    )
+    Dim PathName As String
+    PathName = Join(PathNameComponents, Application.PathSeparator) & Application.PathSeparator
+    zfxGetLibPrefix = PathName
+End Function
+
+
+Public Function zfxGetMeta() As DbMetaData
+    Dim DbFileName As String
+    DbFileName = zfxGetLibPrefix("SecureADODB") & "SecureADODBTest.db"
     Dim DbOK As Variant
     Dim Status As Long
     On Error Resume Next
@@ -86,7 +101,7 @@ Private Sub ztcCreate_ThrowsGivenNullConnectionString()
     On Error Resume Next
     Dim sut As DbMetaData
     Set sut = DbMetaData.Create(Nothing)
-    AssertExpectedError Assert, ErrNo.ObjectNotSetErr
+    Guard.AssertExpectedError Assert, ErrNo.ObjectNotSetErr
 End Sub
 
 
@@ -96,7 +111,7 @@ Private Sub ztiQueryTableADOXMeta_VerifiesTableMeta()
     
 Arrange:
     Dim dbm As DbMetaData
-    Set dbm = zfxGetMeta("ContactEditorTest.db")
+    Set dbm = zfxGetMeta
     If dbm Is Nothing Then GoTo TestInconclusive
 Act:
     Dim TableName As String

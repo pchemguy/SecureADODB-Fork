@@ -35,26 +35,39 @@ End Sub
 '===================================================='
 
 
-Private Function zfxGetConnectionString(ByVal DbType As String) As String
-    zfxGetConnectionString = DbConnectionString.CreateFileDb(DbType).ConnectionString
+Private Function zfxGetLibPrefix(ByVal LibName As String) As String
+    Dim PathNameComponents As Variant
+    PathNameComponents = Array( _
+        ThisWorkbook.Path, _
+        "Library", _
+        LibName _
+    )
+    Dim PathName As String
+    PathName = Join(PathNameComponents, Application.PathSeparator) & Application.PathSeparator
+    zfxGetLibPrefix = PathName
 End Function
 
 
-Private Function zfxGetDbManagerFromConnectionParameters(ByVal TypeOrConnString As String) As IDbManager
-    Dim fileExt As String: fileExt = IIf(TypeOrConnString = "csv", "csv", "db")
-    Dim fso As Scripting.FileSystemObject: Set fso = New Scripting.FileSystemObject
-    Dim FileName As String: FileName = fso.GetBaseName(ThisWorkbook.Name) & "." & fileExt
-
+Private Function zfxGetDbManager( _
+            Optional ByVal DbType As String = "sqlite", _
+            Optional ByVal BaseName As String = "SecureADODB") As IDbManager
+    Dim FileName As String
+    FileName = BaseName & "." & IIf(DbType = "csv", "csv", "db")
+    Dim LibName As String
+    LibName = "SecureADODB"
+    Dim PathName As String
+    PathName = zfxGetLibPrefix(LibName) & FileName
+    
     Dim dbm As IDbManager
-    Set dbm = DbManager.CreateFileDb(TypeOrConnString, FileName, vbNullString, True, LoggerTypeEnum.logPrivate)
-    Set zfxGetDbManagerFromConnectionParameters = dbm
+    Set dbm = DbManager.CreateFileDb(DbType, PathName, vbNullString, LoggerTypeEnum.logDisabled)
+    Set zfxGetDbManager = dbm
 End Function
 
 
-Private Function zfxGetDbManagerFromConnectionString(ByVal TypeOrConnString As String) As IDbManager
-    Dim dbm As IDbManager
-    Set dbm = DbManager.CreateFileDb(TypeOrConnString) ' Use transactions and global Logger by default
-    Set zfxGetDbManagerFromConnectionString = dbm
+Private Function zfxGetConnectionString( _
+            Optional ByVal DbType As String = "sqlite", _
+            Optional ByVal BaseName As String = "SecureADODB") As String
+    zfxGetConnectionString = zfxGetDbManager(DbType, BaseName).DbConnStr.ConnectionString
 End Function
 
 
@@ -122,8 +135,10 @@ Private Sub ztiDbManagerCommand_VerifiesAdoCommand()
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("sqlite")
-    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
+    Dim dbm As IDbManager
+    Set dbm = zfxGetDbManager("sqlite", "SecureADODB")
+    Dim SQLSelect2P As String
+    SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim cmdAdo As ADODB.Command
     Set cmdAdo = dbm.Command.AdoCommand(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
@@ -150,14 +165,16 @@ Private Sub ztiDbManagerRecordset_VerifiesAdoRecordsetDefaultDisconnectedArray()
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("sqlite")
-    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
+    Dim dbm As IDbManager
+    Set dbm = zfxGetDbManager("sqlite", "SecureADODB")
+    Dim SQLSelect2P As String
+    SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim rstAdo As ADODB.Recordset
-    Set rstAdo = dbm.Recordset.AdoRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
+    Set rstAdo = dbm.Recordset.OpenRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
 Assert:
-    Assert.IsNotNothing rstAdo.ActiveConnection, "ActiveConnection of the Recordset object is not set."
-    Assert.IsNotNothing rstAdo.ActiveCommand, "ActiveCommand of the Recordset object is not set."
+    Assert.IsNothing rstAdo.ActiveConnection, "ActiveConnection of the Recordset object should be nothing."
+    Assert.IsNothing rstAdo.ActiveCommand, "ActiveCommand of the Recordset object should not be set."
     Assert.IsFalse IsFalsy(rstAdo.Source), "The Source property of the Recordset object is not set."
     Assert.AreEqual ADODB.CursorTypeEnum.adOpenStatic, rstAdo.CursorType, "The CursorType of the Recordset object should be adOpenStatic."
     Assert.AreEqual ADODB.CursorLocationEnum.adUseClient, rstAdo.CursorLocation, "The CursorLocation of the Recordset object should be adUseClient."
@@ -171,18 +188,23 @@ End Sub
 
 
 '@TestMethod("DbManager.Recordset")
-Private Sub ztiDbManagerRecordset_VerifiesAdoRecordsetDisconnectedScalar()
+Private Sub ztiDbManagerRecordset_VerifiesAdoRecordsetScalar()
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("sqlite")
-    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
+    Dim dbm As IDbManager
+    Set dbm = zfxGetDbManager("sqlite", "SecureADODB")
+    Dim SQLSelect2P As String
+    SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim rst As IDbRecordset
-    Set rst = dbm.Recordset(Scalar:=True, CacheSize:=15)
+    Set rst = dbm.Recordset(CacheSize:=15)
+    Dim Result As Variant
+    Result = rst.OpenScalar(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
     Dim rstAdo As ADODB.Recordset
-    Set rstAdo = rst.AdoRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
+    Set rstAdo = rst.AdoRecordset
 Assert:
+    Assert.AreEqual 1, rstAdo.RecordCount, "The RecordCount of the Recordset object should be 1 for a scalar query."
     Assert.AreEqual 1, rstAdo.MaxRecords, "The MaxRecords of the Recordset object should be set to 1 for a scalar query."
     Assert.AreEqual 15, rstAdo.CacheSize, "The CacheSize of the Recordset object should be set to 15."
 
@@ -198,11 +220,13 @@ Private Sub ztiDbManagerRecordset_VerifiesAdoRecordsetOnlineArray()
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("sqlite", , , False)
-    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
+    Dim dbm As IDbManager
+    Set dbm = zfxGetDbManager("sqlite", "SecureADODB")
+    Dim SQLSelect2P As String
+    SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim rstAdo As ADODB.Recordset
-    Set rstAdo = dbm.Recordset(Disconnected:=False).AdoRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
+    Set rstAdo = dbm.Recordset(Disconnected:=False).OpenRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
 Assert:
     Assert.AreEqual ADODB.CursorTypeEnum.adOpenForwardOnly, rstAdo.CursorType, "The CursorType of the Recordset object should be adOpenForwardOnly."
     Assert.AreEqual ADODB.CursorLocationEnum.adUseServer, rstAdo.CursorLocation, "The CursorLocation of the Recordset object should be adUseServer."
@@ -219,8 +243,10 @@ Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetDisconnectedArraySQLit
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("sqlite")
-    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
+    Dim dbm As IDbManager
+    Set dbm = zfxGetDbManager("sqlite", "SecureADODB")
+    Dim SQLSelect2P As String
+    SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim rstAdo As ADODB.Recordset
     Set rstAdo = dbm.Recordset.OpenRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
@@ -241,8 +267,10 @@ Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetDisconnectedArrayCSV()
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("csv", , , False)
-    Dim SQLSelect1P As String: SQLSelect1P = zfxGetSQLSelect1P(zfxGetCSVTableName)
+    Dim dbm As IDbManager
+    Set dbm = zfxGetDbManager("csv", "SecureADODB")
+    Dim SQLSelect1P As String
+    SQLSelect1P = zfxGetSQLSelect1P(zfxGetCSVTableName)
 Act:
     Dim rstAdo As ADODB.Recordset
     Set rstAdo = dbm.Recordset.OpenRecordset(SQLSelect1P, zfxGetParameterOne)
@@ -261,34 +289,10 @@ End Sub
 '@TestMethod("DbManager.Recordset.Query")
 Private Sub ztiDbManagerFactoryGuard_ThrowsIfRequestedTransactionNotSupported()
     On Error Resume Next
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("csv")
+    Dim dbm As IDbManager
+    Set dbm = zfxGetDbManager("csv", "SecureADODB")
     dbm.Begin
-    AssertExpectedError Assert, ErrNo.AdoInvalidTransactionErr
-End Sub
-
-
-'@TestMethod("DbManager.Recordset.Query")
-Private Sub ztiDbManagerOpenRecordset_ThrowsGivenUnsupportedParameterTypeCSV()
-    '''' Present mapping maps VBA string to adVarWChar, unsupported by the CSV backend (Office 2002, 32bit)
-    On Error GoTo TestFail
-    
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("csv", , , False)
-    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetCSVTableName)
-    
-    On Error Resume Next
-    Dim rstAdo As ADODB.Recordset
-    Set rstAdo = dbm.Recordset.OpenRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
-    AssertExpectedError Assert, ErrNo.AdoInvalidParameterTypeErr
-    On Error GoTo TestFail
-    
-    Assert.IsNothing rstAdo, "Recordset variable unexpectedly set."
-    Dim ExecuteStatus As ADODB.EventStatusEnum: ExecuteStatus = dbm.Connection.ExecuteStatus
-    Assert.AreEqual ADODB.EventStatusEnum.adStatusErrorsOccurred, ExecuteStatus, "Connection error status mismatch."
-    
-    Exit Sub
-
-TestFail:
-    Assert.Fail "Error: " & Err.Number & " - " & Err.Description
+    Guard.AssertExpectedError Assert, ErrNo.AdoInvalidTransactionErr
 End Sub
 
 
@@ -297,8 +301,10 @@ Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetOnlineArraySQLite()
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("sqlite")
-    Dim SQLSelect2P As String: SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
+    Dim dbm As IDbManager
+    Set dbm = zfxGetDbManager("sqlite", "SecureADODB")
+    Dim SQLSelect2P As String
+    SQLSelect2P = zfxGetSQLSelect2P(zfxGetSQLiteTableName)
 Act:
     Dim rstAdo As ADODB.Recordset
     Set rstAdo = dbm.Recordset(Disconnected:=False).OpenRecordset(SQLSelect2P, zfxGetParameterOne, zfxGetParameterTwo)
@@ -324,8 +330,10 @@ Private Sub ztiDbManagerOpenRecordset_VerifiesAdoRecordsetScalarCSV()
     On Error GoTo TestFail
     
 Arrange:
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("csv", , , False)
-    Dim SQLSelect As String: SQLSelect = zfxGetSQLSelect0P(zfxGetCSVTableName)
+    Dim dbm As IDbManager
+    Set dbm = DbManager.CreateFileDb("csv", zfxGetLibPrefix("SecureADODB") & "SecureADODB.csv")
+    Dim SQLSelect As String
+    SQLSelect = zfxGetSQLSelect0P(zfxGetCSVTableName)
 Act:
     Dim Result As Variant
     Result = dbm.Recordset.OpenScalar(SQLSelect)
@@ -351,12 +359,16 @@ Arrange:
     '''' present and, if present, regardless of whether it is later committed or rolledback.
     '''' Set to false below to disable transactions and activate the autocommit mode to see
     '''' the result of the test insert in the database.
-    Dim dbm As IDbManager: Set dbm = DbManager.CreateFileDb("sqlite", , , True)
-    Dim conn As IDbConnection: Set conn = dbm.Connection
-    Dim SQLInsert0P As String: SQLInsert0P = zfxGetSQLInsert0P(zfxGetSQLiteTableNameInsert)
+    Dim dbm As IDbManager
+    Set dbm = DbManager.CreateFileDb("sqlite", zfxGetLibPrefix("SecureADODB") & "SecureADODB.db")
+    Dim conn As IDbConnection
+    Set conn = dbm.Connection
+    Dim SQLInsert0P As String
+    SQLInsert0P = zfxGetSQLInsert0P(zfxGetSQLiteTableNameInsert)
 Act:
     dbm.Command.ExecuteNonQuery SQLInsert0P
-    Dim RecordsAffected As Long: RecordsAffected = conn.RecordsAffected
+    Dim RecordsAffected As Long
+    RecordsAffected = conn.RecordsAffected
     Dim ExecuteStatus As ADODB.EventStatusEnum: ExecuteStatus = conn.ExecuteStatus
 Assert:
     Assert.AreEqual ADODB.EventStatusEnum.adStatusOK, ExecuteStatus, "Execution status mismatch."
@@ -367,5 +379,3 @@ CleanExit:
 TestFail:
     Assert.Fail "Error: " & Err.Number & " - " & Err.Description
 End Sub
-
-

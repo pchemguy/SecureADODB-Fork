@@ -9,3 +9,4 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '@Folder "Common.Excel Objects"
 Option Explicit
+

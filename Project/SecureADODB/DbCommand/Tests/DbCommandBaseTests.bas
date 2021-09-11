@@ -30,8 +30,8 @@ Private Sub ModuleCleanup()
 End Sub
 
 
-Private Function GetParameterProvider() As IParameterProvider
-    Set GetParameterProvider = AdoParameterProvider.Create(AdoTypeMappings.Default)
+Private Function GetParameterProvider() As IDbParameters
+    Set GetParameterProvider = DbParameters.Create(AdoTypeMappings.Default)
 End Function
 
 
@@ -91,31 +91,6 @@ Private Sub CreateCommand_ThrowsGivenClosedConnection()
     
 CleanFail:
     If Err.Number = ErrNo.CustomErr Then Exit Sub
-TestFail:
-    Assert.Fail "Expected error was not raised."
-End Sub
-
-
-'@TestMethod("Guard Clauses")
-Private Sub CreateCommand_ThrowsGivenEmptyCommandString()
-    On Error GoTo TestFail
-    
-    Dim sut As IDbCommandBase
-    Set sut = DbCommandBase.Create(GetParameterProvider)
-    
-    Dim args() As Variant
-    
-    Dim db As StubDbConnection
-    Set db = New StubDbConnection
-    db.State = adStateOpen
-    
-    On Error GoTo CleanFail
-    Dim cmd As ADODB.Command
-    Set cmd = sut.CreateCommand(db, adCmdText, vbNullString, args)
-    On Error GoTo 0
-    
-CleanFail:
-    If Err.Number = ErrNo.EmptyStringErr Then Exit Sub
 TestFail:
     Assert.Fail "Expected error was not raised."
 End Sub

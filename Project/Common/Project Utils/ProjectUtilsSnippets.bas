@@ -66,6 +66,6 @@ Private Sub ProjectNodeSubtreeDelete()
     Dim Project As ProjectUtils
     Set Project = New ProjectUtils
     Dim SubtreePath As String
-    SubtreePath = "" '"Storage\Record"
+    SubtreePath = "ContactEditor" '"Storage\Record"
     Project.ProjectNodeSubtreeDelete SubtreePath
 End Sub
