@@ -5,7 +5,7 @@ nav_order: 2
 permalink: /query-parameters
 ---
 
-The AdoParameterProvider and AdoTypeMappings classes ([SecureADODB-RD][])  assist with parameterized queries (the RD refers to the original RubberDuck version of the library, while PG suffix designates this fork). SecureADODB-PG modifies AdoTypeMappings and replaces AdoParameterProvider with the DbParameters class.
+The AdoParameterProvider and AdoTypeMappings classes ([SecureADODB-RD][])  assist with parameterized queries. SecureADODB-PG modifies AdoTypeMappings and replaces AdoParameterProvider with the DbParameters class.
 
 ### AdoTypeMappings
 
