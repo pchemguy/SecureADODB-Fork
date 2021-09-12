@@ -5,7 +5,9 @@ nav_order: 1
 permalink: /
 ---
 
-This project proposes several modifications to the [SecureADODB] library, as well as explores some alternative design options.
+This project proposes several modifications to the [SecureADODB][] library, as well as explores some alternative design options.
+
+SecureADODB is an object-oriented VBA library developed as a [part][SecureADODB-RD-GH] of the RubberDuck VBA project. To learn the library better and get some hands-on experience, I [forked][SecureADODB-PG-GH] its code. I am currently working on integrating the library into my demo personal database manager application, [ContactEditor][]. When necessary, I adjust/adapt the library's code in my fork. The present focus of this documentation is on the introduced changes. For convenience, when I need to disambiguate the reference, I will use suffixes to designate either the original version ([SecureADODB-RD][SecureADODB-RD-GH]) or this fork ([SecureADODB-PG][SecureADODB-PG-GH]).
 
 ### Class diagram and connections to ADODB
 
@@ -49,7 +51,13 @@ Please see *ExamplesDbManager.bas*, *ExamplesDbRecordsetUpdate.bas* (examples us
 6). *DbRecordset* class handles queries returning disconnected or online Recordsets, as well as scalars. A fully initialized “ADODB.Command” sets most of the *DbRecordset*’s properties (via injected *DbCommand*). Several options (such as return type and cursor type/location) are supplied to the *DbRecordset* factory directly.  
 7). A new module, DbManagerITests, runs a set of tests against mock CSV and SQLite databases. This way, actual SecureADODB classes (as opposed to stubs) are tested. DbManagerITests tests also serve as use templates.  
 
+
+<!-- References -->
+
 [SecureADODB]: https://rubberduckvba.wordpress.com/2020/04/22/secure-adodb/
+[SecureADODB-PG-GH]: https://pchemguy.github.io/SecureADODB-Fork/
+[SecureADODB-RD-GH]: https://github.com/rubberduck-vba/examples/tree/master/SecureADODB
+[ContactEditor]: https://pchemguy.github.io/ContactEditor/
 [Issue 14]: https://github.com/pchemguy/RDVBA-examples/issues/14
 [NoQuery flag]: https://github.com/pchemguy/RDVBA-examples/commit/ffc12ffb361ecc5a2338a321d84e8a756b48e109
 [Factory-Constructor pattern]: https://github.com/pchemguy/RDVBA-examples/issues/11
